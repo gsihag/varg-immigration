@@ -9,14 +9,21 @@ const AgentResponse = ({ message }) => {
       "Department of Home Affairs", "points test", "skills assessment", "IELTS", "PTE", "TOEFL",
       "English requirement", "expression of interest", "EOI", "invitation to apply", "ITA",
       "bridging visa", "permanent residency", "PR", "visa condition", "sponsorship", "nomination",
-      "CRICOS", "ACS", "Engineers Australia", "VARG Immigration", "Ritu", "Australian study", 
+      "CRICOS", "ACS", "Engineers Australia", "VARG Immigration", "Australian study", 
       "Community language", "Professional Year", "Australia", "migration", "visa"
     ];
     
     let highlightedText = text;
     
+    // First handle the special case for "Ritu" name highlighting
+    highlightedText = highlightedText.replace(
+      /\bRitu\b/gi, 
+      '<span class="text-australia-blue font-semibold">Ritu</span>'
+    );
+    
+    // Then handle other terms
     terms.forEach(term => {
-      const regex = new RegExp(`(${term})`, 'gi');
+      const regex = new RegExp(`\\b(${term})\\b`, 'gi');
       highlightedText = highlightedText.replace(regex, '<span class="text-australia-blue font-semibold">$1</span>');
     });
     
@@ -30,7 +37,7 @@ const AgentResponse = ({ message }) => {
       </div>
       <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
         <div 
-          className="text-gray-800 leading-relaxed"
+          className="text-gray-800 leading-relaxed text-base"
           dangerouslySetInnerHTML={highlightTerms(message)}
         />
       </div>
