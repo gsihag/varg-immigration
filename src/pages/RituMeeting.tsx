@@ -45,40 +45,60 @@ const RituMeetingContent = () => {
         
         <Disclaimer className="mb-8" />
         
-        {/* Main Interface */}
+        {/* Main Interface with Enhanced Navigation */}
         <Tabs defaultValue="chat" className="mb-12">
-          <TabsList className="grid w-full grid-cols-6 max-w-4xl mx-auto mb-8">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('chatWithRitu')}</span>
-              <span className="sm:hidden">Chat</span>
-            </TabsTrigger>
-            <TabsTrigger value="assessment" className="flex items-center gap-2">
-              <Calculator className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('visaAssessment')}</span>
-              <span className="sm:hidden">Visa</span>
-            </TabsTrigger>
-            <TabsTrigger value="documents" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('documents')}</span>
-              <span className="sm:hidden">Docs</span>
-            </TabsTrigger>
-            <TabsTrigger value="points" className="flex items-center gap-2">
-              <Target className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('pointsCalculator')}</span>
-              <span className="sm:hidden">Points</span>
-            </TabsTrigger>
-            <TabsTrigger value="timeline" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('timeline')}</span>
-              <span className="sm:hidden">Timeline</span>
-            </TabsTrigger>
-            <TabsTrigger value="settlement" className="flex items-center gap-2">
-              <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">{t('settlement')}</span>
-              <span className="sm:hidden">Settle</span>
-            </TabsTrigger>
-          </TabsList>
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8">
+            <TabsList className="grid w-full grid-cols-6 bg-gray-50 rounded-t-xl p-2 gap-1">
+              <TabsTrigger 
+                value="chat" 
+                className="flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-australia-blue data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 data-[state=inactive]:hover:text-gray-800 font-medium"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('chatWithRitu')}</span>
+                <span className="sm:hidden">Chat</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="assessment" 
+                className="flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-australia-blue data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 data-[state=inactive]:hover:text-gray-800 font-medium"
+              >
+                <Calculator className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('visaAssessment')}</span>
+                <span className="sm:hidden">Visa</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="documents" 
+                className="flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-australia-blue data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 data-[state=inactive]:hover:text-gray-800 font-medium"
+              >
+                <FileText className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('documents')}</span>
+                <span className="sm:hidden">Docs</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="points" 
+                className="flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-australia-blue data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 data-[state=inactive]:hover:text-gray-800 font-medium"
+              >
+                <Target className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('pointsCalculator')}</span>
+                <span className="sm:hidden">Points</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="timeline" 
+                className="flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-australia-blue data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 data-[state=inactive]:hover:text-gray-800 font-medium"
+              >
+                <Calendar className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('timeline')}</span>
+                <span className="sm:hidden">Timeline</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="settlement" 
+                className="flex items-center gap-2 px-3 py-3 rounded-lg transition-all duration-200 data-[state=active]:bg-australia-blue data-[state=active]:text-white data-[state=active]:shadow-md data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-100 data-[state=inactive]:hover:text-gray-800 font-medium"
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('settlement')}</span>
+                <span className="sm:hidden">Settle</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
           
           <TabsContent value="chat">
             <RituChat />

@@ -126,29 +126,29 @@ const RituChat = () => {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col">
-      <CardHeader className="flex-shrink-0 border-b">
-        <CardTitle className="flex items-center gap-2">
-          <Bot className="w-5 h-5 text-australia-blue" />
+    <Card className="h-[600px] flex flex-col shadow-lg border-2 border-gray-200">
+      <CardHeader className="flex-shrink-0 border-b-2 border-gray-100 bg-gradient-to-r from-australia-blue to-australia-darkBlue">
+        <CardTitle className="flex items-center gap-2 text-white">
+          <Bot className="w-5 h-5" />
           {t('chatWithRitu')}
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="flex-1 flex flex-col p-0">
+      <CardContent className="flex-1 flex flex-col p-0 bg-gray-50">
         {/* Messages Container - Fixed Height with Scroll */}
         <div 
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 scroll-smooth"
+          className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 scroll-smooth bg-white"
           style={{ maxHeight: 'calc(600px - 140px)' }}
         >
           {messages.map((message) => (
             <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
               {message.type === 'user' ? (
                 <div className="flex gap-3 max-w-[85%]">
-                  <div className="bg-australia-blue text-white px-4 py-3 rounded-2xl rounded-tr-sm">
+                  <div className="bg-australia-blue text-white px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm">
                     {message.message}
                   </div>
-                  <div className="bg-australia-blue rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm">
+                  <div className="bg-australia-blue rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-md">
                     <User className="w-5 h-5" />
                   </div>
                 </div>
@@ -161,10 +161,10 @@ const RituChat = () => {
           {isLoading && (
             <div className="flex justify-start">
               <div className="flex gap-3 max-w-[85%]">
-                <div className="bg-gradient-to-br from-australia-blue to-australia-darkBlue rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm">
+                <div className="bg-gradient-to-br from-australia-blue to-australia-darkBlue rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-md">
                   R
                 </div>
-                <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+                <div className="bg-white border-2 border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span>{t('loading')}</span>
@@ -178,25 +178,28 @@ const RituChat = () => {
           <div ref={messagesEndRef} />
         </div>
         
-        {/* Input Area - Fixed at Bottom */}
-        <div className="flex-shrink-0 border-t p-4">
-          <div className="flex gap-2">
+        {/* Input Area - Fixed at Bottom with Enhanced Styling */}
+        <div className="flex-shrink-0 border-t-2 border-gray-200 p-4 bg-white">
+          <div className="flex gap-3">
             <Input
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={t('askQuestion')}
-              className="flex-1"
+              className="flex-1 border-2 border-gray-300 focus:border-australia-blue focus:ring-2 focus:ring-australia-blue/20 bg-white text-gray-900 placeholder:text-gray-500 shadow-sm"
               disabled={isLoading}
             />
             <Button 
               onClick={handleSendMessage}
               disabled={isLoading || !inputMessage.trim()}
-              className="bg-australia-blue hover:bg-australia-darkBlue"
+              className="bg-australia-blue hover:bg-australia-darkBlue text-white border-2 border-australia-blue hover:border-australia-darkBlue transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed px-6"
             >
               <Send className="w-4 h-4" />
             </Button>
           </div>
+          <p className="text-xs text-gray-600 mt-2 text-center font-medium">
+            Ask Ritu about Australian visas, points calculation, documents, and migration process
+          </p>
         </div>
       </CardContent>
     </Card>
