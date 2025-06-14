@@ -48,10 +48,10 @@ const RituMeetingContent = () => {
         {/* Main Interface with Enhanced Navigation */}
         <Tabs defaultValue="chat" className="mb-12">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 mb-8 overflow-hidden">
-            <TabsList className="w-full bg-gray-50 p-0 h-auto grid grid-cols-6 gap-0 rounded-none">
+            <TabsList className="w-full bg-gray-50 p-0 h-auto grid grid-cols-6 gap-0 rounded-none border-b border-gray-200">
               <TabsTrigger 
                 value="chat" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-auto min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
                 <MessageCircle className="w-5 h-5 mb-2" />
                 <span className="text-sm leading-tight text-center">
@@ -61,7 +61,7 @@ const RituMeetingContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="assessment" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-auto min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
                 <Calculator className="w-5 h-5 mb-2" />
                 <span className="text-sm leading-tight text-center">
@@ -71,7 +71,7 @@ const RituMeetingContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="documents" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-auto min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
                 <FileText className="w-5 h-5 mb-2" />
                 <span className="text-sm leading-tight text-center">
@@ -81,7 +81,7 @@ const RituMeetingContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="points" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-auto min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
                 <Target className="w-5 h-5 mb-2" />
                 <span className="text-sm leading-tight text-center">
@@ -91,7 +91,7 @@ const RituMeetingContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="timeline" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-auto min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
                 <Calendar className="w-5 h-5 mb-2" />
                 <span className="text-sm leading-tight text-center">
@@ -101,7 +101,7 @@ const RituMeetingContent = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="settlement" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-auto min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
                 <Home className="w-5 h-5 mb-2" />
                 <span className="text-sm leading-tight text-center">

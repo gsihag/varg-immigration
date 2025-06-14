@@ -56,7 +56,7 @@
     --card-foreground: 248 250 252;
 
     --popover: 30 41 59;
-    --popover-foreground: 248 250 252;
+    --popover-foreground: 15 23 42;
 
     --primary: 236 72 153;
     --primary-foreground: 15 23 42;
@@ -90,7 +90,7 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
 
-  /* Enhanced Input Styling for Better Contrast */
+  /* Enhanced Input Styling for Better Contrast - Universal Application */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -105,12 +105,53 @@
     @apply transition-all duration-200;
   }
 
-  /* Ensure all form elements have proper contrast */
+  /* Enhanced form elements with high contrast */
   .form-input,
   .form-select,
   .form-textarea {
     @apply bg-white border-2 border-gray-300 text-gray-900 placeholder-gray-500;
     @apply focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+
+  /* Dropdown and Select Styling */
+  select,
+  .select-trigger {
+    @apply bg-white border-2 border-gray-300 text-gray-900;
+    @apply hover:bg-gray-50 focus:border-blue-600 focus:ring-2 focus:ring-blue-200;
+    @apply transition-all duration-200;
+  }
+
+  /* Button Styling for High Contrast */
+  .button-primary {
+    @apply bg-blue-600 text-white border-2 border-blue-600;
+    @apply hover:bg-blue-700 hover:border-blue-700;
+    @apply focus:ring-2 focus:ring-blue-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+
+  .button-secondary {
+    @apply bg-white text-gray-700 border-2 border-gray-300;
+    @apply hover:bg-gray-50 hover:border-gray-400;
+    @apply focus:ring-2 focus:ring-blue-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+
+  /* Option/Selection Button Styling */
+  .option-button {
+    @apply bg-white text-gray-700 border-2 border-gray-300;
+    @apply hover:bg-gray-50 hover:border-blue-600;
+    @apply transition-all duration-200 cursor-pointer;
+  }
+
+  .option-button.selected {
+    @apply bg-blue-600 text-white border-blue-600;
+  }
+
+  /* Chat Input Specific Styling */
+  .chat-input {
+    @apply bg-white border-2 border-gray-300 text-gray-900 placeholder-gray-500;
+    @apply focus:border-blue-600 focus:ring-0 focus:ring-blue-200 focus:outline-none;
     @apply transition-all duration-200;
   }
 }
@@ -148,6 +189,22 @@
 
 .duration-300 {
   animation-duration: 300ms;
+}
+
+/* Tab transition improvements */
+@keyframes tab-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content-enter {
+  animation: tab-fade-in 0.3s ease-out;
 }
 
 /* Psychology-Based Animations */
