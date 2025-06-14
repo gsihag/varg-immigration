@@ -31,7 +31,7 @@ const Header = () => {
             <div className="relative w-full">
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="Search visas, services..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -63,38 +63,32 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Navigation Menu - Desktop */}
-        <nav className="hidden lg:block pb-4">
-          <div className="flex items-center space-x-8">
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Family visas
+        {/* Main Navigation - Desktop (Always Visible) */}
+        <nav className="hidden lg:block pb-4 border-t border-gray-100 pt-4">
+          <div className="flex items-center justify-center space-x-12">
+            <Link 
+              to="/family-visas" 
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
+            >
+              Family Visas
             </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Work visas
+            <Link 
+              to="/work-visas" 
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
+            >
+              Work Visas
             </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Working holiday visas
+            <Link 
+              to="/study-visas" 
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
+            >
+              Study Visas
             </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Travel visas
-            </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Business visas
-            </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Study visas
-            </Link>
-            <Link to="/about" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Living in Australia
-            </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Jobs in Australia
-            </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Contact us
-            </Link>
-            <Link to="/services" className="text-gray-700 hover:text-green-600 font-medium transition-colors">
-              Our services
+            <Link 
+              to="/business-visas" 
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
+            >
+              Business Visas
             </Link>
           </div>
         </nav>
@@ -107,7 +101,7 @@ const Header = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search"
+                  placeholder="Search visas, services..."
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -135,74 +129,46 @@ const Header = () => {
             {/* Mobile Navigation Links */}
             <nav className="flex flex-col space-y-3">
               <Link 
-                to="/services" 
+                to="/family-visas" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Family visas
+                Family Visas
               </Link>
               <Link 
-                to="/services" 
+                to="/work-visas" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Work visas
+                Work Visas
               </Link>
               <Link 
-                to="/services" 
+                to="/study-visas" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Working holiday visas
+                Study Visas
               </Link>
               <Link 
-                to="/services" 
+                to="/business-visas" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Travel visas
-              </Link>
-              <Link 
-                to="/services" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Business visas
-              </Link>
-              <Link 
-                to="/services" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Study visas
+                Business Visas
               </Link>
               <Link 
                 to="/about" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Living in Australia
-              </Link>
-              <Link 
-                to="/services" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Jobs in Australia
+                About Us
               </Link>
               <Link 
                 to="/contact" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Contact us
-              </Link>
-              <Link 
-                to="/services" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Our services
+                Contact
               </Link>
             </nav>
           </div>

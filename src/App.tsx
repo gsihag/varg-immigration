@@ -10,6 +10,10 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import FamilyVisas from "./pages/FamilyVisas";
+import WorkVisas from "./pages/WorkVisas";
+import StudyVisas from "./pages/StudyVisas";
+import BusinessVisas from "./pages/BusinessVisas";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +29,10 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
+          <Route path="/family-visas" element={<FamilyVisas />} />
+          <Route path="/work-visas" element={<WorkVisas />} />
+          <Route path="/study-visas" element={<StudyVisas />} />
+          <Route path="/business-visas" element={<BusinessVisas />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
