@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Users, ArrowRight, Star, Sparkles } from 'lucide-react';
+import { MessageCircle, Users, ArrowRight, Star, Sparkles, Bot } from 'lucide-react';
 
 const HeroSection = () => {
   const [ritualInteractionCount, setRitualInteractionCount] = useState(2847);
@@ -73,8 +73,8 @@ const HeroSection = () => {
             {/* Primary CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <Button size="lg" className="group bg-gradient-action hover:shadow-2xl text-white font-bold text-base px-6 py-3 rounded-xl magnetic-hover attention-grab border-0" asChild>
-                <Link to="/meeting">
-                  <MessageCircle className="mr-2 w-4 h-4 group-hover:animate-bounce" />
+                <Link to="/ritu">
+                  <Bot className="mr-2 w-4 h-4 group-hover:animate-bounce" />
                   <span>Chat with Ritu - FREE</span>
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </Link>
@@ -95,11 +95,11 @@ const HeroSection = () => {
               <div className="relative bg-white rounded-2xl p-4 shadow-2xl max-w-xs interactive-card border border-slate-200">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-gradient-action rounded-full w-12 h-12 flex items-center justify-center text-white text-lg font-bold shadow-xl pulse-glow">
-                    R
+                    <Bot className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-800 gradient-text-blue">Meet Ritu</h3>
-                    <p className="text-slate-600 font-medium text-xs">Your Personal Migration Consultant</p>
+                    <p className="text-slate-600 font-medium text-xs">Your Personal Migration Assistant</p>
                     <div className="flex items-center gap-1 mt-1">
                       <div className="w-1.5 h-1.5 bg-success-green rounded-full animate-pulse"></div>
                       <span className="text-xs text-success-green font-bold">Online & Ready to Help</span>
@@ -107,7 +107,7 @@ const HeroSection = () => {
                   </div>
                 </div>
                 <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-3 text-slate-700 text-xs mb-3 border-l-4 border-trust-blue">
-                  "Hi! I'm Ritu, your personalized AI migration consultant. I've helped 5,000+ people achieve their Australian dream with tailored guidance. Ready to make yours come true? What's your migration goal?"
+                  "Hi! I'm Ritu, your AI immigration assistant. I've helped 5,000+ people achieve their Australian dream with personalized guidance. Ready to start your journey? What's your migration goal?"
                 </div>
                 <div className="flex justify-between items-center">
                   <div className="typing-indicator flex space-x-1">
@@ -116,7 +116,7 @@ const HeroSection = () => {
                     <span></span>
                   </div>
                   <Button className="bg-gradient-action hover:shadow-lg text-white rounded-full px-3 py-2 font-bold magnetic-hover text-xs" asChild>
-                    <Link to="/meeting">
+                    <Link to="/ritu">
                       Start Chat
                       <ArrowRight className="ml-1 w-3 h-3" />
                     </Link>

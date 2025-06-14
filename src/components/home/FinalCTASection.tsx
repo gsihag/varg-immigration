@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Users, ArrowRight, Clock, Shield, CheckCircle, Zap, Globe } from 'lucide-react';
+import { Bot, Users, ArrowRight, Clock, Shield, CheckCircle, Zap, Globe } from 'lucide-react';
 
 const FinalCTASection = () => {
   return (
@@ -28,13 +28,13 @@ const FinalCTASection = () => {
           <span className="block gradient-text mt-1">Australian Journey?</span>
         </h2>
         <p className="text-lg mb-8 max-w-2xl mx-auto text-blue-100 font-medium">
-          Join <span className="font-bold text-action-warm">5,000+ successful applicants</span> who chose VARG Immigration for their migration consultancy needs
+          Join <span className="font-bold text-action-warm">5,000+ successful applicants</span> who chose VARG Immigration with Ritu for their migration journey
         </p>
         
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
           <Button size="lg" className="group bg-gradient-action hover:shadow-2xl text-white font-bold text-lg px-8 py-4 rounded-xl magnetic-hover attention-grab border-0" asChild>
-            <Link to="/meeting">
-              <MessageCircle className="mr-2 w-5 h-5 group-hover:animate-bounce" />
+            <Link to="/ritu">
+              <Bot className="mr-2 w-5 h-5 group-hover:animate-bounce" />
               Chat with Ritu Now - FREE
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </Link>
@@ -59,7 +59,7 @@ const FinalCTASection = () => {
           </div>
           <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 backdrop-blur-sm">
             <Zap className="w-3 h-3 text-action-warm" />
-            <span className="font-medium text-sm">Personalized Response</span>
+            <span className="font-medium text-sm">Instant AI Response</span>
           </div>
           <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 backdrop-blur-sm">
             <Globe className="w-3 h-3 text-calm-teal" />
