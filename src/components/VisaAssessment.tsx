@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,7 +57,7 @@ const VisaAssessment = () => {
 
     // Age points (minimum 18)
     const age = parseInt(assessmentData.age);
-    if (age >= 18 && age <= 24) breakdown.age = 25;
+    if (age >= 18) breakdown.age = 25;
     else if (age >= 25 && age <= 32) breakdown.age = 30;
     else if (age >= 33 && age <= 39) breakdown.age = 25;
     else if (age >= 40 && age <= 44) breakdown.age = 15;
@@ -78,6 +77,7 @@ const VisaAssessment = () => {
       case 'doctorate': breakdown.education = 20; break;
       case 'bachelor': case 'masters': breakdown.education = 15; break;
       case 'diploma': breakdown.education = 10; break;
+      case 'highschool': breakdown.education = 5; break;
     }
 
     // Overseas work experience points
@@ -220,12 +220,12 @@ const VisaAssessment = () => {
 
   const validateAge = (value) => {
     const age = parseInt(value);
-    return age >= 18 && age <= 65;
+    return age >= 18; // Removed maximum age limit
   };
 
   const validateWorkExperience = (value) => {
     const years = parseInt(value) || 0;
-    return years >= 0 && years <= 30;
+    return years >= 0 && years <= 40; // Changed maximum to 40
   };
 
   if (pointsBreakdown && recommendations) {
@@ -459,13 +459,12 @@ const VisaAssessment = () => {
                 <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="age">Age (18-65 years)</Label>
+                    <Label htmlFor="age">Age (minimum 18 years)</Label>
                     <Input
                       id="age"
                       type="number"
                       placeholder="Enter your age"
                       min="18"
-                      max="65"
                       value={assessmentData.age}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -476,7 +475,7 @@ const VisaAssessment = () => {
                       className={assessmentData.age && !validateAge(assessmentData.age) ? 'border-red-500' : ''}
                     />
                     {assessmentData.age && !validateAge(assessmentData.age) && (
-                      <p className="text-red-500 text-sm mt-1">Age must be between 18 and 65 years</p>
+                      <p className="text-red-500 text-sm mt-1">Age must be at least 18 years</p>
                     )}
                   </div>
                   <div>
@@ -505,18 +504,18 @@ const VisaAssessment = () => {
                         <SelectItem value="masters">Masters Degree</SelectItem>
                         <SelectItem value="bachelor">Bachelor Degree</SelectItem>
                         <SelectItem value="diploma">Diploma/Associate Degree</SelectItem>
-                        <SelectItem value="certificate">Certificate IV</SelectItem>
+                        <SelectItem value="highschool">High School</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="experienceOverseas">Overseas Work Experience (Years)</Label>
+                    <Label htmlFor="experienceOverseas">Overseas Work Experience (Years, max 40)</Label>
                     <Input
                       id="experienceOverseas"
                       type="number"
                       placeholder="Years in nominated occupation"
                       min="0"
-                      max="30"
+                      max="40"
                       value={assessmentData.workExperienceOverseas}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -527,13 +526,13 @@ const VisaAssessment = () => {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <Label htmlFor="experienceAustralia">Australian Work Experience (Years)</Label>
+                    <Label htmlFor="experienceAustralia">Australian Work Experience (Years, max 40)</Label>
                     <Input
                       id="experienceAustralia"
                       type="number"
                       placeholder="Years of Australian work experience"
                       min="0"
-                      max="30"
+                      max="40"
                       value={assessmentData.workExperienceAustralia}
                       onChange={(e) => {
                         const value = e.target.value;
