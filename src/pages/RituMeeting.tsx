@@ -53,7 +53,7 @@ const RituMeetingContent = () => {
                 value="chat" 
                 className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
-                <MessageCircle className="w-5 h-5 mb-2" />
+                <MessageCircle className="w-7 h-7 mb-2 group-data-[state=active]:animate-pulse" />
                 <span className="text-sm leading-tight text-center">
                   <span className="hidden sm:inline">{t('chatWithRitu')}</span>
                   <span className="sm:hidden">Chat</span>
@@ -63,7 +63,7 @@ const RituMeetingContent = () => {
                 value="assessment" 
                 className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
-                <Calculator className="w-5 h-5 mb-2" />
+                <Calculator className="w-7 h-7 mb-2 group-data-[state=active]:scale-110 transition-transform" />
                 <span className="text-sm leading-tight text-center">
                   <span className="hidden sm:inline">{t('visaAssessment')}</span>
                   <span className="sm:hidden">Visa</span>
@@ -73,7 +73,7 @@ const RituMeetingContent = () => {
                 value="documents" 
                 className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
-                <FileText className="w-5 h-5 mb-2" />
+                <FileText className="w-7 h-7 mb-2 group-data-[state=active]:rotate-6 transition-transform" />
                 <span className="text-sm leading-tight text-center">
                   <span className="hidden sm:inline">{t('documents')}</span>
                   <span className="sm:hidden">Docs</span>
@@ -83,7 +83,7 @@ const RituMeetingContent = () => {
                 value="points" 
                 className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
-                <Target className="w-5 h-5 mb-2" />
+                <Target className="w-7 h-7 mb-2 group-data-[state=active]:animate-pulse" />
                 <span className="text-sm leading-tight text-center">
                   <span className="hidden sm:inline">{t('pointsCalculator')}</span>
                   <span className="sm:hidden">Points</span>
@@ -93,7 +93,7 @@ const RituMeetingContent = () => {
                 value="timeline" 
                 className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
-                <Calendar className="w-5 h-5 mb-2" />
+                <Calendar className="w-7 h-7 mb-2 group-data-[state=active]:scale-110 transition-transform" />
                 <span className="text-sm leading-tight text-center">
                   <span className="hidden sm:inline">{t('timeline')}</span>
                   <span className="sm:hidden">Timeline</span>
@@ -103,7 +103,7 @@ const RituMeetingContent = () => {
                 value="settlement" 
                 className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
               >
-                <Home className="w-5 h-5 mb-2" />
+                <Home className="w-7 h-7 mb-2 group-data-[state=active]:animate-bounce" />
                 <span className="text-sm leading-tight text-center">
                   <span className="hidden sm:inline">{t('settlement')}</span>
                   <span className="sm:hidden">Settle</span>
