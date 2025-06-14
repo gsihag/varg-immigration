@@ -19,7 +19,8 @@ const VisaAssessment = () => {
     education: '',
     englishTest: '',
     englishScore: '',
-    workExperience: '',
+    workExperienceAustralia: '',
+    workExperienceOverseas: '',
     currentLocation: '',
     visaStatus: '',
     familyStatus: '',
@@ -50,13 +51,15 @@ const VisaAssessment = () => {
       english: 0,
       education: 0,
       experience: 0,
+      australianExperience: 0,
       bonus: 0,
       total: 0
     };
 
-    // Age points
+    // Age points (minimum 18)
     const age = parseInt(assessmentData.age);
-    if (age >= 25 && age <= 32) breakdown.age = 30;
+    if (age >= 18 && age <= 24) breakdown.age = 25;
+    else if (age >= 25 && age <= 32) breakdown.age = 30;
     else if (age >= 33 && age <= 39) breakdown.age = 25;
     else if (age >= 40 && age <= 44) breakdown.age = 15;
 
@@ -77,16 +80,23 @@ const VisaAssessment = () => {
       case 'diploma': breakdown.education = 10; break;
     }
 
-    // Experience points
-    const experience = parseInt(assessmentData.workExperience);
-    if (experience >= 8) breakdown.experience = 15;
-    else if (experience >= 5) breakdown.experience = 10;
-    else if (experience >= 3) breakdown.experience = 5;
+    // Overseas work experience points
+    const overseasExperience = parseInt(assessmentData.workExperienceOverseas) || 0;
+    if (overseasExperience >= 8) breakdown.experience = 15;
+    else if (overseasExperience >= 5) breakdown.experience = 10;
+    else if (overseasExperience >= 3) breakdown.experience = 5;
+
+    // Australian work experience points
+    const australianExperience = parseInt(assessmentData.workExperienceAustralia) || 0;
+    if (australianExperience >= 8) breakdown.australianExperience = 20;
+    else if (australianExperience >= 5) breakdown.australianExperience = 15;
+    else if (australianExperience >= 3) breakdown.australianExperience = 10;
+    else if (australianExperience >= 1) breakdown.australianExperience = 5;
 
     // Bonus points
     if (assessmentData.australianStudy) breakdown.bonus += 5;
 
-    breakdown.total = breakdown.age + breakdown.english + breakdown.education + breakdown.experience + breakdown.bonus;
+    breakdown.total = breakdown.age + breakdown.english + breakdown.education + breakdown.experience + breakdown.australianExperience + breakdown.bonus;
     
     return breakdown;
   };
@@ -152,6 +162,15 @@ const VisaAssessment = () => {
       });
     }
 
+    if (parseInt(assessmentData.workExperienceAustralia) < 3) {
+      recommendations.improvements.push({
+        area: 'Australian Work Experience',
+        current: `${points.australianExperience} points`,
+        potential: '+5-20 points',
+        action: 'Gain Australian work experience in your nominated occupation'
+      });
+    }
+
     // Strategy recommendation
     if (points.total >= 90) {
       recommendations.strategy = 'Excellent profile! Apply for Subclass 189 with high invitation chances.';
@@ -197,6 +216,16 @@ const VisaAssessment = () => {
 
   const getStepProgress = () => {
     return (currentStep / 4) * 100;
+  };
+
+  const validateAge = (value) => {
+    const age = parseInt(value);
+    return age >= 18 && age <= 65;
+  };
+
+  const validateWorkExperience = (value) => {
+    const years = parseInt(value) || 0;
+    return years >= 0 && years <= 30;
   };
 
   if (pointsBreakdown && recommendations) {
@@ -248,9 +277,15 @@ const VisaAssessment = () => {
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Work Experience ({assessmentData.workExperience} years)</span>
+                  <span>Overseas Work Experience ({assessmentData.workExperienceOverseas} years)</span>
                   <Badge variant={pointsBreakdown.experience >= 10 ? "default" : "secondary"}>
                     {pointsBreakdown.experience} points
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Australian Work Experience ({assessmentData.workExperienceAustralia} years)</span>
+                  <Badge variant={pointsBreakdown.australianExperience >= 10 ? "default" : "secondary"}>
+                    {pointsBreakdown.australianExperience} points
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
@@ -366,11 +401,9 @@ const VisaAssessment = () => {
           </Card>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-4 justify-center">
           <Button 
             onClick={() => {
-              // Reset to step 1 - session only
               setCurrentStep(1);
               setPointsBreakdown(null);
               setRecommendations(null);
@@ -380,7 +413,8 @@ const VisaAssessment = () => {
                 education: '',
                 englishTest: '',
                 englishScore: '',
-                workExperience: '',
+                workExperienceAustralia: '',
+                workExperienceOverseas: '',
                 currentLocation: '',
                 visaStatus: '',
                 familyStatus: '',
@@ -425,14 +459,25 @@ const VisaAssessment = () => {
                 <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="age">Age</Label>
+                    <Label htmlFor="age">Age (18-65 years)</Label>
                     <Input
                       id="age"
                       type="number"
                       placeholder="Enter your age"
+                      min="18"
+                      max="65"
                       value={assessmentData.age}
-                      onChange={(e) => setAssessmentData({...assessmentData, age: e.target.value})}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '' || validateAge(value)) {
+                          setAssessmentData({...assessmentData, age: value});
+                        }
+                      }}
+                      className={assessmentData.age && !validateAge(assessmentData.age) ? 'border-red-500' : ''}
                     />
+                    {assessmentData.age && !validateAge(assessmentData.age) && (
+                      <p className="text-red-500 text-sm mt-1">Age must be between 18 and 65 years</p>
+                    )}
                   </div>
                   <div>
                     <Label htmlFor="occupation">Occupation</Label>
@@ -465,13 +510,37 @@ const VisaAssessment = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="experience">Work Experience (Years)</Label>
+                    <Label htmlFor="experienceOverseas">Overseas Work Experience (Years)</Label>
                     <Input
-                      id="experience"
+                      id="experienceOverseas"
                       type="number"
                       placeholder="Years in nominated occupation"
-                      value={assessmentData.workExperience}
-                      onChange={(e) => setAssessmentData({...assessmentData, workExperience: e.target.value})}
+                      min="0"
+                      max="30"
+                      value={assessmentData.workExperienceOverseas}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '' || validateWorkExperience(value)) {
+                          setAssessmentData({...assessmentData, workExperienceOverseas: value});
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="experienceAustralia">Australian Work Experience (Years)</Label>
+                    <Input
+                      id="experienceAustralia"
+                      type="number"
+                      placeholder="Years of Australian work experience"
+                      min="0"
+                      max="30"
+                      value={assessmentData.workExperienceAustralia}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '' || validateWorkExperience(value)) {
+                          setAssessmentData({...assessmentData, workExperienceAustralia: value});
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -515,7 +584,6 @@ const VisaAssessment = () => {
                   </div>
                 </div>
                 
-                {/* English Score Guidelines */}
                 {assessmentData.englishTest && (
                   <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                     <h4 className="font-medium mb-2">Score Guidelines for {assessmentData.englishTest.toUpperCase()}:</h4>
@@ -545,7 +613,6 @@ const VisaAssessment = () => {
             </div>
           )}
 
-          {/* Step 3: Current Status */}
           {currentStep === 3 && (
             <div className="space-y-6">
               <div>
@@ -621,7 +688,6 @@ const VisaAssessment = () => {
             </div>
           )}
 
-          {/* Step 4: Additional Information */}
           {currentStep === 4 && (
             <div className="space-y-6">
               <div>
@@ -645,7 +711,8 @@ const VisaAssessment = () => {
                       <div>Age: {assessmentData.age}</div>
                       <div>Occupation: {occupations.find(o => o.value === assessmentData.occupation)?.label}</div>
                       <div>Education: {assessmentData.education}</div>
-                      <div>Experience: {assessmentData.workExperience} years</div>
+                      <div>Overseas Experience: {assessmentData.workExperienceOverseas} years</div>
+                      <div>Australian Experience: {assessmentData.workExperienceAustralia} years</div>
                       <div>English: {assessmentData.englishTest?.toUpperCase()} {assessmentData.englishScore}</div>
                       <div>Location: {assessmentData.currentLocation}</div>
                     </div>
@@ -667,7 +734,7 @@ const VisaAssessment = () => {
             <Button
               onClick={handleStepComplete}
               disabled={
-                (currentStep === 1 && (!assessmentData.age || !assessmentData.occupation || !assessmentData.education || !assessmentData.workExperience)) ||
+                (currentStep === 1 && (!assessmentData.age || !validateAge(assessmentData.age) || !assessmentData.occupation || !assessmentData.education)) ||
                 (currentStep === 2 && (!assessmentData.englishTest || !assessmentData.englishScore)) ||
                 (currentStep === 3 && (!assessmentData.currentLocation || !assessmentData.familyStatus)) ||
                 (currentStep === 4 && false)
