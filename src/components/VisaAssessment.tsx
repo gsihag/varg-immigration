@@ -38,7 +38,12 @@ const VisaAssessment = () => {
       speaking: ''
     },
     partnerHasSkillAssessment: null,
-    stateInterest: ''
+    stateInterest: '',
+    australianStudy: '',
+    regionalStudy: '',
+    mastersPhd: '',
+    naatiCredential: '',
+    professionalYear: ''
   });
   const [pointsBreakdown, setPointsBreakdown] = useState<PointsBreakdown | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendations | null>(null);
@@ -56,22 +61,22 @@ const VisaAssessment = () => {
       case 4:
         return true; // Work experience is optional
       case 5:
-        return assessmentData.hasAustralianQualification !== null;
+        return assessmentData.hasAustralianQualification === true || assessmentData.hasAustralianQualification === false;
       case 6:
-        return assessmentData.hasAustralianQualification === false || assessmentData.isFromRegionalAustralia !== null;
+        return assessmentData.hasAustralianQualification === false || (assessmentData.isFromRegionalAustralia === true || assessmentData.isFromRegionalAustralia === false);
       case 7:
-        return assessmentData.hasMastersOrDoctorate !== null;
+        return assessmentData.hasMastersOrDoctorate === true || assessmentData.hasMastersOrDoctorate === false;
       case 8:
-        return assessmentData.hasNAATICredential !== null;
+        return assessmentData.hasNAATICredential === true || assessmentData.hasNAATICredential === false;
       case 9:
-        return assessmentData.hasCompletedProfessionalYear !== null;
+        return assessmentData.hasCompletedProfessionalYear === true || assessmentData.hasCompletedProfessionalYear === false;
       case 10:
         return assessmentData.partnerStatus !== '';
       case 11:
         if (assessmentData.partnerStatus !== 'non-australian') return true;
         return assessmentData.partnerEnglishTest && 
                Object.values(assessmentData.partnerEnglishScores).some(score => score !== '') &&
-               assessmentData.partnerHasSkillAssessment !== null;
+               (assessmentData.partnerHasSkillAssessment === true || assessmentData.partnerHasSkillAssessment === false);
       default:
         return false;
     }
@@ -147,7 +152,12 @@ const VisaAssessment = () => {
         speaking: ''
       },
       partnerHasSkillAssessment: null,
-      stateInterest: ''
+      stateInterest: '',
+      australianStudy: '',
+      regionalStudy: '',
+      mastersPhd: '',
+      naatiCredential: '',
+      professionalYear: ''
     });
   };
 
@@ -164,28 +174,34 @@ const VisaAssessment = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Progress Header */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border">
+      {/* Progress Header with Enhanced Contrast */}
+      <div className="bg-white rounded-lg p-6 shadow-lg border-2 border-gray-200">
         <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-2xl font-bold text-gray-900">Australian Visa Assessment</h2>
-            <span className="text-sm text-gray-500">Question {currentQuestion} of {totalQuestions}</span>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-3xl font-bold text-gray-900">Australian Visa Assessment</h2>
+            <span className="text-lg font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+              Question {currentQuestion} of {totalQuestions}
+            </span>
           </div>
-          <Progress value={(currentQuestion / totalQuestions) * 100} className="h-3" />
-          <p className="text-sm text-gray-600 mt-2">Answer each question to get your personalized visa eligibility report</p>
+          <Progress value={(currentQuestion / totalQuestions) * 100} className="h-4 bg-gray-200" />
+          <p className="text-base text-gray-700 mt-3 font-medium">
+            Answer each question to get your personalized visa eligibility report
+          </p>
         </div>
       </div>
 
-      {/* Question Step */}
-      <QuestionStep
-        currentQuestion={currentQuestion}
-        totalQuestions={totalQuestions}
-        assessmentData={assessmentData}
-        setAssessmentData={setAssessmentData}
-        onNext={handleNext}
-        onPrevious={handlePrevious}
-        canProceed={getCanProceed()}
-      />
+      {/* Question Step with Enhanced Styling */}
+      <div className="bg-white rounded-lg shadow-lg border-2 border-gray-200">
+        <QuestionStep
+          currentQuestion={currentQuestion}
+          totalQuestions={totalQuestions}
+          assessmentData={assessmentData}
+          setAssessmentData={setAssessmentData}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          canProceed={getCanProceed()}
+        />
+      </div>
     </div>
   );
 };

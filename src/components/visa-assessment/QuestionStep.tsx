@@ -1,18 +1,19 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AssessmentData } from './types';
 import { occupations } from './data';
+import { ArrowLeft, ArrowRight, User, Globe, GraduationCap, Briefcase, Award, Heart, Users } from 'lucide-react';
 
 interface QuestionStepProps {
   currentQuestion: number;
   totalQuestions: number;
   assessmentData: AssessmentData;
-  setAssessmentData: (data: AssessmentData) => void;
+  setAssessmentData: React.Dispatch<React.SetStateAction<AssessmentData>>;
   onNext: () => void;
   onPrevious: () => void;
   canProceed: boolean;
@@ -31,408 +32,586 @@ const QuestionStep: React.FC<QuestionStepProps> = ({
     switch (currentQuestion) {
       case 1:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">What is your age?</h3>
-            <p className="text-gray-600">You must be at least 18 years old to be eligible.</p>
-            <div>
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                placeholder="Enter your age"
-                min="18"
-                value={assessmentData.age}
-                onChange={(e) => setAssessmentData({...assessmentData, age: e.target.value})}
-                className="max-w-xs"
-              />
-            </div>
-          </div>
+          <Card className="border-2 border-blue-200">
+            <CardHeader className="bg-blue-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-blue-800">
+                <User className="w-8 h-8" />
+                What is your age?
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Label htmlFor="age" className="text-lg font-semibold text-gray-800">Age (minimum 18 years)</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  min="18"
+                  max="100"
+                  value={assessmentData.age}
+                  onChange={(e) => setAssessmentData(prev => ({ ...prev, age: e.target.value }))}
+                  className="text-lg p-4 border-2 border-gray-300 focus:border-blue-500 bg-white"
+                  placeholder="Enter your age"
+                />
+                {assessmentData.age && parseInt(assessmentData.age) < 18 && (
+                  <p className="text-red-600 font-semibold bg-red-50 p-3 rounded border border-red-200">
+                    You must be at least 18 years old to apply for an Australian visa.
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 2:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">What is your English proficiency?</h3>
-            <p className="text-gray-600">Select your English test type and enter your scores.</p>
-            <div className="space-y-4">
+          <Card className="border-2 border-green-200">
+            <CardHeader className="bg-green-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-green-800">
+                <Globe className="w-8 h-8" />
+                English Language Proficiency
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
               <div>
-                <Label htmlFor="englishTest">English Test Type</Label>
-                <Select onValueChange={(value) => {
-                  setAssessmentData({
-                    ...assessmentData, 
-                    englishTest: value,
-                    englishScores: { listening: '', reading: '', writing: '', speaking: '' }
-                  });
-                }}>
-                  <SelectTrigger className="max-w-xs">
-                    <SelectValue placeholder="Select test type" />
+                <Label className="text-lg font-semibold text-gray-800 mb-3 block">
+                  Which English test did you take?
+                </Label>
+                <Select value={assessmentData.englishTest} onValueChange={(value) => 
+                  setAssessmentData(prev => ({ ...prev, englishTest: value }))
+                }>
+                  <SelectTrigger className="text-lg p-4 border-2 border-gray-300 focus:border-green-500 bg-white">
+                    <SelectValue placeholder="Select your English test" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ielts">IELTS Academic</SelectItem>
-                    <SelectItem value="pte">PTE Academic</SelectItem>
-                    <SelectItem value="toefl">TOEFL iBT</SelectItem>
-                    <SelectItem value="cambridge">Cambridge English</SelectItem>
+                  <SelectContent className="bg-white border-2 border-gray-300">
+                    <SelectItem value="ielts" className="text-lg p-3 hover:bg-green-50">IELTS Academic</SelectItem>
+                    <SelectItem value="pte" className="text-lg p-3 hover:bg-green-50">PTE Academic</SelectItem>
+                    <SelectItem value="toefl" className="text-lg p-3 hover:bg-green-50">TOEFL iBT</SelectItem>
+                    <SelectItem value="oet" className="text-lg p-3 hover:bg-green-50">OET</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {assessmentData.englishTest && (
-                <div className="grid grid-cols-2 gap-4 max-w-md">
+                <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="listening">Listening</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Listening</Label>
                     <Input
-                      id="listening"
                       type="number"
-                      step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
-                      placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                      step="0.5"
                       value={assessmentData.englishScores.listening}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        englishScores: { ...assessmentData.englishScores, listening: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        englishScores: { ...prev.englishScores, listening: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-green-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="reading">Reading</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Reading</Label>
                     <Input
-                      id="reading"
                       type="number"
-                      step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
-                      placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                      step="0.5"
                       value={assessmentData.englishScores.reading}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        englishScores: { ...assessmentData.englishScores, reading: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        englishScores: { ...prev.englishScores, reading: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-green-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="writing">Writing</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Writing</Label>
                     <Input
-                      id="writing"
                       type="number"
-                      step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
-                      placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                      step="0.5"
                       value={assessmentData.englishScores.writing}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        englishScores: { ...assessmentData.englishScores, writing: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        englishScores: { ...prev.englishScores, writing: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-green-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="speaking">Speaking</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Speaking</Label>
                     <Input
-                      id="speaking"
                       type="number"
-                      step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
-                      placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                      step="0.5"
                       value={assessmentData.englishScores.speaking}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        englishScores: { ...assessmentData.englishScores, speaking: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        englishScores: { ...prev.englishScores, speaking: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-green-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                 </div>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         );
 
       case 3:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">What is your highest education level?</h3>
-            <div>
-              <Label htmlFor="education">Education Level</Label>
-              <Select onValueChange={(value) => setAssessmentData({...assessmentData, education: value})}>
-                <SelectTrigger className="max-w-xs">
-                  <SelectValue placeholder="Select education level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="doctorate">Doctorate (PhD)</SelectItem>
-                  <SelectItem value="masters">Masters Degree</SelectItem>
-                  <SelectItem value="bachelor">Bachelor Degree</SelectItem>
-                  <SelectItem value="diploma">Diploma/Associate Degree</SelectItem>
-                  <SelectItem value="highschool">High School</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="occupation">Your Occupation</Label>
-              <Select onValueChange={(value) => setAssessmentData({...assessmentData, occupation: value})}>
-                <SelectTrigger className="max-w-xs">
-                  <SelectValue placeholder="Select your occupation" />
-                </SelectTrigger>
-                <SelectContent>
-                  {occupations.map((occ) => (
-                    <SelectItem key={occ.value} value={occ.value}>
-                      {occ.label} ({occ.list})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <Card className="border-2 border-purple-200">
+            <CardHeader className="bg-purple-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-purple-800">
+                <GraduationCap className="w-8 h-8" />
+                Education & Occupation
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              <div>
+                <Label className="text-lg font-semibold text-gray-800 mb-3 block">
+                  What is your highest level of education?
+                </Label>
+                <Select value={assessmentData.education} onValueChange={(value) => 
+                  setAssessmentData(prev => ({ ...prev, education: value }))
+                }>
+                  <SelectTrigger className="text-lg p-4 border-2 border-gray-300 focus:border-purple-500 bg-white">
+                    <SelectValue placeholder="Select your education level" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-300">
+                    <SelectItem value="doctorate" className="text-lg p-3 hover:bg-purple-50">Doctorate (PhD)</SelectItem>
+                    <SelectItem value="masters" className="text-lg p-3 hover:bg-purple-50">Masters degree</SelectItem>
+                    <SelectItem value="bachelor" className="text-lg p-3 hover:bg-purple-50">Bachelor degree</SelectItem>
+                    <SelectItem value="diploma" className="text-lg p-3 hover:bg-purple-50">Diploma</SelectItem>
+                    <SelectItem value="trade" className="text-lg p-3 hover:bg-purple-50">Trade qualification</SelectItem>
+                    <SelectItem value="other" className="text-lg p-3 hover:bg-purple-50">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-lg font-semibold text-gray-800 mb-3 block">
+                  What is your occupation?
+                </Label>
+                <Select value={assessmentData.occupation} onValueChange={(value) => 
+                  setAssessmentData(prev => ({ ...prev, occupation: value }))
+                }>
+                  <SelectTrigger className="text-lg p-4 border-2 border-gray-300 focus:border-purple-500 bg-white">
+                    <SelectValue placeholder="Select your occupation" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-300 max-h-60">
+                    {occupations.map((occupation) => (
+                      <SelectItem 
+                        key={occupation.value} 
+                        value={occupation.value}
+                        className="text-base p-3 hover:bg-purple-50"
+                      >
+                        {occupation.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 4:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">What is your work experience?</h3>
-            <p className="text-gray-600">Enter your years of work experience in your nominated occupation.</p>
-            <div className="space-y-4 max-w-xs">
+          <Card className="border-2 border-orange-200">
+            <CardHeader className="bg-orange-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-orange-800">
+                <Briefcase className="w-8 h-8" />
+                Work Experience
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
               <div>
-                <Label htmlFor="experienceOverseas">Overseas Work Experience (Years)</Label>
-                <Input
-                  id="experienceOverseas"
-                  type="number"
-                  placeholder="0"
-                  min="0"
-                  value={assessmentData.workExperienceOverseas}
-                  onChange={(e) => setAssessmentData({...assessmentData, workExperienceOverseas: e.target.value})}
-                />
+                <Label className="text-lg font-semibold text-gray-800 mb-3 block">
+                  Years of overseas work experience (in your nominated occupation)
+                </Label>
+                <Select value={assessmentData.workExperienceOverseas} onValueChange={(value) => 
+                  setAssessmentData(prev => ({ ...prev, workExperienceOverseas: value }))
+                }>
+                  <SelectTrigger className="text-lg p-4 border-2 border-gray-300 focus:border-orange-500 bg-white">
+                    <SelectValue placeholder="Select years of experience" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-300">
+                    <SelectItem value="0" className="text-lg p-3 hover:bg-orange-50">0 years</SelectItem>
+                    <SelectItem value="1-2" className="text-lg p-3 hover:bg-orange-50">1-2 years</SelectItem>
+                    <SelectItem value="3-4" className="text-lg p-3 hover:bg-orange-50">3-4 years</SelectItem>
+                    <SelectItem value="5-7" className="text-lg p-3 hover:bg-orange-50">5-7 years</SelectItem>
+                    <SelectItem value="8+" className="text-lg p-3 hover:bg-orange-50">8+ years</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
               <div>
-                <Label htmlFor="experienceAustralia">Australian Work Experience (Years)</Label>
-                <Input
-                  id="experienceAustralia"
-                  type="number"
-                  placeholder="0"
-                  min="0"
-                  value={assessmentData.workExperienceAustralia}
-                  onChange={(e) => setAssessmentData({...assessmentData, workExperienceAustralia: e.target.value})}
-                />
+                <Label className="text-lg font-semibold text-gray-800 mb-3 block">
+                  Years of Australian work experience (in your nominated occupation)
+                </Label>
+                <Select value={assessmentData.workExperienceAustralia} onValueChange={(value) => 
+                  setAssessmentData(prev => ({ ...prev, workExperienceAustralia: value }))
+                }>
+                  <SelectTrigger className="text-lg p-4 border-2 border-gray-300 focus:border-orange-500 bg-white">
+                    <SelectValue placeholder="Select years of experience" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-2 border-gray-300">
+                    <SelectItem value="0" className="text-lg p-3 hover:bg-orange-50">0 years</SelectItem>
+                    <SelectItem value="1" className="text-lg p-3 hover:bg-orange-50">1 year</SelectItem>
+                    <SelectItem value="2" className="text-lg p-3 hover:bg-orange-50">2 years</SelectItem>
+                    <SelectItem value="3" className="text-lg p-3 hover:bg-orange-50">3 years</SelectItem>
+                    <SelectItem value="5" className="text-lg p-3 hover:bg-orange-50">5 years</SelectItem>
+                    <SelectItem value="8" className="text-lg p-3 hover:bg-orange-50">8+ years</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         );
 
       case 5:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution with at least 2 academic years?</h3>
-            <div className="space-y-2">
-              <Button
-                variant={assessmentData.hasAustralianQualification === true ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, hasAustralianQualification: true})}
-              >
-                Yes
-              </Button>
-              <Button
-                variant={assessmentData.hasAustralianQualification === false ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, hasAustralianQualification: false})}
-              >
-                No
-              </Button>
-            </div>
-          </div>
+          <Card className="border-2 border-blue-200">
+            <CardHeader className="bg-blue-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-blue-800">
+                <Award className="w-8 h-8" />
+                Australian Study Requirements
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution that took at least 2 academic years to complete?
+                </Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasAustralianQualification === true ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasAustralianQualification: true }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasAustralianQualification === false ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasAustralianQualification: false }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 6:
-        if (assessmentData.hasAustralianQualification === false) {
-          return renderQuestion7(); // Skip to question 7
-        }
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Is your Australian qualification from regional Australia?</h3>
-            <div className="space-y-2">
-              <Button
-                variant={assessmentData.isFromRegionalAustralia === true ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, isFromRegionalAustralia: true})}
-              >
-                Yes
-              </Button>
-              <Button
-                variant={assessmentData.isFromRegionalAustralia === false ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, isFromRegionalAustralia: false})}
-              >
-                No
-              </Button>
-            </div>
-          </div>
+          <Card className="border-2 border-teal-200">
+            <CardHeader className="bg-teal-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-teal-800">
+                <Award className="w-8 h-8" />
+                Regional Australia Study & Masters/PhD
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-8">
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  Was your Australian qualification completed in regional Australia?
+                </Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.isFromRegionalAustralia === true ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, isFromRegionalAustralia: true }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.isFromRegionalAustralia === false ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, isFromRegionalAustralia: false }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 7:
-        return renderQuestion7();
+        return (
+          <Card className="border-2 border-indigo-200">
+            <CardHeader className="bg-indigo-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-indigo-800">
+                <Award className="w-8 h-8" />
+                Masters/Doctorate Qualification
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  Do you have a Masters degree by research or a Doctorate degree from an Australian educational institution in a relevant field?
+                </Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasMastersOrDoctorate === true ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasMastersOrDoctorate: true }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasMastersOrDoctorate === false ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasMastersOrDoctorate: false }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
 
       case 8:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Do you have a community language credential for interpreting or translating by NAATI?</h3>
-            <p className="text-gray-600">National Accreditation Authority for Translators and Interpreters</p>
-            <div className="space-y-2">
-              <Button
-                variant={assessmentData.hasNAATICredential === true ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, hasNAATICredential: true})}
-              >
-                Yes
-              </Button>
-              <Button
-                variant={assessmentData.hasNAATICredential === false ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, hasNAATICredential: false})}
-              >
-                No
-              </Button>
-            </div>
-          </div>
+          <Card className="border-2 border-pink-200">
+            <CardHeader className="bg-pink-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-pink-800">
+                <Award className="w-8 h-8" />
+                NAATI Credential
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  Do you have a community language credential for interpreting or translating by NAATI?
+                </Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasNAATICredential === true ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasNAATICredential: true }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasNAATICredential === false ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasNAATICredential: false }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 9:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Did you complete a professional year in Australia?</h3>
-            <div className="space-y-2">
-              <Button
-                variant={assessmentData.hasCompletedProfessionalYear === true ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, hasCompletedProfessionalYear: true})}
-              >
-                Yes
-              </Button>
-              <Button
-                variant={assessmentData.hasCompletedProfessionalYear === false ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, hasCompletedProfessionalYear: false})}
-              >
-                No
-              </Button>
-            </div>
-          </div>
+          <Card className="border-2 border-emerald-200">
+            <CardHeader className="bg-emerald-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-emerald-800">
+                <Award className="w-8 h-8" />
+                Professional Year
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  Did you complete a professional year in Australia in your nominated occupation or related field?
+                </Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasCompletedProfessionalYear === true ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasCompletedProfessionalYear: true }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.hasCompletedProfessionalYear === false ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, hasCompletedProfessionalYear: false }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    No
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 10:
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">What is your partner status?</h3>
-            <div className="space-y-2">
-              <Button
-                variant={assessmentData.partnerStatus === 'single' ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, partnerStatus: 'single'})}
-                className="w-full justify-start"
-              >
-                Single
-              </Button>
-              <Button
-                variant={assessmentData.partnerStatus === 'australian-citizen' ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, partnerStatus: 'australian-citizen'})}
-                className="w-full justify-start"
-              >
-                Partner is Australian Citizen or PR
-              </Button>
-              <Button
-                variant={assessmentData.partnerStatus === 'non-australian' ? "default" : "outline"}
-                onClick={() => setAssessmentData({...assessmentData, partnerStatus: 'non-australian'})}
-                className="w-full justify-start"
-              >
-                Partner is not Australian Citizen/PR (with skills assessment and English)
-              </Button>
-            </div>
-          </div>
+          <Card className="border-2 border-red-200">
+            <CardHeader className="bg-red-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-red-800">
+                <Heart className="w-8 h-8" />
+                Partner Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  What is your relationship status?
+                </Label>
+                <div className="grid grid-cols-1 gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.partnerStatus === 'single' ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, partnerStatus: 'single' }))}
+                    className="text-lg p-4 border-2 hover:scale-105 transition-all justify-start"
+                  >
+                    Single / No partner
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.partnerStatus === 'australian' ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, partnerStatus: 'australian' }))}
+                    className="text-lg p-4 border-2 hover:scale-105 transition-all justify-start"
+                  >
+                    Partner is Australian citizen or permanent resident
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.partnerStatus === 'non-australian' ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, partnerStatus: 'non-australian' }))}
+                    className="text-lg p-4 border-2 hover:scale-105 transition-all justify-start"
+                  >
+                    Partner is not Australian citizen or permanent resident
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         );
 
       case 11:
-        if (assessmentData.partnerStatus !== 'non-australian') {
-          return null; // Skip this question
-        }
         return (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Partner's English Test Scores</h3>
-            <div className="space-y-4">
+          <Card className="border-2 border-violet-200">
+            <CardHeader className="bg-violet-50">
+              <CardTitle className="flex items-center gap-3 text-2xl text-violet-800">
+                <Users className="w-8 h-8" />
+                Partner Skills Assessment
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
               <div>
-                <Label htmlFor="partnerEnglishTest">Partner's English Test Type</Label>
-                <Select onValueChange={(value) => {
-                  setAssessmentData({
-                    ...assessmentData, 
-                    partnerEnglishTest: value,
-                    partnerEnglishScores: { listening: '', reading: '', writing: '', speaking: '' }
-                  });
-                }}>
-                  <SelectTrigger className="max-w-xs">
-                    <SelectValue placeholder="Select test type" />
+                <Label className="text-lg font-semibold text-gray-800 mb-3 block">
+                  Partner's English test
+                </Label>
+                <Select value={assessmentData.partnerEnglishTest} onValueChange={(value) => 
+                  setAssessmentData(prev => ({ ...prev, partnerEnglishTest: value }))
+                }>
+                  <SelectTrigger className="text-lg p-4 border-2 border-gray-300 focus:border-violet-500 bg-white">
+                    <SelectValue placeholder="Select partner's English test" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ielts">IELTS Academic</SelectItem>
-                    <SelectItem value="pte">PTE Academic</SelectItem>
-                    <SelectItem value="toefl">TOEFL iBT</SelectItem>
-                    <SelectItem value="cambridge">Cambridge English</SelectItem>
+                  <SelectContent className="bg-white border-2 border-gray-300">
+                    <SelectItem value="ielts" className="text-lg p-3 hover:bg-violet-50">IELTS Academic</SelectItem>
+                    <SelectItem value="pte" className="text-lg p-3 hover:bg-violet-50">PTE Academic</SelectItem>
+                    <SelectItem value="toefl" className="text-lg p-3 hover:bg-violet-50">TOEFL iBT</SelectItem>
+                    <SelectItem value="oet" className="text-lg p-3 hover:bg-violet-50">OET</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {assessmentData.partnerEnglishTest && (
-                <div className="grid grid-cols-2 gap-4 max-w-md">
+                <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="partnerListening">Listening</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Listening</Label>
                     <Input
-                      id="partnerListening"
                       type="number"
-                      step={assessmentData.partnerEnglishTest === 'ielts' ? '0.5' : '1'}
+                      step="0.5"
                       value={assessmentData.partnerEnglishScores.listening}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        partnerEnglishScores: { ...assessmentData.partnerEnglishScores, listening: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        partnerEnglishScores: { ...prev.partnerEnglishScores, listening: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-violet-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="partnerReading">Reading</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Reading</Label>
                     <Input
-                      id="partnerReading"
                       type="number"
-                      step={assessmentData.partnerEnglishTest === 'ielts' ? '0.5' : '1'}
+                      step="0.5"
                       value={assessmentData.partnerEnglishScores.reading}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        partnerEnglishScores: { ...assessmentData.partnerEnglishScores, reading: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        partnerEnglishScores: { ...prev.partnerEnglishScores, reading: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-violet-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="partnerWriting">Writing</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Writing</Label>
                     <Input
-                      id="partnerWriting"
                       type="number"
-                      step={assessmentData.partnerEnglishTest === 'ielts' ? '0.5' : '1'}
+                      step="0.5"
                       value={assessmentData.partnerEnglishScores.writing}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        partnerEnglishScores: { ...assessmentData.partnerEnglishScores, writing: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        partnerEnglishScores: { ...prev.partnerEnglishScores, writing: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-violet-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="partnerSpeaking">Speaking</Label>
+                    <Label className="text-base font-semibold text-gray-800 mb-2 block">Speaking</Label>
                     <Input
-                      id="partnerSpeaking"
                       type="number"
-                      step={assessmentData.partnerEnglishTest === 'ielts' ? '0.5' : '1'}
+                      step="0.5"
                       value={assessmentData.partnerEnglishScores.speaking}
-                      onChange={(e) => setAssessmentData({
-                        ...assessmentData,
-                        partnerEnglishScores: { ...assessmentData.partnerEnglishScores, speaking: e.target.value }
-                      })}
+                      onChange={(e) => setAssessmentData(prev => ({
+                        ...prev,
+                        partnerEnglishScores: { ...prev.partnerEnglishScores, speaking: e.target.value }
+                      }))}
+                      className="text-lg p-3 border-2 border-gray-300 focus:border-violet-500 bg-white"
+                      placeholder="Score"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="space-y-2">
-                <h4 className="font-medium">Does your partner have a positive skills assessment?</h4>
-                <Button
-                  variant={assessmentData.partnerHasSkillAssessment === true ? "default" : "outline"}
-                  onClick={() => setAssessmentData({...assessmentData, partnerHasSkillAssessment: true})}
-                >
-                  Yes
-                </Button>
-                <Button
-                  variant={assessmentData.partnerHasSkillAssessment === false ? "default" : "outline"}
-                  onClick={() => setAssessmentData({...assessmentData, partnerHasSkillAssessment: false})}
-                >
-                  No
-                </Button>
+              <div className="space-y-4">
+                <Label className="text-lg font-semibold text-gray-800 block">
+                  Does your partner have a positive skills assessment in an occupation on the same skilled occupation list as your nominated occupation?
+                </Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={assessmentData.partnerHasSkillAssessment === true ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, partnerHasSkillAssessment: true }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={assessmentData.partnerHasSkillAssessment === false ? "default" : "outline"}
+                    onClick={() => setAssessmentData(prev => ({ ...prev, partnerHasSkillAssessment: false }))}
+                    className="text-lg px-8 py-4 border-2 hover:scale-105 transition-all"
+                  >
+                    No
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         );
 
       default:
@@ -440,55 +619,34 @@ const QuestionStep: React.FC<QuestionStepProps> = ({
     }
   };
 
-  const renderQuestion7 = () => (
-    <div className="space-y-4">
-      <h3 className="text-xl font-semibold">Do you have a Masters degree by research or a Doctorate degree from an Australian educational institution that included at least 2 academic years in a relevant field?</h3>
-      <div className="space-y-2">
+  return (
+    <div className="p-8">
+      {renderQuestion()}
+      
+      {/* Navigation Buttons with Enhanced Styling */}
+      <div className="flex justify-between mt-8">
         <Button
-          variant={assessmentData.hasMastersOrDoctorate === true ? "default" : "outline"}
-          onClick={() => setAssessmentData({...assessmentData, hasMastersOrDoctorate: true})}
+          onClick={onPrevious}
+          disabled={currentQuestion === 1}
+          variant="outline"
+          size="lg"
+          className="text-lg px-8 py-4 border-2 border-gray-300 hover:border-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Yes
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Previous
         </Button>
+        
         <Button
-          variant={assessmentData.hasMastersOrDoctorate === false ? "default" : "outline"}
-          onClick={() => setAssessmentData({...assessmentData, hasMastersOrDoctorate: false})}
+          onClick={onNext}
+          disabled={!canProceed}
+          size="lg"
+          className="text-lg px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600 hover:border-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          No
+          {currentQuestion === totalQuestions ? 'Get Results' : 'Next'}
+          {currentQuestion !== totalQuestions && <ArrowRight className="w-5 h-5 ml-2" />}
         </Button>
       </div>
     </div>
-  );
-
-  return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex justify-between items-center">
-          <span>Question {currentQuestion} of {totalQuestions}</span>
-          <span className="text-sm text-gray-500">{Math.round((currentQuestion / totalQuestions) * 100)}% Complete</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {renderQuestion()}
-        
-        <div className="flex justify-between pt-6">
-          <Button
-            variant="outline"
-            onClick={onPrevious}
-            disabled={currentQuestion === 1}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={onNext}
-            disabled={!canProceed}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {currentQuestion === totalQuestions ? 'Calculate Results' : 'Next'}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 
