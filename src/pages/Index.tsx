@@ -6,234 +6,247 @@ import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Disclaimer from '@/components/Disclaimer';
+import { CheckCircle, Users, Clock, Shield, Star, ArrowRight } from 'lucide-react';
 
 const Index = () => {
   const services = [
     { 
       name: 'Skilled Migration', 
       description: 'Expert guidance on skilled visa pathways and points-based applications for professionals.',
-      icon: '💼'
+      icon: '🎯',
+      popular: true
     },
     { 
       name: 'Family & Partner Visas', 
       description: 'Compassionate support for family reunification and partner visa applications.',
-      icon: '👨‍👩‍👧‍👦'
+      icon: '❤️',
+      popular: false
     },
     { 
       name: 'Student Visas', 
       description: 'Complete assistance for studying in Australia - from application to arrival.',
-      icon: '🎓'
+      icon: '🎓',
+      popular: true
     },
     { 
       name: 'Business & Investment', 
       description: 'Strategic pathways for entrepreneurs and investors seeking Australian opportunities.',
-      icon: '🏢'
+      icon: '💼',
+      popular: false
     },
     { 
       name: 'Permanent Residency', 
       description: 'End-to-end support for achieving your Australian permanent residency goals.',
-      icon: '🏠'
+      icon: '🏠',
+      popular: true
     },
     { 
       name: 'Citizenship Applications', 
       description: 'Final step guidance to become an Australian citizen with confidence.',
-      icon: '🇦🇺'
+      icon: '🇦🇺',
+      popular: false
     },
+  ];
+
+  const stats = [
+    { number: '5000+', label: 'Successful Applications' },
+    { number: '98%', label: 'Success Rate' },
+    { number: '24/7', label: 'AI Support' },
+    { number: '15+', label: 'Years Experience' }
+  ];
+
+  const features = [
+    {
+      icon: <CheckCircle className="w-8 h-8 text-australia-blue" />,
+      title: 'AI-Powered Guidance',
+      description: 'Get instant, accurate answers from Ritu - our advanced AI assistant trained on Australian immigration law'
+    },
+    {
+      icon: <Users className="w-8 h-8 text-australia-blue" />,
+      title: 'Expert Human Support',
+      description: 'Registered migration agents and consultants ready to handle complex cases'
+    },
+    {
+      icon: <Clock className="w-8 h-8 text-australia-blue" />,
+      title: 'Faster Processing',
+      description: 'Streamlined processes and AI-assisted document preparation reduce processing times'
+    },
+    {
+      icon: <Shield className="w-8 h-8 text-australia-blue" />,
+      title: 'Guaranteed Accuracy',
+      description: 'Our AI ensures error-free applications with human expert verification'
+    }
   ];
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen">
       <Header />
       
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-australia-blue/10 to-australia-blue/5 py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-1/2 mb-8 md:mb-0 md:pr-8">
-                <div className="mb-4">
-                  <span className="bg-australia-blue/10 text-australia-blue px-3 py-1 rounded-full text-sm font-medium">
-                    Trusted by 5000+ Indian Families
-                  </span>
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
-                  Your Gateway to <span className="text-australia-blue">Australia</span>
-                </h1>
-                <p className="text-lg md:text-xl mb-6 text-gray-600">
-                  VARG Immigration specializes in helping Indian diaspora achieve their Australian migration dreams. 
-                  Get instant guidance from our AI assistant <span className="font-semibold text-australia-blue">Ritu</span> 
-                  and expert support from registered migration agents.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-australia-blue hover:bg-australia-darkBlue text-lg"
-                    asChild
-                  >
-                    <Link to="/meeting">Talk to Ritu AI</Link>
-                  </Button>
-                  <Button
-                    variant="outline" 
-                    size="lg"
-                    className="border-australia-blue text-australia-blue hover:bg-australia-blue/10 text-lg"
-                    asChild
-                  >
-                    <Link to="/about">Meet Our Experts</Link>
-                  </Button>
-                </div>
-                
-                <Disclaimer className="mt-6" />
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-australia-blue via-australia-blue/90 to-australia-darkBlue text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative container mx-auto px-4 py-20 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium">
+                <Star className="w-4 h-4 mr-2 text-yellow-400" />
+                Australia's Most Trusted Migration Experts
               </div>
               
-              <div className="md:w-1/2 flex justify-center">
-                <div className="relative">
-                  <div className="absolute -inset-4 rounded-full bg-australia-blue/10 animate-pulse-slow"></div>
-                  <div className="relative bg-australia-blue rounded-full w-48 h-48 md:w-64 md:h-64 flex items-center justify-center text-white text-6xl md:text-7xl font-bold">
-                    R
+              <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+                Your Journey to
+                <span className="block text-yellow-400">Australia Starts Here</span>
+              </h1>
+              
+              <p className="text-xl lg:text-2xl text-blue-100 leading-relaxed">
+                Experience the future of migration services with <span className="font-semibold text-yellow-400">Ritu AI</span> - 
+                get instant expert guidance combined with human expertise for guaranteed success.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg px-8 py-4 rounded-full" asChild>
+                  <Link to="/meeting">
+                    <span>Talk to Ritu AI</span>
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-australia-blue font-semibold text-lg px-8 py-4 rounded-full" asChild>
+                  <Link to="/contact">Book Free Consultation</Link>
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8">
+                {stats.map((stat, index) => (
+                  <div key={index} className="text-center">
+                    <div className="text-2xl lg:text-3xl font-bold text-yellow-400">{stat.number}</div>
+                    <div className="text-sm text-blue-100">{stat.label}</div>
                   </div>
-                  <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg">
-                    <div className="text-2xl">🇮🇳</div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative">
+                <div className="absolute -inset-8 rounded-full bg-gradient-to-r from-yellow-400/20 to-blue-300/20 animate-pulse-slow"></div>
+                <div className="relative bg-white rounded-3xl p-8 shadow-2xl max-w-md">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="bg-australia-blue rounded-full w-16 h-16 flex items-center justify-center text-white text-2xl font-bold">
+                      R
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-800">Meet Ritu AI</h3>
+                      <p className="text-gray-600">Your Personal Migration Assistant</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-2xl p-4 text-gray-700 text-sm">
+                    "Hi! I'm Ritu, your AI migration assistant. I can help you understand visa requirements, calculate points, and guide you through the entire process. What would you like to know about migrating to Australia?"
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-australia-blue rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-australia-blue rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                      <div className="w-2 h-2 bg-australia-blue rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-        
-        {/* Why Choose VARG Section */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">Why Choose VARG Immigration?</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-              Combining cutting-edge AI technology with human expertise to serve the Indian community's migration needs.
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              Why Choose <span className="text-australia-blue">VARG Immigration</span>?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We combine cutting-edge AI technology with human expertise to deliver unmatched migration services
             </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm border flex flex-col items-center text-center">
-                <div className="bg-australia-blue/10 p-4 rounded-full mb-4">
-                  <div className="text-3xl">🤖</div>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">AI-Powered Guidance</h3>
-                <p className="text-gray-600">
-                  Get instant answers from Ritu, our AI assistant trained specifically on Australian immigration for Indians.
-                </p>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border flex flex-col items-center text-center">
-                <div className="bg-australia-blue/10 p-4 rounded-full mb-4">
-                  <div className="text-3xl">👥</div>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Expert Human Support</h3>
-                <p className="text-gray-600">
-                  Registered migration agents and consultants who understand the unique needs of Indian applicants.
-                </p>
-              </div>
-              
-              <div className="bg-white p-6 rounded-lg shadow-sm border flex flex-col items-center text-center">
-                <div className="bg-australia-blue/10 p-4 rounded-full mb-4">
-                  <div className="text-3xl">🎯</div>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Specialized for Indians</h3>
-                <p className="text-gray-600">
-                  Deep understanding of Indian qualifications, work experience, and cultural considerations.
-                </p>
-              </div>
-            </div>
           </div>
-        </section>
-        
-        {/* Services Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">Our Immigration Services</h2>
-            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-              Comprehensive immigration solutions tailored for Indian professionals and families.
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <CardContent className="p-8 text-center">
+                  <div className="mb-6 flex justify-center">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">Our Migration Services</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Comprehensive immigration solutions tailored to your unique situation and goals
             </p>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service, index) => (
-                <Card key={index} className="border hover:border-australia-blue/30 hover:shadow-md transition-all">
-                  <CardContent className="p-6">
-                    <div className="text-3xl mb-3">{service.icon}</div>
-                    <h3 className="font-semibold text-lg mb-2 text-australia-blue">{service.name}</h3>
-                    <p className="text-gray-600 text-sm">{service.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            
-            <div className="text-center mt-10">
-              <Button 
-                className="bg-australia-blue hover:bg-australia-darkBlue mr-4"
-                asChild
-              >
-                <Link to="/meeting">Start with Ritu AI</Link>
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-australia-blue text-australia-blue hover:bg-australia-blue/10"
-                asChild
-              >
-                <Link to="/contact">Book Expert Consultation</Link>
-              </Button>
-            </div>
           </div>
-        </section>
-
-        {/* Success Stories */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-12 text-center">Success Stories</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-australia-blue/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-australia-blue font-bold">RK</span>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <Card key={index} className={`group cursor-pointer border-2 hover:border-australia-blue/50 transition-all duration-300 hover:shadow-xl ${service.popular ? 'ring-2 ring-australia-blue/20' : ''}`}>
+                <CardContent className="p-8 relative">
+                  {service.popular && (
+                    <div className="absolute -top-3 left-6 bg-australia-blue text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      Most Popular
+                    </div>
+                  )}
+                  <div className="text-4xl mb-4">{service.icon}</div>
+                  <h3 className="text-xl font-bold text-australia-blue mb-3 group-hover:text-australia-darkBlue transition-colors">
+                    {service.name}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                  <div className="mt-6 text-australia-blue font-semibold group-hover:text-australia-darkBlue transition-colors">
+                    Learn More →
                   </div>
-                  <div>
-                    <h4 className="font-semibold">Raj Kumar</h4>
-                    <p className="text-sm text-gray-600">Software Engineer from Bangalore</p>
-                  </div>
-                </div>
-                <p className="text-gray-700 text-sm">
-                  "VARG Immigration made my skilled migration journey seamless. Ritu helped me understand the points system, and their experts guided me through every step."
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-australia-blue/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-australia-blue font-bold">PS</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Priya Sharma</h4>
-                    <p className="text-sm text-gray-600">Family Visa from Mumbai</p>
-                  </div>
-                </div>
-                <p className="text-gray-700 text-sm">
-                  "Reuniting with my husband in Australia was my dream. VARG's team understood our situation and made it happen in record time."
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-australia-blue/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-australia-blue font-bold">AM</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Arjun Mehta</h4>
-                    <p className="text-sm text-gray-600">Business Investor from Delhi</p>
-                  </div>
-                </div>
-                <p className="text-gray-700 text-sm">
-                  "As an entrepreneur, I needed specialized guidance for investor visa. VARG's expertise in business immigration was exactly what I needed."
-                </p>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </section>
-      </main>
+          
+          <div className="text-center mt-12">
+            <Button size="lg" className="bg-australia-blue hover:bg-australia-darkBlue text-lg px-8 py-4 rounded-full" asChild>
+              <Link to="/meeting">Get Started with Ritu AI</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-australia-blue to-australia-darkBlue text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6">Ready to Start Your Australian Journey?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">
+            Join thousands of successful applicants who chose VARG Immigration for their migration needs
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg px-8 py-4 rounded-full" asChild>
+              <Link to="/meeting">Chat with Ritu AI Now</Link>
+            </Button>
+            <Button variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-australia-blue font-semibold text-lg px-8 py-4 rounded-full" asChild>
+              <Link to="/contact">Book Expert Consultation</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Disclaimer */}
+      <section className="py-8 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <Disclaimer />
+        </div>
+      </section>
       
       <Footer />
     </div>
