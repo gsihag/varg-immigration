@@ -33,25 +33,21 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-6 text-slate-900">Our Services</h3>
             <ul className="space-y-4">
-              <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
-                <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Skilled Migration Consulting
-              </Link></li>
-              <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
+              <li><Link to="/family-visas" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
                 Family Visa Guidance
               </Link></li>
-              <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
+              <li><Link to="/work-visas" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Business & Investment Advisory
+                Work Visa Consulting
               </Link></li>
-              <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
+              <li><Link to="/study-visas" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
                 Student Visa Support
               </Link></li>
               <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Citizenship Consultation
+                Skilled Migration Consulting
               </Link></li>
             </ul>
           </div>
