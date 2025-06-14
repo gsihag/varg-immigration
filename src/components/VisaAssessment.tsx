@@ -17,7 +17,12 @@ const VisaAssessment = () => {
     occupation: '',
     education: '',
     englishTest: '',
-    englishScore: '',
+    englishScores: {
+      listening: '',
+      reading: '',
+      writing: '',
+      speaking: ''
+    },
     workExperienceAustralia: '',
     workExperienceOverseas: '',
     currentLocation: '',
@@ -62,14 +67,25 @@ const VisaAssessment = () => {
     else if (age >= 33 && age <= 39) breakdown.age = 25;
     else if (age >= 40 && age <= 44) breakdown.age = 15;
 
-    // English points
-    const englishScore = parseFloat(assessmentData.englishScore);
+    // English points based on individual section scores
+    const { listening, reading, writing, speaking } = assessmentData.englishScores;
+    const scores = [
+      parseFloat(listening) || 0,
+      parseFloat(reading) || 0,
+      parseFloat(writing) || 0,
+      parseFloat(speaking) || 0
+    ];
+
     if (assessmentData.englishTest === 'ielts') {
-      if (englishScore >= 8.0) breakdown.english = 20;
-      else if (englishScore >= 7.0) breakdown.english = 10;
+      // For IELTS, all bands must meet minimum requirement
+      const minScore = Math.min(...scores.filter(score => score > 0));
+      if (scores.every(score => score >= 8.0)) breakdown.english = 20;
+      else if (scores.every(score => score >= 7.0)) breakdown.english = 10;
     } else if (assessmentData.englishTest === 'pte') {
-      if (englishScore >= 79) breakdown.english = 20;
-      else if (englishScore >= 65) breakdown.english = 10;
+      // For PTE, all sections must meet minimum requirement
+      const minScore = Math.min(...scores.filter(score => score > 0));
+      if (scores.every(score => score >= 79)) breakdown.english = 20;
+      else if (scores.every(score => score >= 65)) breakdown.english = 10;
     }
 
     // Education points
@@ -228,6 +244,23 @@ const VisaAssessment = () => {
     return years >= 0; // Removed maximum limit
   };
 
+  const updateEnglishScore = (section, value) => {
+    setAssessmentData({
+      ...assessmentData,
+      englishScores: {
+        ...assessmentData.englishScores,
+        [section]: value
+      }
+    });
+  };
+
+  const getEnglishScoreDisplay = () => {
+    const { listening, reading, writing, speaking } = assessmentData.englishScores;
+    const scores = [listening, reading, writing, speaking].filter(score => score !== '');
+    if (scores.length === 0) return '';
+    return `L:${listening || '-'} R:${reading || '-'} W:${writing || '-'} S:${speaking || '-'}`;
+  };
+
   if (pointsBreakdown && recommendations) {
     return (
       <div className="space-y-6">
@@ -265,7 +298,7 @@ const VisaAssessment = () => {
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>English ({assessmentData.englishTest?.toUpperCase()} {assessmentData.englishScore})</span>
+                  <span>English ({assessmentData.englishTest?.toUpperCase()} {getEnglishScoreDisplay()})</span>
                   <Badge variant={pointsBreakdown.english >= 10 ? "default" : "secondary"}>
                     {pointsBreakdown.english} points
                   </Badge>
@@ -412,7 +445,12 @@ const VisaAssessment = () => {
                 occupation: '',
                 education: '',
                 englishTest: '',
-                englishScore: '',
+                englishScores: {
+                  listening: '',
+                  reading: '',
+                  writing: '',
+                  speaking: ''
+                },
                 workExperienceAustralia: '',
                 workExperienceOverseas: '',
                 currentLocation: '',
@@ -550,10 +588,16 @@ const VisaAssessment = () => {
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold mb-4">English Proficiency</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div>
                     <Label htmlFor="englishTest">English Test Type</Label>
-                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, englishTest: value})}>
+                    <Select onValueChange={(value) => {
+                      setAssessmentData({
+                        ...assessmentData, 
+                        englishTest: value,
+                        englishScores: { listening: '', reading: '', writing: '', speaking: '' }
+                      });
+                    }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select test type" />
                       </SelectTrigger>
@@ -565,47 +609,83 @@ const VisaAssessment = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="englishScore">
-                      {assessmentData.englishTest === 'ielts' ? 'Overall IELTS Score' : 
-                       assessmentData.englishTest === 'pte' ? 'Overall PTE Score' : 'Overall Score'}
-                    </Label>
-                    <Input
-                      id="englishScore"
-                      type="number"
-                      step="0.5"
-                      placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
-                      value={assessmentData.englishScore}
-                      onChange={(e) => setAssessmentData({...assessmentData, englishScore: e.target.value})}
-                    />
-                  </div>
-                </div>
-                
-                {assessmentData.englishTest && (
-                  <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium mb-2">Score Guidelines for {assessmentData.englishTest.toUpperCase()}:</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                      <div>
-                        <span className="font-medium">Competent (0 points):</span>
-                        <br />
-                        {assessmentData.englishTest === 'ielts' ? '6.0 each band' : 
-                         assessmentData.englishTest === 'pte' ? '50 each section' : '6.0 overall'}
+
+                  {assessmentData.englishTest && (
+                    <div className="space-y-4">
+                      <h4 className="font-medium">Individual Section Scores:</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="listening">Listening</Label>
+                          <Input
+                            id="listening"
+                            type="number"
+                            step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
+                            placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                            value={assessmentData.englishScores.listening}
+                            onChange={(e) => updateEnglishScore('listening', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="reading">Reading</Label>
+                          <Input
+                            id="reading"
+                            type="number"
+                            step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
+                            placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                            value={assessmentData.englishScores.reading}
+                            onChange={(e) => updateEnglishScore('reading', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="writing">Writing</Label>
+                          <Input
+                            id="writing"
+                            type="number"
+                            step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
+                            placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                            value={assessmentData.englishScores.writing}
+                            onChange={(e) => updateEnglishScore('writing', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="speaking">Speaking</Label>
+                          <Input
+                            id="speaking"
+                            type="number"
+                            step={assessmentData.englishTest === 'ielts' ? '0.5' : '1'}
+                            placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                            value={assessmentData.englishScores.speaking}
+                            onChange={(e) => updateEnglishScore('speaking', e.target.value)}
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-medium">Proficient (+10 points):</span>
-                        <br />
-                        {assessmentData.englishTest === 'ielts' ? '7.0 each band' : 
-                         assessmentData.englishTest === 'pte' ? '65 each section' : '7.0 overall'}
-                      </div>
-                      <div>
-                        <span className="font-medium">Superior (+20 points):</span>
-                        <br />
-                        {assessmentData.englishTest === 'ielts' ? '8.0 each band' : 
-                         assessmentData.englishTest === 'pte' ? '79 each section' : '8.0 overall'}
+                      
+                      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                        <h4 className="font-medium mb-2">Score Guidelines for {assessmentData.englishTest.toUpperCase()}:</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                          <div>
+                            <span className="font-medium">Competent (0 points):</span>
+                            <br />
+                            {assessmentData.englishTest === 'ielts' ? '6.0 each band' : 
+                             assessmentData.englishTest === 'pte' ? '50 each section' : '6.0 each section'}
+                          </div>
+                          <div>
+                            <span className="font-medium">Proficient (+10 points):</span>
+                            <br />
+                            {assessmentData.englishTest === 'ielts' ? '7.0 each band' : 
+                             assessmentData.englishTest === 'pte' ? '65 each section' : '7.0 each section'}
+                          </div>
+                          <div>
+                            <span className="font-medium">Superior (+20 points):</span>
+                            <br />
+                            {assessmentData.englishTest === 'ielts' ? '8.0 each band' : 
+                             assessmentData.englishTest === 'pte' ? '79 each section' : '8.0 each section'}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -710,7 +790,7 @@ const VisaAssessment = () => {
                       <div>Education: {assessmentData.education}</div>
                       <div>Overseas Experience: {assessmentData.workExperienceOverseas} years</div>
                       <div>Australian Experience: {assessmentData.workExperienceAustralia} years</div>
-                      <div>English: {assessmentData.englishTest?.toUpperCase()} {assessmentData.englishScore}</div>
+                      <div>English: {assessmentData.englishTest?.toUpperCase()} {getEnglishScoreDisplay()}</div>
                       <div>Location: {assessmentData.currentLocation}</div>
                     </div>
                   </div>
@@ -732,7 +812,7 @@ const VisaAssessment = () => {
               onClick={handleStepComplete}
               disabled={
                 (currentStep === 1 && (!assessmentData.age || !validateAge(assessmentData.age) || !assessmentData.occupation || !assessmentData.education)) ||
-                (currentStep === 2 && (!assessmentData.englishTest || !assessmentData.englishScore)) ||
+                (currentStep === 2 && (!assessmentData.englishTest || Object.values(assessmentData.englishScores).every(score => score === ''))) ||
                 (currentStep === 3 && (!assessmentData.currentLocation || !assessmentData.familyStatus)) ||
                 (currentStep === 4 && false)
               }
