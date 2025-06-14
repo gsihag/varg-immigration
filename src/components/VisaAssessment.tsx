@@ -57,7 +57,7 @@ const VisaAssessment = () => {
 
     // Age points (minimum 18)
     const age = parseInt(assessmentData.age);
-    if (age >= 18) breakdown.age = 25;
+    if (age >= 18 && age <= 24) breakdown.age = 25;
     else if (age >= 25 && age <= 32) breakdown.age = 30;
     else if (age >= 33 && age <= 39) breakdown.age = 25;
     else if (age >= 40 && age <= 44) breakdown.age = 15;
@@ -80,13 +80,13 @@ const VisaAssessment = () => {
       case 'highschool': breakdown.education = 5; break;
     }
 
-    // Overseas work experience points
+    // Overseas work experience points - default to 0 if empty
     const overseasExperience = parseInt(assessmentData.workExperienceOverseas) || 0;
     if (overseasExperience >= 8) breakdown.experience = 15;
     else if (overseasExperience >= 5) breakdown.experience = 10;
     else if (overseasExperience >= 3) breakdown.experience = 5;
 
-    // Australian work experience points
+    // Australian work experience points - default to 0 if empty
     const australianExperience = parseInt(assessmentData.workExperienceAustralia) || 0;
     if (australianExperience >= 8) breakdown.australianExperience = 20;
     else if (australianExperience >= 5) breakdown.australianExperience = 15;
@@ -225,7 +225,7 @@ const VisaAssessment = () => {
 
   const validateWorkExperience = (value) => {
     const years = parseInt(value) || 0;
-    return years >= 0 && years <= 40; // Changed maximum to 40
+    return years >= 0; // Removed maximum limit
   };
 
   if (pointsBreakdown && recommendations) {
@@ -509,13 +509,12 @@ const VisaAssessment = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="experienceOverseas">Overseas Work Experience (Years, max 40)</Label>
+                    <Label htmlFor="experienceOverseas">Overseas Work Experience (Years, optional)</Label>
                     <Input
                       id="experienceOverseas"
                       type="number"
-                      placeholder="Years in nominated occupation"
+                      placeholder="Years in nominated occupation (leave blank if none)"
                       min="0"
-                      max="40"
                       value={assessmentData.workExperienceOverseas}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -526,13 +525,12 @@ const VisaAssessment = () => {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <Label htmlFor="experienceAustralia">Australian Work Experience (Years, max 40)</Label>
+                    <Label htmlFor="experienceAustralia">Australian Work Experience (Years, optional)</Label>
                     <Input
                       id="experienceAustralia"
                       type="number"
-                      placeholder="Years of Australian work experience"
+                      placeholder="Years of Australian work experience (leave blank if none)"
                       min="0"
-                      max="40"
                       value={assessmentData.workExperienceAustralia}
                       onChange={(e) => {
                         const value = e.target.value;
