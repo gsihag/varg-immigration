@@ -13,7 +13,6 @@ import NotFound from "./pages/NotFound";
 import FamilyVisas from "./pages/FamilyVisas";
 import WorkVisas from "./pages/WorkVisas";
 import StudyVisas from "./pages/StudyVisas";
-import BusinessVisas from "./pages/BusinessVisas";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +31,6 @@ const App = () => (
           <Route path="/family-visas" element={<FamilyVisas />} />
           <Route path="/work-visas" element={<WorkVisas />} />
           <Route path="/study-visas" element={<StudyVisas />} />
-          <Route path="/business-visas" element={<BusinessVisas />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

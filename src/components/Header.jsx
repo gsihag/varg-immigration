@@ -2,7 +2,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Search, User, LogIn } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,34 +31,47 @@ const Header = () => {
               </div>
             </div>
           </Link>
-          
-          {/* Search Bar - Desktop */}
-          <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <input
-                type="text"
-                placeholder="Search visas, services..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            </div>
-          </div>
-          
-          {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-4">
-            <Button variant="ghost" className="text-gray-600 hover:text-gray-800 font-medium">
-              Login
-            </Button>
-            <Button variant="ghost" className="text-gray-600 hover:text-gray-800 font-medium">
-              Sign up
-            </Button>
-            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
-              Select visas
-            </Button>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            <Link 
+              to="/about" 
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+            >
+              About Us
+            </Link>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger className="text-gray-700 hover:text-green-600 font-medium transition-colors">
+                Our Services
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link to="/services">All Services</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/family-visas">Family Visas</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/work-visas">Work Visas</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/study-visas">Study Visas</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Link 
+              to="/contact" 
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+            >
+              Contact
+            </Link>
+            
             <Button className="bg-green-600 hover:bg-green-700 text-white font-medium px-6">
-              Book a consultation
+              Book Consultation
             </Button>
-          </div>
+          </nav>
 
           {/* Mobile Menu Button */}
           <button
@@ -63,99 +82,10 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Main Navigation - Desktop (Always Visible) */}
-        <nav className="hidden lg:block pb-4 border-t border-gray-100 pt-4">
-          <div className="flex items-center justify-center space-x-12">
-            <Link 
-              to="/family-visas" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-            >
-              Family Visas
-            </Link>
-            <Link 
-              to="/work-visas" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-            >
-              Work Visas
-            </Link>
-            <Link 
-              to="/study-visas" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-            >
-              Study Visas
-            </Link>
-            <Link 
-              to="/business-visas" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-            >
-              Business Visas
-            </Link>
-          </div>
-        </nav>
-
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
-            {/* Mobile Search */}
-            <div className="mb-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search visas, services..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              </div>
-            </div>
-
-            {/* Mobile Actions */}
-            <div className="flex flex-col gap-3 mb-4 pb-4 border-b border-gray-200">
-              <Button variant="ghost" className="justify-start text-gray-600 hover:text-gray-800 font-medium">
-                <LogIn className="w-4 h-4 mr-2" />
-                Login
-              </Button>
-              <Button variant="ghost" className="justify-start text-gray-600 hover:text-gray-800 font-medium">
-                <User className="w-4 h-4 mr-2" />
-                Sign up
-              </Button>
-              <Button variant="outline" className="justify-start border-gray-300 text-gray-700 hover:bg-gray-50 font-medium">
-                Select visas
-              </Button>
-              <Button className="justify-start bg-green-600 hover:bg-green-700 text-white font-medium">
-                Book a consultation
-              </Button>
-            </div>
-
-            {/* Mobile Navigation Links */}
             <nav className="flex flex-col space-y-3">
-              <Link 
-                to="/family-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Family Visas
-              </Link>
-              <Link 
-                to="/work-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Work Visas
-              </Link>
-              <Link 
-                to="/study-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Study Visas
-              </Link>
-              <Link 
-                to="/business-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Business Visas
-              </Link>
               <Link 
                 to="/about" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
@@ -163,6 +93,39 @@ const Header = () => {
               >
                 About Us
               </Link>
+              
+              <Link 
+                to="/services" 
+                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Our Services
+              </Link>
+              
+              <Link 
+                to="/family-visas" 
+                className="text-gray-700 hover:text-green-600 font-medium py-2 pl-4 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                - Family Visas
+              </Link>
+              
+              <Link 
+                to="/work-visas" 
+                className="text-gray-700 hover:text-green-600 font-medium py-2 pl-4 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                - Work Visas
+              </Link>
+              
+              <Link 
+                to="/study-visas" 
+                className="text-gray-700 hover:text-green-600 font-medium py-2 pl-4 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                - Study Visas
+              </Link>
+              
               <Link 
                 to="/contact" 
                 className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
@@ -170,6 +133,13 @@ const Header = () => {
               >
                 Contact
               </Link>
+              
+              <Button 
+                className="bg-green-600 hover:bg-green-700 text-white font-medium mt-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Book Consultation
+              </Button>
             </nav>
           </div>
         )}
