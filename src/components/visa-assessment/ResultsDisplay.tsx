@@ -20,6 +20,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   assessmentData, 
   onStartNew 
 }) => {
+  // Calculate total bonus points
+  const bonusPoints = pointsBreakdown.australianStudy + pointsBreakdown.naati + pointsBreakdown.professionalYear;
+
   return (
     <div className="space-y-6">
       {/* Results Header */}
@@ -81,8 +84,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span>Bonus Points</span>
-                <Badge variant={pointsBreakdown.bonus > 0 ? "default" : "secondary"}>
-                  {pointsBreakdown.bonus} points
+                <Badge variant={bonusPoints > 0 ? "default" : "secondary"}>
+                  {bonusPoints} points
                 </Badge>
               </div>
               <div className="border-t pt-3">
