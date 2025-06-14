@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { Send, Bot, User, Loader2, MessageCircle, Calculator, FileText, Clock, Users, MapPin } from 'lucide-react';
 import AgentResponse from '@/components/AgentResponse';
 import { useLanguage } from '@/components/LanguageSelector';
 
@@ -12,6 +12,7 @@ const RituChat = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -36,10 +37,38 @@ const RituChat = () => {
       id: 1,
       type: 'agent',
       message: t('greeting'),
-      timestamp: new Date()
+      timestamp: new Date(),
+      showSuggestions: true
     };
     setMessages([initialGreeting]);
   }, [currentLanguage, t]);
+
+  const getSuggestions = (language) => {
+    const suggestions = {
+      en: [
+        { icon: Calculator, text: "Calculate my points", color: "bg-green-500 hover:bg-green-600" },
+        { icon: FileText, text: "Required documents", color: "bg-purple-500 hover:bg-purple-600" },
+        { icon: Clock, text: "Processing times", color: "bg-blue-500 hover:bg-blue-600" },
+        { icon: Users, text: "Family visa options", color: "bg-orange-500 hover:bg-orange-600" },
+        { icon: MapPin, text: "State nomination", color: "bg-teal-500 hover:bg-teal-600" }
+      ],
+      hi: [
+        { icon: Calculator, text: "मेरे पॉइंट्स की गणना करें", color: "bg-green-500 hover:bg-green-600" },
+        { icon: FileText, text: "आवश्यक दस्तावेज़", color: "bg-purple-500 hover:bg-purple-600" },
+        { icon: Clock, text: "प्रसंस्करण समय", color: "bg-blue-500 hover:bg-blue-600" },
+        { icon: Users, text: "पारिवारिक वीज़ा विकल्प", color: "bg-orange-500 hover:bg-orange-600" },
+        { icon: MapPin, text: "राज्य नामांकन", color: "bg-teal-500 hover:bg-teal-600" }
+      ],
+      zh: [
+        { icon: Calculator, text: "计算我的积分", color: "bg-green-500 hover:bg-green-600" },
+        { icon: FileText, text: "所需文件", color: "bg-purple-500 hover:bg-purple-600" },
+        { icon: Clock, text: "处理时间", color: "bg-blue-500 hover:bg-blue-600" },
+        { icon: Users, text: "家庭签证选项", color: "bg-orange-500 hover:bg-orange-600" },
+        { icon: MapPin, text: "州担保", color: "bg-teal-500 hover:bg-teal-600" }
+      ]
+    };
+    return suggestions[language] || suggestions.en;
+  };
 
   const getAIResponse = (userMessage, language) => {
     const responses = {
@@ -49,6 +78,8 @@ const RituChat = () => {
         'points': "The points test evaluates factors like age, English proficiency, education, work experience, and Australian study. I can help calculate your points score.",
         'documents': "Common documents include passport, education transcripts, English test results, work references, and health/character certificates. What visa type are you considering?",
         'processing': "Processing times vary by visa type: 189 (8-12 months), 190 (8-15 months), 482 (3-5 months). Current times may differ based on your country and circumstances.",
+        'family': "Family visas include Partner visas (820/801), Parent visas (103/143), and Child visas (101/102). Each has specific requirements and processing times.",
+        'state': "State nomination programs like 190 and 491 visas offer additional pathways. Popular states include NSW, Victoria, Queensland, and South Australia with varying occupation lists.",
         'default': "I understand you're asking about Australian immigration. Let me help you with that. Can you be more specific about what aspect you'd like to know about - visa types, points calculation, documents, or processing times?"
       },
       hi: {
@@ -57,6 +88,8 @@ const RituChat = () => {
         'points': "पॉइंट्स टेस्ट उम्र, अंग्रेजी प्रवाहता, शिक्षा, कार्य अनुभव, और ऑस्ट्रेलियाई अध्ययन जैसे कारकों का मूल्यांकन करता है। मैं आपके पॉइंट्स स्कोर की गणना में मदद कर सकती हूँ।",
         'documents': "सामान्य दस्तावेजों में पासपोर्ट, शिक्षा प्रमाण पत्र, अंग्रेजी टेस्ट परिणाम, कार्य संदर्भ, और स्वास्थ्य/चरित्र प्रमाण पत्र शामिल हैं। आप किस वीज़ा प्रकार पर विचार कर रहे हैं?",
         'processing': "प्रसंस्करण समय वीज़ा प्रकार के अनुसार भिन्न होता है: 189 (8-12 महीने), 190 (8-15 महीने), 482 (3-5 महीने)। वर्तमान समय आपके देश और परिस्थितियों के आधार पर भिन्न हो सकता है।",
+        'family': "पारिवारिक वीज़ा में पार्टनर वीज़ा (820/801), माता-पिता वीज़ा (103/143), और बच्चे वीज़ा (101/102) शामिल हैं। प्रत्येक की विशिष्ट आवश्यकताएं और प्रसंस्करण समय हैं।",
+        'state': "राज्य नामांकन कार्यक्रम जैसे 190 और 491 वीज़ा अतिरिक्त मार्ग प्रदान करते हैं। लोकप्रिय राज्यों में NSW, विक्टोरिया, क्वींसलैंड, और दक्षिण ऑस्ट्रेलिया शामिल हैं।",
         'default': "मैं समझती हूँ कि आप ऑस्ट्रेलियाई इमिग्रेशन के बारे में पूछ रहे हैं। मैं इसमें आपकी मदद करती हूँ। क्या आप अधिक विशिष्ट बता सकते हैं कि आप किस पहलू के बारे में जानना चाहते हैं - वीज़ा प्रकार, पॉइंट्स गणना, दस्तावेज़, या प्रसंस्करण समय?"
       },
       zh: {
@@ -65,6 +98,8 @@ const RituChat = () => {
         'points': "积分测试评估年龄、英语水平、教育、工作经验和澳洲学习等因素。我可以帮助计算您的积分。",
         'documents': "常见文件包括护照、教育成绩单、英语考试成绩、工作推荐信和健康/品格证明。您考虑申请哪种签证类型？",
         'processing': "处理时间因签证类型而异：189（8-12个月）、190（8-15个月）、482（3-5个月）。当前时间可能因您的国家和情况而有所不同。",
+        'family': "家庭签证包括配偶签证(820/801)、父母签证(103/143)和子女签证(101/102)。每种都有特定要求和处理时间。",
+        'state': "州担保项目如190和491签证提供额外途径。热门州包括新南威尔士、维多利亚、昆士兰和南澳，各有不同职业清单。",
         'default': "我理解您询问澳洲移民事宜。让我来帮助您。您能更具体地说明想了解哪个方面吗 - 签证类型、积分计算、文件要求还是处理时间？"
       }
     };
@@ -83,39 +118,50 @@ const RituChat = () => {
       return langResponses.documents;
     } else if (lowerMessage.includes('processing') || lowerMessage.includes('time') || lowerMessage.includes('प्रसंस्करण') || lowerMessage.includes('处理')) {
       return langResponses.processing;
+    } else if (lowerMessage.includes('family') || lowerMessage.includes('पारिवारिक') || lowerMessage.includes('家庭')) {
+      return langResponses.family;
+    } else if (lowerMessage.includes('state') || lowerMessage.includes('nomination') || lowerMessage.includes('राज्य') || lowerMessage.includes('州担保')) {
+      return langResponses.state;
     } else {
       return langResponses.default;
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const handleSendMessage = async (messageText = null) => {
+    const messageToSend = messageText || inputMessage;
+    if (!messageToSend.trim()) return;
 
     const userMessage = {
       id: Date.now(),
       type: 'user',
-      message: inputMessage,
+      message: messageToSend,
       timestamp: new Date()
     };
 
     // Add user message and clear input immediately
     setMessages(prev => [...prev, userMessage]);
-    const currentInput = inputMessage;
-    setInputMessage('');
+    if (!messageText) setInputMessage('');
     setIsLoading(true);
+    setShowSuggestions(false);
 
     // Simulate AI response delay
     setTimeout(() => {
       const aiResponse = {
         id: Date.now() + 1,
         type: 'agent',
-        message: getAIResponse(currentInput, currentLanguage),
-        timestamp: new Date()
+        message: getAIResponse(messageToSend, currentLanguage),
+        timestamp: new Date(),
+        showSuggestions: true
       };
       
       setMessages(prev => [...prev, aiResponse]);
       setIsLoading(false);
+      setShowSuggestions(true);
     }, 1000 + Math.random() * 2000);
+  };
+
+  const handleSuggestionClick = (suggestionText) => {
+    handleSendMessage(suggestionText);
   };
 
   const handleKeyPress = (e) => {
@@ -124,6 +170,8 @@ const RituChat = () => {
       handleSendMessage();
     }
   };
+
+  const suggestions = getSuggestions(currentLanguage);
 
   return (
     <Card className="h-[600px] flex flex-col shadow-lg border-2 border-gray-200">
@@ -142,18 +190,44 @@ const RituChat = () => {
           style={{ maxHeight: 'calc(600px - 140px)' }}
         >
           {messages.map((message) => (
-            <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-              {message.type === 'user' ? (
-                <div className="flex gap-3 max-w-[85%]">
-                  <div className="bg-australia-blue text-white px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm">
-                    {message.message}
+            <div key={message.id}>
+              <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {message.type === 'user' ? (
+                  <div className="flex gap-3 max-w-[85%]">
+                    <div className="bg-australia-blue text-white px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm">
+                      {message.message}
+                    </div>
+                    <div className="bg-australia-blue rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                      <User className="w-5 h-5" />
+                    </div>
                   </div>
-                  <div className="bg-australia-blue rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-md">
-                    <User className="w-5 h-5" />
+                ) : (
+                  <AgentResponse message={message.message} />
+                )}
+              </div>
+              
+              {/* Suggestions - Show after agent responses */}
+              {message.type === 'agent' && message.showSuggestions && showSuggestions && (
+                <div className="mt-4 ml-14">
+                  <p className="text-sm text-gray-600 mb-3 font-medium">Quick suggestions:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestions.map((suggestion, index) => {
+                      const IconComponent = suggestion.icon;
+                      return (
+                        <Button
+                          key={index}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleSuggestionClick(suggestion.text)}
+                          className={`${suggestion.color} text-white border-none hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg text-xs px-3 py-2 h-auto`}
+                        >
+                          <IconComponent className="w-3 h-3 mr-2" />
+                          {suggestion.text}
+                        </Button>
+                      );
+                    })}
                   </div>
                 </div>
-              ) : (
-                <AgentResponse message={message.message} />
               )}
             </div>
           ))}
@@ -190,7 +264,7 @@ const RituChat = () => {
               disabled={isLoading}
             />
             <Button 
-              onClick={handleSendMessage}
+              onClick={() => handleSendMessage()}
               disabled={isLoading || !inputMessage.trim()}
               className="bg-australia-blue hover:bg-australia-darkBlue text-white border-2 border-australia-blue hover:border-australia-darkBlue transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed px-6"
             >
