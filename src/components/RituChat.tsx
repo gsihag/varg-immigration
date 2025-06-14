@@ -16,12 +16,19 @@ const RituChat = () => {
   const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = chatContainerRef.current;
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
+  // Auto-scroll on messages change and loading state change
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isLoading]);
 
   useEffect(() => {
     // Initialize with greeting based on language
@@ -91,7 +98,9 @@ const RituChat = () => {
       timestamp: new Date()
     };
 
+    // Add user message and clear input immediately
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputMessage;
     setInputMessage('');
     setIsLoading(true);
 
@@ -100,7 +109,7 @@ const RituChat = () => {
       const aiResponse = {
         id: Date.now() + 1,
         type: 'agent',
-        message: getAIResponse(inputMessage, currentLanguage),
+        message: getAIResponse(currentInput, currentLanguage),
         timestamp: new Date()
       };
       
@@ -129,7 +138,7 @@ const RituChat = () => {
         {/* Messages Container - Fixed Height with Scroll */}
         <div 
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0"
+          className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 scroll-smooth"
           style={{ maxHeight: 'calc(600px - 140px)' }}
         >
           {messages.map((message) => (
@@ -165,6 +174,7 @@ const RituChat = () => {
             </div>
           )}
           
+          {/* Invisible element to help with scrolling */}
           <div ref={messagesEndRef} />
         </div>
         
