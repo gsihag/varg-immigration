@@ -9,7 +9,10 @@ export const calculatePoints = (assessmentData: AssessmentData): PointsBreakdown
     education: 0,
     experience: 0,
     australianExperience: 0,
-    bonus: 0,
+    australianStudy: 0,
+    naati: 0,
+    professionalYear: 0,
+    partner: 0,
     total: 0
   };
 
@@ -58,10 +61,56 @@ export const calculatePoints = (assessmentData: AssessmentData): PointsBreakdown
   else if (australianExperience >= 3) breakdown.australianExperience = 10;
   else if (australianExperience >= 1) breakdown.australianExperience = 5;
 
-  // Bonus points
-  if (assessmentData.australianStudy) breakdown.bonus += 5;
+  // Australian study points
+  if (assessmentData.hasAustralianQualification) {
+    breakdown.australianStudy += 5;
+    if (assessmentData.isFromRegionalAustralia) {
+      breakdown.australianStudy += 5; // Regional study bonus
+    }
+  }
+  
+  if (assessmentData.hasMastersOrDoctorate) {
+    breakdown.australianStudy += 10; // Masters/Doctorate bonus
+  }
 
-  breakdown.total = breakdown.age + breakdown.english + breakdown.education + breakdown.experience + breakdown.australianExperience + breakdown.bonus;
+  // NAATI credential points
+  if (assessmentData.hasNAATICredential) {
+    breakdown.naati = 5;
+  }
+
+  // Professional Year points
+  if (assessmentData.hasCompletedProfessionalYear) {
+    breakdown.professionalYear = 5;
+  }
+
+  // Partner points
+  if (assessmentData.partnerStatus === 'australian-citizen') {
+    breakdown.partner = 10;
+  } else if (assessmentData.partnerStatus === 'non-australian') {
+    // Partner with skills assessment and competent English
+    const partnerScores = [
+      parseFloat(assessmentData.partnerEnglishScores.listening) || 0,
+      parseFloat(assessmentData.partnerEnglishScores.reading) || 0,
+      parseFloat(assessmentData.partnerEnglishScores.writing) || 0,
+      parseFloat(assessmentData.partnerEnglishScores.speaking) || 0
+    ];
+
+    let partnerEnglishQualified = false;
+    if (assessmentData.partnerEnglishTest === 'ielts') {
+      partnerEnglishQualified = partnerScores.every(score => score >= 6.0);
+    } else if (assessmentData.partnerEnglishTest === 'pte') {
+      partnerEnglishQualified = partnerScores.every(score => score >= 50);
+    }
+
+    if (partnerEnglishQualified && assessmentData.partnerHasSkillAssessment) {
+      breakdown.partner = 5;
+    }
+  }
+
+  breakdown.total = breakdown.age + breakdown.english + breakdown.education + 
+                   breakdown.experience + breakdown.australianExperience + 
+                   breakdown.australianStudy + breakdown.naati + 
+                   breakdown.professionalYear + breakdown.partner;
   
   return breakdown;
 };
@@ -101,42 +150,29 @@ export const generateRecommendations = (points: PointsBreakdown, assessmentData:
 
   // Improvement suggestions
   if (points.english < 20) {
-    const scores = Object.values(assessmentData.englishScores);
-    const hasScores = scores.some(score => score !== '');
-    if (hasScores) {
-      recommendations.improvements.push({
-        area: 'English Proficiency',
-        current: `${points.english} points`,
-        potential: '+10-20 points',
-        action: 'Achieve IELTS 7.0+ (Proficient) or 8.0+ (Superior)'
-      });
-    }
-  }
-
-  if (points.age < 30 && parseInt(assessmentData.age) > 32) {
     recommendations.improvements.push({
-      area: 'Age Factor',
-      current: `${points.age} points`,
-      potential: 'Time-sensitive',
-      action: 'Apply as soon as possible - points decrease with age'
+      area: 'English Proficiency',
+      current: `${points.english} points`,
+      potential: '+10-20 points',
+      action: 'Achieve higher English test scores (IELTS 7.0+ or 8.0+)'
     });
   }
 
-  if (!assessmentData.australianStudy) {
+  if (!assessmentData.hasAustralianQualification) {
     recommendations.improvements.push({
       area: 'Australian Study',
-      current: '0 points',
-      potential: '+5 points',
-      action: 'Consider Professional Year or additional Australian qualification'
+      current: `${points.australianStudy} points`,
+      potential: '+5-15 points',
+      action: 'Complete Australian qualification or Professional Year'
     });
   }
 
-  if (parseInt(assessmentData.workExperienceAustralia) < 3) {
+  if (!assessmentData.hasNAATICredential) {
     recommendations.improvements.push({
-      area: 'Australian Work Experience',
-      current: `${points.australianExperience} points`,
-      potential: '+5-20 points',
-      action: 'Gain Australian work experience in your nominated occupation'
+      area: 'NAATI Credential',
+      current: '0 points',
+      potential: '+5 points',
+      action: 'Obtain community language credential'
     });
   }
 

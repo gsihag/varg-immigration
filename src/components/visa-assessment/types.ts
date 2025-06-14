@@ -15,7 +15,25 @@ export interface AssessmentData {
   currentLocation: string;
   visaStatus: string;
   familyStatus: string;
-  australianStudy: boolean;
+  
+  // Australian Study Requirements
+  hasAustralianQualification: boolean | null;
+  isFromRegionalAustralia: boolean | null;
+  hasMastersOrDoctorate: boolean | null;
+  hasNAATICredential: boolean | null;
+  hasCompletedProfessionalYear: boolean | null;
+  
+  // Partner Skills
+  partnerStatus: string;
+  partnerEnglishTest: string;
+  partnerEnglishScores: {
+    listening: string;
+    reading: string;
+    writing: string;
+    speaking: string;
+  };
+  partnerHasSkillAssessment: boolean | null;
+  
   stateInterest: string;
 }
 
@@ -25,7 +43,10 @@ export interface PointsBreakdown {
   education: number;
   experience: number;
   australianExperience: number;
-  bonus: number;
+  australianStudy: number;
+  naati: number;
+  professionalYear: number;
+  partner: number;
   total: number;
 }
 
