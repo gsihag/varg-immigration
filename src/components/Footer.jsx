@@ -5,7 +5,7 @@ import { Mail, Phone, MapPin, Clock, Heart, Sparkles } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-green-50 via-green-100 to-emerald-100 text-slate-800">
+    <footer className="bg-gradient-to-br from-green-50 via-green-100 to-emerald-50 text-slate-800">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info - Enhanced */}
@@ -16,11 +16,11 @@ const Footer = () => {
               </div>
               <div>
                 <div className="text-3xl font-bold text-slate-900">VARG</div>
-                <div className="text-sm text-action-orange font-semibold">Immigration</div>
+                <div className="text-sm text-action-orange font-semibold">Immigration Consultancy</div>
               </div>
             </div>
             <p className="text-slate-700 leading-relaxed font-medium">
-              Australia's most trusted immigration specialists, combining <span className="text-action-orange font-bold">AI-powered assistance</span> with expert human guidance for your migration success.
+              Australia's best immigration consultancy, combining <span className="text-action-orange font-bold">personalized AI assistance</span> with expert human guidance for your migration success.
             </p>
             <div className="flex items-center gap-3 bg-gradient-to-r from-action-orange/20 to-energy-pink/20 rounded-xl p-3 backdrop-blur-sm border border-action-orange/30">
               <div className="bg-gradient-to-r from-action-orange to-action-warm rounded-full w-8 h-8 flex items-center justify-center text-white font-bold text-sm">R</div>
@@ -35,23 +35,23 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Skilled Migration
+                Skilled Migration Consulting
               </Link></li>
               <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Family Visas
+                Family Visa Guidance
               </Link></li>
               <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Business & Investment
+                Business & Investment Advisory
               </Link></li>
               <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Student Visas
+                Student Visa Support
               </Link></li>
               <li><Link to="/services" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <span className="w-2 h-2 bg-action-orange rounded-full mr-3 group-hover:bg-slate-900 transition-colors"></span>
-                Citizenship
+                Citizenship Consultation
               </Link></li>
             </ul>
           </div>
@@ -119,7 +119,7 @@ const Footer = () => {
         <div className="border-t border-slate-300 mt-16 pt-8">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <p className="text-slate-600 text-sm font-medium">
-              &copy; {new Date().getFullYear()} VARG Immigration. All rights reserved. | Registered Migration Agency
+              &copy; {new Date().getFullYear()} VARG Immigration Consultancy. All rights reserved. | Best in Business Migration Consulting
             </p>
             <p className="text-slate-600 text-sm font-medium">
               For official information, visit 
@@ -142,11 +142,11 @@ const Footer = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-trust-blue rounded-full animate-pulse"></div>
-              <span className="text-slate-700">Licensed Professionals</span>
+              <span className="text-slate-700">Expert Consultants</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-action-orange rounded-full animate-pulse"></div>
-              <span className="text-slate-700">AI-Powered Excellence</span>
+              <span className="text-slate-700">Personalized AI Excellence</span>
             </div>
           </div>
         </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -24,8 +23,8 @@ const Index = () => {
 
   const services = [
     { 
-      name: 'Skilled Migration', 
-      description: 'Fast-track your career with AI-guided skilled visa applications. Get matched to the right pathway instantly.',
+      name: 'Skilled Migration Consulting', 
+      description: 'Fast-track your career with AI-guided skilled visa consultation. Get personalized pathway recommendations instantly.',
       icon: '🎯',
       popular: true,
       successRate: '96%',
@@ -33,8 +32,8 @@ const Index = () => {
       gradient: 'from-trust-blue to-confidence-purple'
     },
     { 
-      name: 'Family & Partner Visas', 
-      description: 'Reunite with loved ones faster. Our AI ensures your family visa application is perfect from day one.',
+      name: 'Family & Partner Visa Guidance', 
+      description: 'Reunite with loved ones faster. Our personalized AI ensures your family visa consultation is perfect from day one.',
       icon: '❤️',
       popular: false,
       successRate: '94%',
@@ -42,8 +41,8 @@ const Index = () => {
       gradient: 'from-warmth-coral to-energy-pink'
     },
     { 
-      name: 'Student Visas', 
-      description: 'Start your Australian education journey with confidence. AI-powered application support from start to finish.',
+      name: 'Student Visa Support', 
+      description: 'Start your Australian education journey with confidence. Personalized AI-powered consultation from start to finish.',
       icon: '🎓',
       popular: true,
       successRate: '99%',
@@ -51,8 +50,8 @@ const Index = () => {
       gradient: 'from-success-green to-calm-teal'
     },
     { 
-      name: 'Business & Investment', 
-      description: 'Launch your Australian business venture with expert AI guidance and strategic pathway planning.',
+      name: 'Business & Investment Advisory', 
+      description: 'Launch your Australian business venture with expert AI guidance and strategic pathway consultation.',
       icon: '💼',
       popular: false,
       successRate: '91%',
@@ -60,8 +59,8 @@ const Index = () => {
       gradient: 'from-action-orange to-action-warm'
     },
     { 
-      name: 'Permanent Residency', 
-      description: 'Achieve your Australian dream with our AI-powered PR pathway optimization and application support.',
+      name: 'Permanent Residency Consulting', 
+      description: 'Achieve your Australian dream with our personalized AI-powered PR pathway optimization and consultation.',
       icon: '🏠',
       popular: true,
       successRate: '97%',
@@ -69,8 +68,8 @@ const Index = () => {
       gradient: 'from-trust-blue to-trust-deep'
     },
     { 
-      name: 'Citizenship Applications', 
-      description: 'Complete your Australian journey with AI-assisted citizenship applications and ceremony preparation.',
+      name: 'Citizenship Consultation', 
+      description: 'Complete your Australian journey with personalized AI-assisted citizenship consultation and ceremony preparation.',
       icon: '🇦🇺',
       popular: false,
       successRate: '100%',
@@ -91,7 +90,7 @@ const Index = () => {
       name: "Sarah Chen",
       role: "Software Engineer",
       location: "Sydney, Australia",
-      text: "Ritu AI made my PR application effortless! The instant guidance was like having a migration expert in my pocket 24/7.",
+      text: "Ritu AI made my PR consultation effortless! The personalized guidance was like having a migration expert in my pocket 24/7.",
       rating: 5,
       avatar: "👩‍💻",
       highlight: "Got PR in 8 months!"
@@ -100,7 +99,7 @@ const Index = () => {
       name: "Ahmed Hassan",
       role: "Business Analyst",
       location: "Melbourne, Australia", 
-      text: "The AI predicted every requirement before I even asked. Saved me months of research and thousands in consultant fees.",
+      text: "The personalized AI predicted every requirement before I even asked. Saved me months of research and thousands in consultant fees.",
       rating: 5,
       avatar: "👨‍💼",
       highlight: "Saved $5,000+"
@@ -109,7 +108,7 @@ const Index = () => {
       name: "Maria Rodriguez",
       role: "Nurse",
       location: "Perth, Australia",
-      text: "VARG's human touch combined with AI precision made my family reunion possible. Emotional and efficient support!",
+      text: "VARG's human touch combined with personalized AI precision made my family reunion possible. Emotional and efficient support!",
       rating: 5,
       avatar: "👩‍⚕️",
       highlight: "Family reunited!"
@@ -119,18 +118,18 @@ const Index = () => {
   const features = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: 'AI-Powered Guidance',
-      description: 'Get instant, accurate answers from Ritu - trained on 10,000+ successful applications and Australian immigration law',
-      highlight: 'Instant Answers',
+      title: 'Personalized AI Guidance',
+      description: 'Get instant, tailored answers from Ritu - your personal AI consultant trained on 10,000+ successful applications and Australian immigration law',
+      highlight: 'Personalized',
       color: 'text-trust-blue',
       bgGradient: 'from-trust-blue/10 to-confidence-purple/10',
       borderColor: 'border-trust-blue/20'
     },
     {
       icon: <Users className="w-8 h-8" />,
-      title: 'Expert Human Support',
-      description: 'Licensed migration agents and consultants ready to handle complex cases with personal attention',
-      highlight: 'Licensed Experts',
+      title: 'Expert Human Consultants',
+      description: 'Best-in-business migration consultants ready to handle complex cases with personal attention and years of expertise',
+      highlight: 'Best in Business',
       color: 'text-action-orange',
       bgGradient: 'from-action-orange/10 to-action-warm/10',
       borderColor: 'border-action-orange/20'
@@ -138,7 +137,7 @@ const Index = () => {
     {
       icon: <Clock className="w-8 h-8" />,
       title: 'Faster Processing',
-      description: 'AI-assisted document preparation and error detection reduces processing times significantly',
+      description: 'Personalized AI-assisted document preparation and error detection reduces consultation time significantly',
       highlight: '50% Faster',
       color: 'text-success-green',
       bgGradient: 'from-success-green/10 to-calm-teal/10',
@@ -147,7 +146,7 @@ const Index = () => {
     {
       icon: <Shield className="w-8 h-8" />,
       title: 'Guaranteed Accuracy',
-      description: 'Our AI ensures error-free applications with human expert verification before submission',
+      description: 'Our personalized AI ensures error-free consultation with human expert verification and guidance',
       highlight: '100% Accurate',
       color: 'text-energy-pink',
       bgGradient: 'from-energy-pink/10 to-confidence-purple/10',
@@ -194,7 +193,7 @@ const Index = () => {
               
               <p className="text-xl lg:text-2xl text-blue-100 leading-relaxed">
                 Experience the future of migration with <span className="font-bold text-action-warm gradient-text">Ritu AI</span> - 
-                get instant expert guidance combined with human expertise for <span className="font-bold text-success-green">guaranteed success.</span>
+                your personalized AI consultant combined with Australia's best immigration consultancy for <span className="font-bold text-success-green">guaranteed success.</span>
               </p>
               
               {/* Trust + Social Proof Bar */}
@@ -262,7 +261,7 @@ const Index = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold text-slate-800 gradient-text-blue">Meet Ritu AI</h3>
-                      <p className="text-slate-600 font-medium">Your Migration Specialist</p>
+                      <p className="text-slate-600 font-medium">Your Personal Migration Consultant</p>
                       <div className="flex items-center gap-2 mt-2">
                         <div className="w-3 h-3 bg-success-green rounded-full animate-pulse"></div>
                         <span className="text-sm text-success-green font-bold">Online & Ready to Help</span>
@@ -270,7 +269,7 @@ const Index = () => {
                     </div>
                   </div>
                   <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-2xl p-5 text-slate-700 text-sm mb-6 border-l-4 border-trust-blue">
-                    "Hi! I'm Ritu, your personal AI migration assistant. I've helped 5,000+ people achieve their Australian dream. Ready to make yours come true? What's your migration goal?"
+                    "Hi! I'm Ritu, your personalized AI migration consultant. I've helped 5,000+ people achieve their Australian dream with tailored guidance. Ready to make yours come true? What's your migration goal?"
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="typing-indicator flex space-x-1">
@@ -362,7 +361,7 @@ const Index = () => {
               Why Choose <span className="gradient-text">VARG Immigration</span>?
             </h2>
             <p className="text-xl text-slate-600 max-w-4xl mx-auto font-medium">
-              We combine cutting-edge AI technology with human expertise to deliver <span className="font-bold text-trust-blue">unmatched migration success</span>
+              We combine cutting-edge personalized AI technology with Australia's best migration consultancy to deliver <span className="font-bold text-trust-blue">unmatched migration success</span>
             </p>
           </div>
           
@@ -395,10 +394,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-6xl font-bold text-slate-800 mb-6">
-              <span className="gradient-text">Complete Migration</span> Solutions
+              <span className="gradient-text">Complete Migration</span> Consultancy
             </h2>
             <p className="text-xl text-slate-600 max-w-4xl mx-auto font-medium">
-              Comprehensive immigration solutions tailored to your unique situation and goals
+              Comprehensive immigration consultancy services tailored to your unique situation and goals with personalized AI support
             </p>
           </div>
           
@@ -463,7 +462,7 @@ const Index = () => {
           <div className="inline-flex items-center bg-gradient-to-r from-excitement-red/30 to-action-orange/30 backdrop-blur-lg rounded-full px-8 py-4 text-sm font-bold text-white border border-excitement-red/30 mb-8 urgency-element">
             <div className="w-3 h-3 bg-excitement-red rounded-full mr-3 animate-pulse"></div>
             <span className="text-excitement-red font-bold">Limited Time:</span>
-            <span className="ml-2 text-white">Free AI consultation for first 100 users today</span>
+            <span className="ml-2 text-white">Free personalized AI consultation for first 100 users today</span>
             <Clock className="w-4 h-4 ml-3 text-action-warm animate-pulse" />
           </div>
           
@@ -472,7 +471,7 @@ const Index = () => {
             <span className="block gradient-text mt-2">Australian Journey?</span>
           </h2>
           <p className="text-2xl mb-12 max-w-4xl mx-auto text-blue-100 font-medium">
-            Join <span className="font-bold text-action-warm">5,000+ successful applicants</span> who chose VARG Immigration for their migration needs
+            Join <span className="font-bold text-action-warm">5,000+ successful applicants</span> who chose VARG Immigration for their migration consultancy needs
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
@@ -503,7 +502,7 @@ const Index = () => {
             </div>
             <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 backdrop-blur-sm">
               <Zap className="w-5 h-5 text-action-warm" />
-              <span className="font-medium">Instant AI Response</span>
+              <span className="font-medium">Personalized AI Response</span>
             </div>
             <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 backdrop-blur-sm">
               <Globe className="w-5 h-5 text-calm-teal" />
