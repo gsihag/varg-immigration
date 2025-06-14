@@ -33,7 +33,7 @@ const HeroSection = () => {
             <div className="inline-flex items-center bg-gradient-to-r from-success-green/20 to-calm-teal/20 backdrop-blur-lg rounded-full px-3 py-2 text-xs font-bold text-white border border-success-green/30 pulse-glow">
               <div className="w-2 h-2 bg-success-green rounded-full mr-2 animate-pulse"></div>
               <span className="text-success-green font-bold">{liveUsersCount}</span>
-              <span className="ml-1 text-white">users chatting with Ritu AI right now</span>
+              <span className="ml-1 text-white">users chatting with Ritu right now</span>
               <Sparkles className="w-3 h-3 ml-2 text-action-warm animate-pulse" />
             </div>
             
@@ -43,7 +43,7 @@ const HeroSection = () => {
             </h1>
             
             <p className="text-base lg:text-lg text-blue-100 leading-relaxed">
-              Experience the future of migration with <span className="font-bold text-action-warm gradient-text">Ritu AI</span> - 
+              Experience the future of migration with <span className="font-bold text-action-warm gradient-text">Ritu</span> - 
               your personalized AI consultant combined with Australia's best immigration consultancy for <span className="font-bold text-success-green">guaranteed success.</span>
             </p>
             
@@ -75,7 +75,7 @@ const HeroSection = () => {
               <Button size="lg" className="group bg-gradient-action hover:shadow-2xl text-white font-bold text-base px-6 py-3 rounded-xl magnetic-hover attention-grab border-0" asChild>
                 <Link to="/meeting">
                   <MessageCircle className="mr-2 w-4 h-4 group-hover:animate-bounce" />
-                  <span>Chat with Ritu AI - FREE</span>
+                  <span>Chat with Ritu - FREE</span>
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </Link>
               </Button>
@@ -88,7 +88,7 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Interactive Ritu AI Preview */}
+          {/* Interactive Ritu Preview */}
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative group">
               <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-action-orange/30 to-energy-pink/30 blur-2xl group-hover:from-action-orange/40 group-hover:to-energy-pink/40 transition-all duration-500 animate-pulse"></div>
@@ -98,7 +98,7 @@ const HeroSection = () => {
                     R
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-800 gradient-text-blue">Meet Ritu AI</h3>
+                    <h3 className="text-lg font-bold text-slate-800 gradient-text-blue">Meet Ritu</h3>
                     <p className="text-slate-600 font-medium text-xs">Your Personal Migration Consultant</p>
                     <div className="flex items-center gap-1 mt-1">
                       <div className="w-1.5 h-1.5 bg-success-green rounded-full animate-pulse"></div>

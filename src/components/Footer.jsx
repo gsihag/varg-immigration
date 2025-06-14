@@ -20,11 +20,11 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-slate-700 leading-relaxed font-medium">
-              Australia's best immigration consultancy, combining <span className="text-action-orange font-bold">personalized AI assistance</span> with expert human guidance for your migration success.
+              Australia's best immigration consultancy, combining <span className="text-action-orange font-bold">personalized assistance</span> with expert human guidance for your migration success.
             </p>
             <div className="flex items-center gap-3 bg-gradient-to-r from-action-orange/20 to-energy-pink/20 rounded-xl p-3 backdrop-blur-sm border border-action-orange/30">
               <div className="bg-gradient-to-r from-action-orange to-action-warm rounded-full w-8 h-8 flex items-center justify-center text-white font-bold text-sm">R</div>
-              <span className="text-slate-900 font-semibold">Powered by Ritu AI</span>
+              <span className="text-slate-900 font-semibold">Powered by Ritu</span>
               <Sparkles className="w-4 h-4 text-action-orange animate-pulse" />
             </div>
           </div>
@@ -58,7 +58,7 @@ const Footer = () => {
             <ul className="space-y-4">
               <li><Link to="/meeting" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <Sparkles className="w-4 h-4 mr-3 text-action-orange group-hover:animate-pulse" />
-                Chat with Ritu AI
+                Chat with Ritu
               </Link></li>
               <li><Link to="/contact" className="text-slate-700 hover:text-action-orange transition-colors font-medium flex items-center group">
                 <Heart className="w-4 h-4 mr-3 text-energy-pink group-hover:animate-pulse" />
@@ -142,7 +142,7 @@ const Footer = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-action-orange rounded-full animate-pulse"></div>
-              <span className="text-slate-700">Personalized AI Excellence</span>
+              <span className="text-slate-700">Personalized Excellence</span>
             </div>
           </div>
         </div>

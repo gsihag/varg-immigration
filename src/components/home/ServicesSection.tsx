@@ -9,7 +9,7 @@ const ServicesSection = () => {
   const services = [
     { 
       name: 'Skilled Migration Consulting', 
-      description: 'Fast-track your career with AI-guided skilled visa consultation. Get personalized pathway recommendations instantly.',
+      description: 'Fast-track your career with Ritu-guided skilled visa consultation. Get personalized pathway recommendations instantly.',
       icon: '🎯',
       popular: true,
       successRate: '96%',
@@ -18,7 +18,7 @@ const ServicesSection = () => {
     },
     { 
       name: 'Family & Partner Visa Guidance', 
-      description: 'Reunite with loved ones faster. Our personalized AI ensures your family visa consultation is perfect from day one.',
+      description: 'Reunite with loved ones faster. Our personalized guidance ensures your family visa consultation is perfect from day one.',
       icon: '❤️',
       popular: false,
       successRate: '94%',
@@ -27,7 +27,7 @@ const ServicesSection = () => {
     },
     { 
       name: 'Student Visa Support', 
-      description: 'Start your Australian education journey with confidence. Personalized AI-powered consultation from start to finish.',
+      description: 'Start your Australian education journey with confidence. Personalized consultation from start to finish.',
       icon: '🎓',
       popular: true,
       successRate: '99%',
@@ -36,7 +36,7 @@ const ServicesSection = () => {
     },
     { 
       name: 'Work Visa Consulting', 
-      description: 'Secure your Australian work opportunity with expert AI guidance and strategic consultation.',
+      description: 'Secure your Australian work opportunity with expert guidance and strategic consultation.',
       icon: '💼',
       popular: false,
       successRate: '91%',
@@ -53,7 +53,7 @@ const ServicesSection = () => {
             <span className="gradient-text">Complete Migration</span> Consultancy
           </h2>
           <p className="text-base text-slate-600 max-w-2xl mx-auto font-medium">
-            Comprehensive immigration consultancy services tailored to your unique situation and goals with personalized AI support
+            Comprehensive immigration consultancy services tailored to your unique situation and goals with personalized support
           </p>
         </div>
         
@@ -97,7 +97,7 @@ const ServicesSection = () => {
           <Button size="lg" className="group bg-gradient-action hover:shadow-2xl text-white text-base px-8 py-3 rounded-xl magnetic-hover attention-grab font-bold" asChild>
             <Link to="/meeting">
               <MessageCircle className="mr-2 w-4 h-4 group-hover:animate-pulse" />
-              Start with Ritu AI - It's FREE!
+              Start with Ritu - It's FREE!
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform" />
             </Link>
           </Button>

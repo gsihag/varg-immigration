@@ -42,7 +42,7 @@ const ChatBox = ({ messages = [], onSendMessage }) => {
             R
           </div>
           <div>
-            <h3 className="font-semibold text-lg">Ritu AI Assistant</h3>
+            <h3 className="font-semibold text-lg">Ritu Assistant</h3>
             <p className="text-sm text-blue-100">Your Migration Expert</p>
           </div>
         </div>
@@ -106,7 +106,7 @@ const ChatBox = ({ messages = [], onSendMessage }) => {
           </Button>
         </div>
         <p className="text-xs text-gray-500 mt-2 text-center">
-          Ritu AI provides general guidance. For personalized advice, book a consultation with our experts.
+          Ritu provides general guidance. For personalized advice, book a consultation with our experts.
         </p>
       </div>
     </div>

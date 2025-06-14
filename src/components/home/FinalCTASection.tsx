@@ -19,7 +19,7 @@ const FinalCTASection = () => {
         <div className="inline-flex items-center bg-gradient-to-r from-excitement-red/30 to-action-orange/30 backdrop-blur-lg rounded-full px-4 py-2 text-xs font-bold text-white border border-excitement-red/30 mb-5 urgency-element">
           <div className="w-2 h-2 bg-excitement-red rounded-full mr-2 animate-pulse"></div>
           <span className="text-excitement-red font-bold">Limited Time:</span>
-          <span className="ml-2 text-white">Free personalized AI consultation for first 100 users today</span>
+          <span className="ml-2 text-white">Free personalized consultation for first 100 users today</span>
           <Clock className="w-3 h-3 ml-2 text-action-warm animate-pulse" />
         </div>
         
@@ -35,7 +35,7 @@ const FinalCTASection = () => {
           <Button size="lg" className="group bg-gradient-action hover:shadow-2xl text-white font-bold text-lg px-8 py-4 rounded-xl magnetic-hover attention-grab border-0" asChild>
             <Link to="/meeting">
               <MessageCircle className="mr-2 w-5 h-5 group-hover:animate-bounce" />
-              Chat with Ritu AI Now - FREE
+              Chat with Ritu Now - FREE
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </Link>
           </Button>
@@ -59,7 +59,7 @@ const FinalCTASection = () => {
           </div>
           <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 backdrop-blur-sm">
             <Zap className="w-3 h-3 text-action-warm" />
-            <span className="font-medium text-sm">Personalized AI Response</span>
+            <span className="font-medium text-sm">Personalized Response</span>
           </div>
           <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 backdrop-blur-sm">
             <Globe className="w-3 h-3 text-calm-teal" />
