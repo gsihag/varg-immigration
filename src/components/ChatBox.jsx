@@ -27,7 +27,7 @@ const ChatBox = ({ messages = [], onSendMessage }) => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-    }, 2000); // Show typing indicator for 2 seconds
+    }, 2000);
   };
   
   // Handle Enter key press
@@ -40,7 +40,10 @@ const ChatBox = ({ messages = [], onSendMessage }) => {
   return (
     <div className="flex flex-col h-full border rounded-lg overflow-hidden bg-white">
       <div className="p-3 border-b bg-australia-blue/5">
-        <h3 className="font-medium text-australia-blue">Chat with Gulshan</h3>
+        <h3 className="font-medium text-australia-blue flex items-center gap-2">
+          <div className="bg-australia-blue rounded-full w-6 h-6 flex items-center justify-center text-white font-bold text-xs">R</div>
+          Chat with Ritu AI
+        </h3>
       </div>
       
       <ScrollArea className="flex-grow p-4">
@@ -62,11 +65,16 @@ const ChatBox = ({ messages = [], onSendMessage }) => {
           
           {isTyping && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 p-3 rounded-t-2xl rounded-br-2xl max-w-[80%] flex items-center">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+              <div className="flex gap-2 max-w-[80%]">
+                <div className="bg-australia-blue rounded-full w-8 h-8 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm mt-1">
+                  R
+                </div>
+                <div className="bg-gray-100 p-3 rounded-t-2xl rounded-br-2xl flex items-center">
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -81,7 +89,7 @@ const ChatBox = ({ messages = [], onSendMessage }) => {
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Type your message..."
+          placeholder="Ask Ritu about your Australian migration..."
           className="flex-grow"
         />
         <Button 

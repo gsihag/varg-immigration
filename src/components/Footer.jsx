@@ -4,38 +4,50 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="border-t mt-auto py-6">
+    <footer className="border-t mt-auto py-6 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-australia-blue rounded-full w-10 h-10 flex items-center justify-center text-white font-bold text-xl">G</div>
-              <span className="font-semibold text-xl">Gulshan</span>
-              <span className="bg-australia-blue text-white text-xs px-2 py-1 rounded-full">AI</span>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="text-2xl font-bold text-australia-blue">VARG</div>
+              <div className="text-sm text-gray-600">Immigration</div>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-              Your AI migration assistant for Australian visa information and guidance.
+              Trusted Australian immigration specialists serving the Indian diaspora with AI-powered assistance and expert guidance.
             </p>
+            <div className="flex items-center gap-2">
+              <div className="bg-australia-blue rounded-full w-6 h-6 flex items-center justify-center text-white font-bold text-xs">R</div>
+              <span className="text-xs text-gray-600">Powered by Ritu AI</span>
+            </div>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-3 text-australia-blue">Quick Links</h3>
+            <h3 className="font-semibold mb-3 text-australia-blue">Services</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Home</Link></li>
-              <li><Link to="/meeting" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Start Meeting</Link></li>
-              <li><Link to="/about" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">About Gulshan</Link></li>
-              <li><Link to="/faq" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">FAQ</Link></li>
+              <li><Link to="/services/skilled" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Skilled Migration</Link></li>
+              <li><Link to="/services/family" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Family Visas</Link></li>
+              <li><Link to="/services/business" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Business & Investment</Link></li>
+              <li><Link to="/services/student" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Student Visas</Link></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-3 text-australia-blue">Important Information</h3>
+            <h3 className="font-semibold mb-3 text-australia-blue">Support</h3>
+            <ul className="space-y-2">
+              <li><Link to="/meeting" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Chat with Ritu AI</Link></li>
+              <li><Link to="/contact" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Book Consultation</Link></li>
+              <li><Link to="/faq" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">FAQ</Link></li>
+              <li><Link to="/resources" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Resources</Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold mb-3 text-australia-blue">Legal Information</h3>
             <p className="text-xs text-gray-600 mb-4">
-              Gulshan is an AI assistant and provides information based on publicly available resources. 
-              All information provided should not be considered as legal advice.
+              VARG Immigration is a registered migration agency. All AI-powered information is supplemented by expert human guidance.
             </p>
-            <p className="text-xs text-gray-600">
-              For official information, please visit the 
+            <p className="text-xs text-gray-600 mb-4">
+              For official information, visit the 
               <a 
                 href="https://immi.homeaffairs.gov.au/" 
                 target="_blank" 
@@ -50,7 +62,7 @@ const Footer = () => {
         </div>
         
         <div className="pt-6 border-t text-center text-xs text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Gulshan AI. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} VARG Immigration. All rights reserved. | Serving Indian diaspora since 2018</p>
         </div>
       </div>
     </footer>

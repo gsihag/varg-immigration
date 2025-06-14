@@ -8,25 +8,27 @@ const Header = () => {
     <header className="border-b bg-white">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
-          <div className="bg-australia-blue rounded-full w-10 h-10 flex items-center justify-center text-white font-bold text-xl">G</div>
-          <span className="font-semibold text-xl">Gulshan</span>
-          <span className="bg-australia-blue text-white text-xs px-2 py-1 rounded-full">AI</span>
+          <div className="flex items-center gap-3">
+            <div className="text-2xl font-bold text-australia-blue">VARG</div>
+            <div className="text-sm text-gray-600">Immigration</div>
+          </div>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Home</Link>
+          <Link to="/services" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Services</Link>
           <Link to="/about" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">About</Link>
-          <Link to="/faq" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">FAQ</Link>
+          <Link to="/contact" className="text-sm text-gray-600 hover:text-australia-blue transition-colors">Contact</Link>
         </nav>
         
         <div className="flex items-center gap-3">
           <Link to="/meeting" className="hidden sm:block">
             <Button variant="outline" className="border-australia-blue text-australia-blue hover:text-white hover:bg-australia-blue">
-              Start Meeting
+              Ask Ritu AI
             </Button>
           </Link>
-          <Button className="bg-australia-blue hover:bg-australia-darkBlue transition-colors">
-            <Link to="/meeting">Talk to Gulshan</Link>
+          <Button className="bg-australia-blue hover:bg-australia-darkBlue transition-colors" asChild>
+            <Link to="/contact">Book Consultation</Link>
           </Button>
         </div>
       </div>
