@@ -88,12 +88,12 @@ const Index = () => {
         <div className="relative container mx-auto px-4 py-20 lg:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
-              <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium">
+              <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-white">
                 <Star className="w-4 h-4 mr-2 text-yellow-400" />
                 Australia's Most Trusted Migration Experts
               </div>
               
-              <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl lg:text-6xl font-bold leading-tight text-white">
                 Your Journey to
                 <span className="block text-yellow-400">Australia Starts Here</span>
               </h1>
@@ -184,7 +184,7 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-20">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">Our Migration Services</h2>
@@ -206,7 +206,7 @@ const Index = () => {
                   <h3 className="text-xl font-bold text-australia-blue mb-3 group-hover:text-australia-darkBlue transition-colors">
                     {service.name}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">{service.description}</p>
+                  <p className="text-gray-700 leading-relaxed">{service.description}</p>
                   <div className="mt-6 text-australia-blue font-semibold group-hover:text-australia-darkBlue transition-colors">
                     Learn More →
                   </div>
@@ -216,7 +216,7 @@ const Index = () => {
           </div>
           
           <div className="text-center mt-12">
-            <Button size="lg" className="bg-australia-blue hover:bg-australia-darkBlue text-lg px-8 py-4 rounded-full" asChild>
+            <Button size="lg" className="bg-australia-blue hover:bg-australia-darkBlue text-white text-lg px-8 py-4 rounded-full" asChild>
               <Link to="/meeting">Get Started with Ritu AI</Link>
             </Button>
           </div>
@@ -226,7 +226,7 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-australia-blue to-australia-darkBlue text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">Ready to Start Your Australian Journey?</h2>
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">Ready to Start Your Australian Journey?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">
             Join thousands of successful applicants who chose VARG Immigration for their migration needs
           </p>

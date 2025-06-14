@@ -15,7 +15,7 @@ const Footer = () => {
                 V
               </div>
               <div>
-                <div className="text-2xl font-bold">VARG</div>
+                <div className="text-2xl font-bold text-white">VARG</div>
                 <div className="text-sm text-gray-400">Immigration</div>
               </div>
             </div>
@@ -24,7 +24,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-2 text-australia-blue">
               <div className="bg-australia-blue rounded-full w-6 h-6 flex items-center justify-center text-white font-bold text-xs">R</div>
-              <span className="text-sm font-semibold">Powered by Ritu AI</span>
+              <span className="text-sm font-semibold text-gray-300">Powered by Ritu AI</span>
             </div>
           </div>
           
@@ -32,11 +32,11 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-australia-blue">Services</h3>
             <ul className="space-y-3">
-              <li><Link to="/services/skilled" className="text-gray-300 hover:text-white transition-colors">Skilled Migration</Link></li>
-              <li><Link to="/services/family" className="text-gray-300 hover:text-white transition-colors">Family Visas</Link></li>
-              <li><Link to="/services/business" className="text-gray-300 hover:text-white transition-colors">Business & Investment</Link></li>
-              <li><Link to="/services/student" className="text-gray-300 hover:text-white transition-colors">Student Visas</Link></li>
-              <li><Link to="/services/citizenship" className="text-gray-300 hover:text-white transition-colors">Citizenship</Link></li>
+              <li><Link to="/services" className="text-gray-300 hover:text-white transition-colors">Skilled Migration</Link></li>
+              <li><Link to="/services" className="text-gray-300 hover:text-white transition-colors">Family Visas</Link></li>
+              <li><Link to="/services" className="text-gray-300 hover:text-white transition-colors">Business & Investment</Link></li>
+              <li><Link to="/services" className="text-gray-300 hover:text-white transition-colors">Student Visas</Link></li>
+              <li><Link to="/services" className="text-gray-300 hover:text-white transition-colors">Citizenship</Link></li>
             </ul>
           </div>
           
@@ -47,8 +47,8 @@ const Footer = () => {
               <li><Link to="/meeting" className="text-gray-300 hover:text-white transition-colors">Chat with Ritu AI</Link></li>
               <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Book Consultation</Link></li>
               <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/faq" className="text-gray-300 hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link to="/resources" className="text-gray-300 hover:text-white transition-colors">Resources</Link></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">FAQ</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Resources</a></li>
             </ul>
           </div>
           
