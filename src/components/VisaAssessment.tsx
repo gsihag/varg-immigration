@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { AssessmentData, PointsBreakdown, Recommendations } from './visa-assessment/types';
@@ -61,22 +60,22 @@ const VisaAssessment = () => {
       case 4:
         return true; // Work experience is optional
       case 5:
-        return assessmentData.hasAustralianQualification === true || assessmentData.hasAustralianQualification === false;
+        return assessmentData.hasAustralianQualification !== null;
       case 6:
-        return assessmentData.hasAustralianQualification === false || (assessmentData.isFromRegionalAustralia === true || assessmentData.isFromRegionalAustralia === false);
+        return assessmentData.hasAustralianQualification === false || assessmentData.isFromRegionalAustralia !== null;
       case 7:
-        return assessmentData.hasMastersOrDoctorate === true || assessmentData.hasMastersOrDoctorate === false;
+        return assessmentData.hasMastersOrDoctorate !== null;
       case 8:
-        return assessmentData.hasNAATICredential === true || assessmentData.hasNAATICredential === false;
+        return assessmentData.hasNAATICredential !== null;
       case 9:
-        return assessmentData.hasCompletedProfessionalYear === true || assessmentData.hasCompletedProfessionalYear === false;
+        return assessmentData.hasCompletedProfessionalYear !== null;
       case 10:
         return assessmentData.partnerStatus !== '';
       case 11:
         if (assessmentData.partnerStatus !== 'non-australian') return true;
         return assessmentData.partnerEnglishTest && 
                Object.values(assessmentData.partnerEnglishScores).some(score => score !== '') &&
-               (assessmentData.partnerHasSkillAssessment === true || assessmentData.partnerHasSkillAssessment === false);
+               assessmentData.partnerHasSkillAssessment !== null;
       default:
         return false;
     }

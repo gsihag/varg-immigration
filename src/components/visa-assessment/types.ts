@@ -35,6 +35,11 @@ export interface AssessmentData {
   partnerHasSkillAssessment: boolean | null;
   
   stateInterest: string;
+  australianStudy: string;
+  regionalStudy: string;
+  mastersPhd: string;
+  naatiCredential: string;
+  professionalYear: string;
 }
 
 export interface PointsBreakdown {
