@@ -4,10 +4,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RituChat from '@/components/RituChat';
 import VisaAssessment from '@/components/VisaAssessment';
+import DocumentCenter from '@/components/DocumentCenter';
+import EnhancedPointsCalculator from '@/components/EnhancedPointsCalculator';
 import Disclaimer from '@/components/Disclaimer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageCircle, Calculator, FileText, BookOpen, Users, Shield, Clock, CheckCircle } from 'lucide-react';
+import { MessageCircle, Calculator, FileText, BookOpen, Users, Shield, Clock, CheckCircle, Target } from 'lucide-react';
 
 const RituMeeting = () => {
   return (
@@ -34,7 +36,7 @@ const RituMeeting = () => {
         
         {/* Main Interface */}
         <Tabs defaultValue="chat" className="mb-12">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8">
             <TabsTrigger value="chat" className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
               Chat with Ritu
@@ -42,6 +44,14 @@ const RituMeeting = () => {
             <TabsTrigger value="assessment" className="flex items-center gap-2">
               <Calculator className="w-4 h-4" />
               Visa Assessment
+            </TabsTrigger>
+            <TabsTrigger value="documents" className="flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Documents
+            </TabsTrigger>
+            <TabsTrigger value="points" className="flex items-center gap-2">
+              <Target className="w-4 h-4" />
+              Points Calculator
             </TabsTrigger>
           </TabsList>
           
@@ -51,6 +61,14 @@ const RituMeeting = () => {
           
           <TabsContent value="assessment">
             <VisaAssessment />
+          </TabsContent>
+          
+          <TabsContent value="documents">
+            <DocumentCenter />
+          </TabsContent>
+          
+          <TabsContent value="points">
+            <EnhancedPointsCalculator />
           </TabsContent>
         </Tabs>
         
