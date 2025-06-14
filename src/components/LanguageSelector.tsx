@@ -1,11 +1,28 @@
 
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Globe, ChevronDown } from 'lucide-react';
 
-const LanguageContext = createContext();
+// Define TypeScript interfaces
+interface Language {
+  name: string;
+  flag: string;
+}
 
-export const useLanguage = () => {
+interface LanguageContextType {
+  currentLanguage: string;
+  setCurrentLanguage: (language: string) => void;
+  languages: Record<string, Language>;
+  t: (key: string) => string;
+}
+
+interface LanguageProviderProps {
+  children: ReactNode;
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');
@@ -13,10 +30,10 @@ export const useLanguage = () => {
   return context;
 };
 
-export const LanguageProvider = ({ children }) => {
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState('en');
 
-  const languages = {
+  const languages: Record<string, Language> = {
     en: { name: 'English', flag: '🇺🇸' },
     hi: { name: 'हिंदी', flag: '🇮🇳' },
     zh: { name: '中文', flag: '🇨🇳' },
@@ -27,7 +44,7 @@ export const LanguageProvider = ({ children }) => {
     ur: { name: 'اردو', flag: '🇵🇰' }
   };
 
-  const translations = {
+  const translations: Record<string, Record<string, string>> = {
     en: {
       chatWithRitu: 'Chat with Ritu',
       visaAssessment: 'Visa Assessment',
@@ -142,16 +159,23 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
-  const t = (key) => translations[currentLanguage]?.[key] || translations.en[key];
+  const t = (key: string): string => translations[currentLanguage]?.[key] || translations.en[key] || key;
+
+  const contextValue: LanguageContextType = {
+    currentLanguage,
+    setCurrentLanguage,
+    languages,
+    t
+  };
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, setCurrentLanguage, languages, t }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
 };
 
-const LanguageSelector = () => {
+const LanguageSelector: React.FC = () => {
   const { currentLanguage, setCurrentLanguage, languages } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
