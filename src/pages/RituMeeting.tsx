@@ -51,60 +51,78 @@ const RituMeetingContent = () => {
             <TabsList className="w-full bg-gray-50 p-0 h-auto grid grid-cols-6 gap-0 rounded-none border-b border-gray-200">
               <TabsTrigger 
                 value="chat" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-8 h-24 min-h-[96px] rounded-none border-0 bg-transparent hover:bg-blue-50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-blue-700 font-medium"
               >
-                <MessageCircle className="w-9 h-9 mb-2 group-data-[state=active]:animate-pulse group-data-[state=active]:drop-shadow-lg hover:scale-110 transition-all duration-300" />
-                <span className="text-sm leading-tight text-center">
+                <div className="relative">
+                  <MessageCircle className="w-12 h-12 mb-3 group-data-[state=active]:animate-pulse group-data-[state=active]:drop-shadow-lg group-data-[state=active]:filter group-data-[state=active]:brightness-110 hover:scale-110 transition-all duration-300 group-data-[state=active]:text-white group-hover:text-blue-600" />
+                  <div className="absolute inset-0 bg-blue-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-sm leading-tight text-center font-semibold">
                   <span className="hidden sm:inline">{t('chatWithRitu')}</span>
                   <span className="sm:hidden">Chat</span>
                 </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="assessment" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-8 h-24 min-h-[96px] rounded-none border-0 bg-transparent hover:bg-green-50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-600 data-[state=active]:to-green-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-green-700 font-medium"
               >
-                <Calculator className="w-9 h-9 mb-2 group-data-[state=active]:scale-110 group-data-[state=active]:drop-shadow-lg hover:rotate-12 transition-all duration-300" />
-                <span className="text-sm leading-tight text-center">
+                <div className="relative">
+                  <Calculator className="w-12 h-12 mb-3 group-data-[state=active]:scale-110 group-data-[state=active]:drop-shadow-lg group-data-[state=active]:filter group-data-[state=active]:brightness-110 hover:rotate-12 transition-all duration-300 group-data-[state=active]:text-white group-hover:text-green-600" />
+                  <div className="absolute inset-0 bg-green-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-sm leading-tight text-center font-semibold">
                   <span className="hidden sm:inline">{t('visaAssessment')}</span>
                   <span className="sm:hidden">Visa</span>
                 </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="documents" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-8 h-24 min-h-[96px] rounded-none border-0 bg-transparent hover:bg-purple-50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-purple-700 font-medium"
               >
-                <FileText className="w-9 h-9 mb-2 group-data-[state=active]:rotate-6 group-data-[state=active]:drop-shadow-lg hover:scale-110 transition-all duration-300" />
-                <span className="text-sm leading-tight text-center">
+                <div className="relative">
+                  <FileText className="w-12 h-12 mb-3 group-data-[state=active]:rotate-6 group-data-[state=active]:drop-shadow-lg group-data-[state=active]:filter group-data-[state=active]:brightness-110 hover:scale-110 transition-all duration-300 group-data-[state=active]:text-white group-hover:text-purple-600" />
+                  <div className="absolute inset-0 bg-purple-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-sm leading-tight text-center font-semibold">
                   <span className="hidden sm:inline">{t('documents')}</span>
                   <span className="sm:hidden">Docs</span>
                 </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="points" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-8 h-24 min-h-[96px] rounded-none border-0 bg-transparent hover:bg-orange-50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-600 data-[state=active]:to-orange-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-orange-700 font-medium"
               >
-                <Target className="w-9 h-9 mb-2 group-data-[state=active]:animate-pulse group-data-[state=active]:drop-shadow-lg hover:scale-125 transition-all duration-300" />
-                <span className="text-sm leading-tight text-center">
+                <div className="relative">
+                  <Target className="w-12 h-12 mb-3 group-data-[state=active]:animate-pulse group-data-[state=active]:drop-shadow-lg group-data-[state=active]:filter group-data-[state=active]:brightness-110 hover:scale-125 transition-all duration-300 group-data-[state=active]:text-white group-hover:text-orange-600" />
+                  <div className="absolute inset-0 bg-orange-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-sm leading-tight text-center font-semibold">
                   <span className="hidden sm:inline">{t('pointsCalculator')}</span>
                   <span className="sm:hidden">Points</span>
                 </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="timeline" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-8 h-24 min-h-[96px] rounded-none border-0 bg-transparent hover:bg-indigo-50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-600 data-[state=active]:to-indigo-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-indigo-700 font-medium"
               >
-                <Calendar className="w-9 h-9 mb-2 group-data-[state=active]:scale-110 group-data-[state=active]:drop-shadow-lg hover:rotate-12 transition-all duration-300" />
-                <span className="text-sm leading-tight text-center">
+                <div className="relative">
+                  <Calendar className="w-12 h-12 mb-3 group-data-[state=active]:scale-110 group-data-[state=active]:drop-shadow-lg group-data-[state=active]:filter group-data-[state=active]:brightness-110 hover:rotate-12 transition-all duration-300 group-data-[state=active]:text-white group-hover:text-indigo-600" />
+                  <div className="absolute inset-0 bg-indigo-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-sm leading-tight text-center font-semibold">
                   <span className="hidden sm:inline">{t('timeline')}</span>
                   <span className="sm:hidden">Timeline</span>
                 </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="settlement" 
-                className="group relative flex flex-col items-center justify-center px-4 py-6 h-20 min-h-[80px] rounded-none border-0 bg-transparent hover:bg-gray-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-none transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-gray-800 font-medium"
+                className="group relative flex flex-col items-center justify-center px-4 py-8 h-24 min-h-[96px] rounded-none border-0 bg-transparent hover:bg-teal-50 data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-600 data-[state=active]:to-teal-700 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 ease-in-out text-gray-600 data-[state=inactive]:hover:text-teal-700 font-medium"
               >
-                <Home className="w-9 h-9 mb-2 group-data-[state=active]:animate-bounce group-data-[state=active]:drop-shadow-lg hover:scale-110 transition-all duration-300" />
-                <span className="text-sm leading-tight text-center">
+                <div className="relative">
+                  <Home className="w-12 h-12 mb-3 group-data-[state=active]:animate-bounce group-data-[state=active]:drop-shadow-lg group-data-[state=active]:filter group-data-[state=active]:brightness-110 hover:scale-110 transition-all duration-300 group-data-[state=active]:text-white group-hover:text-teal-600" />
+                  <div className="absolute inset-0 bg-teal-600/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 group-data-[state=active]:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                <span className="text-sm leading-tight text-center font-semibold">
                   <span className="hidden sm:inline">{t('settlement')}</span>
                   <span className="sm:hidden">Settle</span>
                 </span>
