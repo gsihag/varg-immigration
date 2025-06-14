@@ -89,6 +89,65 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
+
+  /* Enhanced Input Styling for Better Contrast */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  select,
+  textarea {
+    @apply bg-white border-2 border-gray-300 text-gray-900 placeholder-gray-500;
+    @apply focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+
+  /* Ensure all form elements have proper contrast */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    @apply bg-white border-2 border-gray-300 text-gray-900 placeholder-gray-500;
+    @apply focus:border-blue-600 focus:ring-2 focus:ring-blue-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+}
+
+/* Enhanced Animations */
+@keyframes fade-in-50 {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-out-50 {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in-50 {
+  animation: fade-in-50 0.3s ease-out;
+}
+
+.duration-300 {
+  animation-duration: 300ms;
 }
 
 /* Psychology-Based Animations */
