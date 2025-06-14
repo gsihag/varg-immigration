@@ -1,450 +1,685 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, AlertCircle, Calculator, FileText, Globe } from 'lucide-react';
-
-interface AssessmentData {
-  age: string;
-  education: string;
-  experience: string;
-  englishTest: string;
-  englishScore: string;
-  occupation: string;
-  partnerSkills: string;
-  australianStudy: string;
-  communityLanguage: string;
-  professionalYear: string;
-}
+import { Calculator, CheckCircle, AlertCircle, TrendingUp, MapPin, Award, Clock } from 'lucide-react';
 
 const VisaAssessment = () => {
-  const [step, setStep] = useState(1);
-  const [assessmentData, setAssessmentData] = useState<AssessmentData>({
+  // Session-only state - no persistent storage
+  const [currentStep, setCurrentStep] = useState(1);
+  const [assessmentData, setAssessmentData] = useState({
     age: '',
+    occupation: '',
     education: '',
-    experience: '',
     englishTest: '',
     englishScore: '',
-    occupation: '',
-    partnerSkills: '',
-    australianStudy: '',
-    communityLanguage: '',
-    professionalYear: ''
+    workExperience: '',
+    currentLocation: '',
+    visaStatus: '',
+    familyStatus: '',
+    australianStudy: false,
+    stateInterest: ''
   });
-  const [results, setResults] = useState<any>(null);
+  const [pointsBreakdown, setPointsBreakdown] = useState(null);
+  const [recommendations, setRecommendations] = useState(null);
+
+  // Comprehensive occupation list
+  const occupations = [
+    { value: 'software-engineer', label: 'Software Engineer', list: 'MLTSSL', assessment: 'ACS' },
+    { value: 'business-analyst', label: 'Business Analyst', list: 'MLTSSL', assessment: 'ACS' },
+    { value: 'accountant', label: 'Accountant', list: 'MLTSSL', assessment: 'CPA/CA ANZ' },
+    { value: 'mechanical-engineer', label: 'Mechanical Engineer', list: 'MLTSSL', assessment: 'Engineers Australia' },
+    { value: 'civil-engineer', label: 'Civil Engineer', list: 'MLTSSL', assessment: 'Engineers Australia' },
+    { value: 'registered-nurse', label: 'Registered Nurse', list: 'MLTSSL', assessment: 'ANMAC' },
+    { value: 'teacher', label: 'Secondary School Teacher', list: 'MLTSSL', assessment: 'AITSL' },
+    { value: 'chef', label: 'Chef', list: 'STSOL', assessment: 'TRA' },
+    { value: 'marketing-specialist', label: 'Marketing Specialist', list: 'STSOL', assessment: 'VETASSESS' },
+    { value: 'project-manager', label: 'Project Manager', list: 'STSOL', assessment: 'VETASSESS' }
+  ];
 
   const calculatePoints = () => {
-    let totalPoints = 0;
-    let breakdown: any = {};
+    let points = 0;
+    const breakdown = {
+      age: 0,
+      english: 0,
+      education: 0,
+      experience: 0,
+      bonus: 0,
+      total: 0
+    };
 
     // Age points
     const age = parseInt(assessmentData.age);
-    if (age >= 25 && age <= 32) {
-      breakdown.age = 30;
-      totalPoints += 30;
-    } else if (age >= 33 && age <= 39) {
-      breakdown.age = 25;
-      totalPoints += 25;
-    } else if (age >= 40 && age <= 44) {
-      breakdown.age = 15;
-      totalPoints += 15;
-    } else {
-      breakdown.age = 0;
-    }
-
-    // Education points
-    switch (assessmentData.education) {
-      case 'doctorate':
-        breakdown.education = 20;
-        totalPoints += 20;
-        break;
-      case 'bachelor':
-        breakdown.education = 15;
-        totalPoints += 15;
-        break;
-      case 'diploma':
-        breakdown.education = 10;
-        totalPoints += 10;
-        break;
-      default:
-        breakdown.education = 0;
-    }
-
-    // Experience points
-    const experience = parseInt(assessmentData.experience);
-    if (experience >= 8) {
-      breakdown.experience = 20;
-      totalPoints += 20;
-    } else if (experience >= 5) {
-      breakdown.experience = 15;
-      totalPoints += 15;
-    } else if (experience >= 3) {
-      breakdown.experience = 10;
-      totalPoints += 10;
-    } else {
-      breakdown.experience = 0;
-    }
+    if (age >= 25 && age <= 32) breakdown.age = 30;
+    else if (age >= 33 && age <= 39) breakdown.age = 25;
+    else if (age >= 40 && age <= 44) breakdown.age = 15;
 
     // English points
     const englishScore = parseFloat(assessmentData.englishScore);
     if (assessmentData.englishTest === 'ielts') {
-      if (englishScore >= 8.0) {
-        breakdown.english = 20;
-        totalPoints += 20;
-      } else if (englishScore >= 7.0) {
-        breakdown.english = 10;
-        totalPoints += 10;
-      } else {
-        breakdown.english = 0;
-      }
+      if (englishScore >= 8.0) breakdown.english = 20;
+      else if (englishScore >= 7.0) breakdown.english = 10;
+    } else if (assessmentData.englishTest === 'pte') {
+      if (englishScore >= 79) breakdown.english = 20;
+      else if (englishScore >= 65) breakdown.english = 10;
     }
+
+    // Education points
+    switch (assessmentData.education) {
+      case 'doctorate': breakdown.education = 20; break;
+      case 'bachelor': case 'masters': breakdown.education = 15; break;
+      case 'diploma': breakdown.education = 10; break;
+    }
+
+    // Experience points
+    const experience = parseInt(assessmentData.workExperience);
+    if (experience >= 8) breakdown.experience = 15;
+    else if (experience >= 5) breakdown.experience = 10;
+    else if (experience >= 3) breakdown.experience = 5;
 
     // Bonus points
-    breakdown.bonus = 0;
-    if (assessmentData.australianStudy === 'yes') {
-      breakdown.bonus += 5;
-      totalPoints += 5;
-    }
-    if (assessmentData.communityLanguage === 'yes') {
-      breakdown.bonus += 5;
-      totalPoints += 5;
-    }
-    if (assessmentData.professionalYear === 'yes') {
-      breakdown.bonus += 5;
-      totalPoints += 5;
-    }
-    if (assessmentData.partnerSkills === 'yes') {
-      breakdown.bonus += 10;
-      totalPoints += 10;
-    }
+    if (assessmentData.australianStudy) breakdown.bonus += 5;
 
-    return { totalPoints, breakdown };
-  };
-
-  const handleSubmit = () => {
-    const { totalPoints, breakdown } = calculatePoints();
+    breakdown.total = breakdown.age + breakdown.english + breakdown.education + breakdown.experience + breakdown.bonus;
     
-    let eligibility = '';
-    let recommendations = [];
-    let visaOptions = [];
+    return breakdown;
+  };
 
-    if (totalPoints >= 80) {
-      eligibility = 'Excellent';
-      recommendations.push('You have a competitive score for skilled migration');
-      recommendations.push('Consider applying for subclass 189 (Skilled Independent)');
-      visaOptions.push({ visa: 'Subclass 189', chance: 'Very High', points: totalPoints });
-      visaOptions.push({ visa: 'Subclass 190', chance: 'Very High', points: totalPoints + 5 });
-    } else if (totalPoints >= 65) {
-      eligibility = 'Good';
-      recommendations.push('You meet the minimum points requirement');
-      recommendations.push('State nomination (190) would improve your chances significantly');
-      visaOptions.push({ visa: 'Subclass 190', chance: 'High', points: totalPoints + 5 });
-      visaOptions.push({ visa: 'Subclass 491', chance: 'High', points: totalPoints + 15 });
-    } else {
-      eligibility = 'Needs Improvement';
-      recommendations.push('Focus on improving your points score');
-      recommendations.push('Consider improving English scores or gaining more experience');
-      if (totalPoints >= 50) {
-        visaOptions.push({ visa: 'Subclass 491', chance: 'Moderate', points: totalPoints + 15 });
+  const generateRecommendations = (points) => {
+    const selectedOccupation = occupations.find(occ => occ.value === assessmentData.occupation);
+    
+    const recommendations = {
+      eligible: [],
+      improvements: [],
+      strategy: '',
+      nextSteps: []
+    };
+
+    // Visa eligibility assessment
+    if (points.total >= 65) {
+      if (selectedOccupation?.list === 'MLTSSL') {
+        recommendations.eligible.push({
+          visa: 'Subclass 189 - Skilled Independent',
+          chance: points.total >= 90 ? 'Excellent' : points.total >= 80 ? 'Good' : 'Fair',
+          description: 'No sponsorship required, live anywhere in Australia'
+        });
       }
+      
+      recommendations.eligible.push({
+        visa: 'Subclass 190 - State Nominated',
+        chance: points.total >= 85 ? 'Excellent' : points.total >= 75 ? 'Good' : 'Fair',
+        description: '+5 points with state nomination, must live in nominating state'
+      });
+
+      recommendations.eligible.push({
+        visa: 'Subclass 491 - Regional Skilled',
+        chance: points.total >= 75 ? 'Excellent' : 'Good',
+        description: '+15 points with regional nomination, 5-year pathway to PR'
+      });
     }
 
-    setResults({
-      totalPoints,
-      breakdown,
-      eligibility,
-      recommendations,
-      visaOptions
-    });
-    setStep(4);
+    // Improvement suggestions
+    if (points.english < 20 && parseFloat(assessmentData.englishScore) < 8.0) {
+      recommendations.improvements.push({
+        area: 'English Proficiency',
+        current: `${points.english} points`,
+        potential: '+10-20 points',
+        action: 'Achieve IELTS 7.0+ (Proficient) or 8.0+ (Superior)'
+      });
+    }
+
+    if (points.age < 30 && parseInt(assessmentData.age) > 32) {
+      recommendations.improvements.push({
+        area: 'Age Factor',
+        current: `${points.age} points`,
+        potential: 'Time-sensitive',
+        action: 'Apply as soon as possible - points decrease with age'
+      });
+    }
+
+    if (!assessmentData.australianStudy) {
+      recommendations.improvements.push({
+        area: 'Australian Study',
+        current: '0 points',
+        potential: '+5 points',
+        action: 'Consider Professional Year or additional Australian qualification'
+      });
+    }
+
+    // Strategy recommendation
+    if (points.total >= 90) {
+      recommendations.strategy = 'Excellent profile! Apply for Subclass 189 with high invitation chances.';
+    } else if (points.total >= 80) {
+      recommendations.strategy = 'Strong profile. Consider state nomination for faster processing.';
+    } else if (points.total >= 65) {
+      recommendations.strategy = 'Eligible but competitive. Focus on state nomination and points improvement.';
+    } else {
+      recommendations.strategy = 'Below minimum threshold. Focus on improving English and gaining experience.';
+    }
+
+    // Next steps
+    if (points.total >= 65) {
+      recommendations.nextSteps = [
+        'Get skills assessment from ' + (selectedOccupation?.assessment || 'relevant authority'),
+        'Research state nomination programs',
+        'Prepare comprehensive document checklist',
+        'Consider EOI submission timing'
+      ];
+    } else {
+      recommendations.nextSteps = [
+        'Improve English test scores',
+        'Gain additional work experience',
+        'Consider Australian study pathway',
+        'Research alternative visa options'
+      ];
+    }
+
+    return recommendations;
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                placeholder="Enter your age"
-                value={assessmentData.age}
-                onChange={(e) => setAssessmentData({...assessmentData, age: e.target.value})}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="education">Highest Education Level</Label>
-              <Select value={assessmentData.education} onValueChange={(value) => setAssessmentData({...assessmentData, education: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select education level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="doctorate">Doctorate (PhD)</SelectItem>
-                  <SelectItem value="bachelor">Bachelor's/Master's Degree</SelectItem>
-                  <SelectItem value="diploma">Diploma/Certificate</SelectItem>
-                  <SelectItem value="secondary">Secondary School</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="experience">Years of Work Experience (in nominated occupation)</Label>
-              <Input
-                id="experience"
-                type="number"
-                placeholder="Years of experience"
-                value={assessmentData.experience}
-                onChange={(e) => setAssessmentData({...assessmentData, experience: e.target.value})}
-              />
-            </div>
-          </div>
-        );
-      
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="englishTest">English Test Type</Label>
-              <Select value={assessmentData.englishTest} onValueChange={(value) => setAssessmentData({...assessmentData, englishTest: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select test type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ielts">IELTS Academic</SelectItem>
-                  <SelectItem value="pte">PTE Academic</SelectItem>
-                  <SelectItem value="toefl">TOEFL iBT</SelectItem>
-                  <SelectItem value="none">Not taken yet</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="englishScore">Overall Score (if taken)</Label>
-              <Input
-                id="englishScore"
-                type="number"
-                step="0.5"
-                placeholder="e.g., 7.5 for IELTS"
-                value={assessmentData.englishScore}
-                onChange={(e) => setAssessmentData({...assessmentData, englishScore: e.target.value})}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="occupation">Nominated Occupation</Label>
-              <Input
-                id="occupation"
-                placeholder="e.g., Software Engineer, Accountant"
-                value={assessmentData.occupation}
-                onChange={(e) => setAssessmentData({...assessmentData, occupation: e.target.value})}
-              />
-            </div>
-          </div>
-        );
-      
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div>
-              <Label>Do you have a skilled partner?</Label>
-              <Select value={assessmentData.partnerSkills} onValueChange={(value) => setAssessmentData({...assessmentData, partnerSkills: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes (+10 points)</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                  <SelectItem value="single">Single</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Australian study (2+ years)?</Label>
-              <Select value={assessmentData.australianStudy} onValueChange={(value) => setAssessmentData({...assessmentData, australianStudy: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes (+5 points)</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Community language credentials?</Label>
-              <Select value={assessmentData.communityLanguage} onValueChange={(value) => setAssessmentData({...assessmentData, communityLanguage: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes (+5 points)</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label>Professional Year completed?</Label>
-              <Select value={assessmentData.professionalYear} onValueChange={(value) => setAssessmentData({...assessmentData, professionalYear: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes (+5 points)</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        );
-      
-      case 4:
-        return (
-          <div className="space-y-6">
-            {results && (
-              <>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-australia-blue mb-2">
-                    {results.totalPoints} Points
-                  </div>
-                  <div className={`text-lg font-semibold ${
-                    results.eligibility === 'Excellent' ? 'text-green-600' :
-                    results.eligibility === 'Good' ? 'text-yellow-600' : 'text-red-600'
-                  }`}>
-                    {results.eligibility} Eligibility
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-australia-blue">{results.breakdown.age}</div>
-                    <div className="text-sm text-gray-600">Age</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-australia-blue">{results.breakdown.education}</div>
-                    <div className="text-sm text-gray-600">Education</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-australia-blue">{results.breakdown.experience}</div>
-                    <div className="text-sm text-gray-600">Experience</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-australia-blue">{results.breakdown.english}</div>
-                    <div className="text-sm text-gray-600">English</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-australia-blue">{results.breakdown.bonus}</div>
-                    <div className="text-sm text-gray-600">Bonus</div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Visa Options</h3>
-                  <div className="space-y-3">
-                    {results.visaOptions.map((option: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="font-medium">{option.visa}</div>
-                          <div className="text-sm text-gray-600">{option.points} points with this visa</div>
-                        </div>
-                        <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          option.chance === 'Very High' ? 'bg-green-100 text-green-800' :
-                          option.chance === 'High' ? 'bg-blue-100 text-blue-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {option.chance}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Recommendations</h3>
-                  <div className="space-y-2">
-                    {results.recommendations.map((rec: string, index: number) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{rec}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        );
-      
-      default:
-        return null;
+  const handleStepComplete = () => {
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      // Calculate final results - session only
+      const points = calculatePoints();
+      const recs = generateRecommendations(points);
+      setPointsBreakdown(points);
+      setRecommendations(recs);
     }
   };
+
+  const getStepProgress = () => {
+    return (currentStep / 4) * 100;
+  };
+
+  if (pointsBreakdown && recommendations) {
+    return (
+      <div className="space-y-6">
+        {/* Results Header */}
+        <Card className="bg-gradient-to-r from-australia-blue to-australia-darkBlue text-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Your Assessment Results</h2>
+                <p className="text-blue-100">Personalized visa guidance based on your profile</p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold">{pointsBreakdown.total}</div>
+                <div className="text-sm text-blue-200">Total Points</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Points Breakdown */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calculator className="w-5 h-5" />
+                Points Breakdown
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span>Age ({assessmentData.age} years)</span>
+                  <Badge variant={pointsBreakdown.age >= 25 ? "default" : "secondary"}>
+                    {pointsBreakdown.age} points
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>English ({assessmentData.englishTest?.toUpperCase()} {assessmentData.englishScore})</span>
+                  <Badge variant={pointsBreakdown.english >= 10 ? "default" : "secondary"}>
+                    {pointsBreakdown.english} points
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Education</span>
+                  <Badge variant={pointsBreakdown.education >= 15 ? "default" : "secondary"}>
+                    {pointsBreakdown.education} points
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Work Experience ({assessmentData.workExperience} years)</span>
+                  <Badge variant={pointsBreakdown.experience >= 10 ? "default" : "secondary"}>
+                    {pointsBreakdown.experience} points
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Bonus Points</span>
+                  <Badge variant={pointsBreakdown.bonus > 0 ? "default" : "secondary"}>
+                    {pointsBreakdown.bonus} points
+                  </Badge>
+                </div>
+                <div className="border-t pt-3">
+                  <div className="flex justify-between items-center font-bold text-lg">
+                    <span>Total Score</span>
+                    <Badge className="bg-australia-blue text-white">
+                      {pointsBreakdown.total} points
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Visa Recommendations */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="w-5 h-5" />
+                Recommended Visas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recommendations.eligible.length > 0 ? (
+                <div className="space-y-3">
+                  {recommendations.eligible.map((visa, index) => (
+                    <div key={index} className="border rounded-lg p-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{visa.visa}</h4>
+                        <Badge 
+                          variant={visa.chance === 'Excellent' ? 'default' : visa.chance === 'Good' ? 'secondary' : 'outline'}
+                        >
+                          {visa.chance}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600">{visa.description}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                  <p className="text-gray-600">Currently not eligible for skilled migration visas</p>
+                  <p className="text-sm text-gray-500 mt-1">Focus on improving your points score</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Strategy & Improvements */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                Improvement Opportunities
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {recommendations.improvements.length > 0 ? (
+                <div className="space-y-3">
+                  {recommendations.improvements.map((improvement, index) => (
+                    <div key={index} className="border rounded-lg p-3">
+                      <div className="flex justify-between items-center mb-1">
+                        <h4 className="font-medium">{improvement.area}</h4>
+                        <span className="text-green-600 font-medium">{improvement.potential}</span>
+                      </div>
+                      <p className="text-sm text-gray-600">{improvement.action}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-2" />
+                  <p className="text-gray-600">Excellent profile! No major improvements needed.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="w-5 h-5" />
+                Next Steps
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                  <h4 className="font-medium text-blue-900 mb-1">Strategy Recommendation</h4>
+                  <p className="text-sm text-blue-800">{recommendations.strategy}</p>
+                </div>
+                <ol className="space-y-2">
+                  {recommendations.nextSteps.map((step, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <div className="bg-australia-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium flex-shrink-0 mt-0.5">
+                        {index + 1}
+                      </div>
+                      <span className="text-sm">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 justify-center">
+          <Button 
+            onClick={() => {
+              // Reset to step 1 - session only
+              setCurrentStep(1);
+              setPointsBreakdown(null);
+              setRecommendations(null);
+              setAssessmentData({
+                age: '',
+                occupation: '',
+                education: '',
+                englishTest: '',
+                englishScore: '',
+                workExperience: '',
+                currentLocation: '',
+                visaStatus: '',
+                familyStatus: '',
+                australianStudy: false,
+                stateInterest: ''
+              });
+            }}
+            variant="outline"
+          >
+            Start New Assessment
+          </Button>
+          <Button className="bg-australia-blue hover:bg-australia-darkBlue">
+            Chat with Ritu for Guidance
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="w-5 h-5" />
-          Visa Eligibility Assessment
-        </CardTitle>
-        <Progress value={(step / 4) * 100} className="mt-2" />
-        <p className="text-sm text-gray-600">Step {step} of 4</p>
-      </CardHeader>
-      
-      <CardContent>
-        {renderStep()}
-        
-        <div className="flex justify-between mt-8">
-          <Button 
-            variant="outline" 
-            onClick={() => setStep(Math.max(1, step - 1))}
-            disabled={step === 1}
-          >
-            Previous
-          </Button>
-          
-          {step < 4 ? (
-            <Button 
-              onClick={() => setStep(step + 1)}
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Progress Header */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xl font-bold">Visa Eligibility Assessment</h2>
+              <span className="text-sm text-gray-500">Step {currentStep} of 4</span>
+            </div>
+            <Progress value={getStepProgress()} className="h-2" />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Step Content */}
+      <Card>
+        <CardContent className="p-6">
+          {/* Step 1: Personal Information */}
+          {currentStep === 1 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="age">Age</Label>
+                    <Input
+                      id="age"
+                      type="number"
+                      placeholder="Enter your age"
+                      value={assessmentData.age}
+                      onChange={(e) => setAssessmentData({...assessmentData, age: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="occupation">Occupation</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, occupation: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your occupation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {occupations.map((occ) => (
+                          <SelectItem key={occ.value} value={occ.value}>
+                            {occ.label} ({occ.list})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="education">Highest Education</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, education: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select education level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="doctorate">Doctorate (PhD)</SelectItem>
+                        <SelectItem value="masters">Masters Degree</SelectItem>
+                        <SelectItem value="bachelor">Bachelor Degree</SelectItem>
+                        <SelectItem value="diploma">Diploma/Associate Degree</SelectItem>
+                        <SelectItem value="certificate">Certificate IV</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="experience">Work Experience (Years)</Label>
+                    <Input
+                      id="experience"
+                      type="number"
+                      placeholder="Years in nominated occupation"
+                      value={assessmentData.workExperience}
+                      onChange={(e) => setAssessmentData({...assessmentData, workExperience: e.target.value})}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: English Proficiency */}
+          {currentStep === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">English Proficiency</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="englishTest">English Test Type</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, englishTest: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select test type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ielts">IELTS Academic</SelectItem>
+                        <SelectItem value="pte">PTE Academic</SelectItem>
+                        <SelectItem value="toefl">TOEFL iBT</SelectItem>
+                        <SelectItem value="cambridge">Cambridge English</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="englishScore">
+                      {assessmentData.englishTest === 'ielts' ? 'Overall IELTS Score' : 
+                       assessmentData.englishTest === 'pte' ? 'Overall PTE Score' : 'Overall Score'}
+                    </Label>
+                    <Input
+                      id="englishScore"
+                      type="number"
+                      step="0.5"
+                      placeholder={assessmentData.englishTest === 'ielts' ? '6.0' : '50'}
+                      value={assessmentData.englishScore}
+                      onChange={(e) => setAssessmentData({...assessmentData, englishScore: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                {/* English Score Guidelines */}
+                {assessmentData.englishTest && (
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <h4 className="font-medium mb-2">Score Guidelines for {assessmentData.englishTest.toUpperCase()}:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                      <div>
+                        <span className="font-medium">Competent (0 points):</span>
+                        <br />
+                        {assessmentData.englishTest === 'ielts' ? '6.0 each band' : 
+                         assessmentData.englishTest === 'pte' ? '50 each section' : '6.0 overall'}
+                      </div>
+                      <div>
+                        <span className="font-medium">Proficient (+10 points):</span>
+                        <br />
+                        {assessmentData.englishTest === 'ielts' ? '7.0 each band' : 
+                         assessmentData.englishTest === 'pte' ? '65 each section' : '7.0 overall'}
+                      </div>
+                      <div>
+                        <span className="font-medium">Superior (+20 points):</span>
+                        <br />
+                        {assessmentData.englishTest === 'ielts' ? '8.0 each band' : 
+                         assessmentData.englishTest === 'pte' ? '79 each section' : '8.0 overall'}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Current Status */}
+          {currentStep === 3 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Current Status</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="location">Current Location</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, currentLocation: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="australia">Australia</SelectItem>
+                        <SelectItem value="india">India</SelectItem>
+                        <SelectItem value="china">China</SelectItem>
+                        <SelectItem value="uk">United Kingdom</SelectItem>
+                        <SelectItem value="usa">United States</SelectItem>
+                        <SelectItem value="canada">Canada</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="visaStatus">Current Visa Status (if in Australia)</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, visaStatus: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select visa status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Not in Australia</SelectItem>
+                        <SelectItem value="student">Student Visa</SelectItem>
+                        <SelectItem value="temporary-graduate">Temporary Graduate Visa</SelectItem>
+                        <SelectItem value="working-holiday">Working Holiday Visa</SelectItem>
+                        <SelectItem value="work">Work Visa</SelectItem>
+                        <SelectItem value="visitor">Visitor Visa</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="family">Family Status</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, familyStatus: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select family status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="single">Single</SelectItem>
+                        <SelectItem value="married-included">Married (partner included in application)</SelectItem>
+                        <SelectItem value="married-separate">Married (partner not included)</SelectItem>
+                        <SelectItem value="defacto">De facto relationship</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="state">Preferred Australian State</Label>
+                    <Select onValueChange={(value) => setAssessmentData({...assessmentData, stateInterest: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select preferred state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="nsw">New South Wales (Sydney)</SelectItem>
+                        <SelectItem value="vic">Victoria (Melbourne)</SelectItem>
+                        <SelectItem value="qld">Queensland (Brisbane)</SelectItem>
+                        <SelectItem value="wa">Western Australia (Perth)</SelectItem>
+                        <SelectItem value="sa">South Australia (Adelaide)</SelectItem>
+                        <SelectItem value="tas">Tasmania (Hobart)</SelectItem>
+                        <SelectItem value="act">Australian Capital Territory (Canberra)</SelectItem>
+                        <SelectItem value="nt">Northern Territory (Darwin)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Additional Information */}
+          {currentStep === 4 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Additional Information</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="australianStudy"
+                      checked={assessmentData.australianStudy}
+                      onChange={(e) => setAssessmentData({...assessmentData, australianStudy: e.target.checked})}
+                    />
+                    <Label htmlFor="australianStudy">
+                      I have completed 2+ years of Australian study (+5 points)
+                    </Label>
+                  </div>
+                  
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-2">Review Your Information:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                      <div>Age: {assessmentData.age}</div>
+                      <div>Occupation: {occupations.find(o => o.value === assessmentData.occupation)?.label}</div>
+                      <div>Education: {assessmentData.education}</div>
+                      <div>Experience: {assessmentData.workExperience} years</div>
+                      <div>English: {assessmentData.englishTest?.toUpperCase()} {assessmentData.englishScore}</div>
+                      <div>Location: {assessmentData.currentLocation}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+              disabled={currentStep === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={handleStepComplete}
+              disabled={
+                (currentStep === 1 && (!assessmentData.age || !assessmentData.occupation || !assessmentData.education || !assessmentData.workExperience)) ||
+                (currentStep === 2 && (!assessmentData.englishTest || !assessmentData.englishScore)) ||
+                (currentStep === 3 && (!assessmentData.currentLocation || !assessmentData.familyStatus)) ||
+                (currentStep === 4 && false)
+              }
               className="bg-australia-blue hover:bg-australia-darkBlue"
             >
-              {step === 3 ? 'Calculate Results' : 'Next'}
+              {currentStep === 4 ? 'Calculate Results' : 'Next'}
             </Button>
-          ) : (
-            <Button 
-              onClick={() => {
-                setStep(1);
-                setResults(null);
-                setAssessmentData({
-                  age: '',
-                  education: '',
-                  experience: '',
-                  englishTest: '',
-                  englishScore: '',
-                  occupation: '',
-                  partnerSkills: '',
-                  australianStudy: '',
-                  communityLanguage: '',
-                  professionalYear: ''
-                });
-              }}
-              variant="outline"
-            >
-              Start New Assessment
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
