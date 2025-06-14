@@ -6,17 +6,28 @@ import RituChat from '@/components/RituChat';
 import VisaAssessment from '@/components/VisaAssessment';
 import DocumentCenter from '@/components/DocumentCenter';
 import EnhancedPointsCalculator from '@/components/EnhancedPointsCalculator';
+import TimelineTracker from '@/components/TimelineTracker';
+import SettlementHub from '@/components/SettlementHub';
 import Disclaimer from '@/components/Disclaimer';
+import { LanguageProvider, useLanguage } from '@/components/LanguageSelector';
+import LanguageSelector from '@/components/LanguageSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageCircle, Calculator, FileText, BookOpen, Users, Shield, Clock, CheckCircle, Target } from 'lucide-react';
+import { MessageCircle, Calculator, FileText, BookOpen, Users, Shield, Clock, CheckCircle, Target, Calendar, Home } from 'lucide-react';
 
-const RituMeeting = () => {
+const RituMeetingContent = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
+        {/* Language Selector */}
+        <div className="flex justify-end mb-4">
+          <LanguageSelector />
+        </div>
+
         {/* Hero Section */}
         <div className="text-center mb-8">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
@@ -36,22 +47,36 @@ const RituMeeting = () => {
         
         {/* Main Interface */}
         <Tabs defaultValue="chat" className="mb-12">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto mb-8">
+          <TabsList className="grid w-full grid-cols-6 max-w-4xl mx-auto mb-8">
             <TabsTrigger value="chat" className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4" />
-              Chat with Ritu
+              <span className="hidden sm:inline">{t('chatWithRitu')}</span>
+              <span className="sm:hidden">Chat</span>
             </TabsTrigger>
             <TabsTrigger value="assessment" className="flex items-center gap-2">
               <Calculator className="w-4 h-4" />
-              Visa Assessment
+              <span className="hidden sm:inline">{t('visaAssessment')}</span>
+              <span className="sm:hidden">Visa</span>
             </TabsTrigger>
             <TabsTrigger value="documents" className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
-              Documents
+              <span className="hidden sm:inline">{t('documents')}</span>
+              <span className="sm:hidden">Docs</span>
             </TabsTrigger>
             <TabsTrigger value="points" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
-              Points Calculator
+              <span className="hidden sm:inline">{t('pointsCalculator')}</span>
+              <span className="sm:hidden">Points</span>
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('timeline')}</span>
+              <span className="sm:hidden">Timeline</span>
+            </TabsTrigger>
+            <TabsTrigger value="settlement" className="flex items-center gap-2">
+              <Home className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('settlement')}</span>
+              <span className="sm:hidden">Settle</span>
             </TabsTrigger>
           </TabsList>
           
@@ -69,6 +94,14 @@ const RituMeeting = () => {
           
           <TabsContent value="points">
             <EnhancedPointsCalculator />
+          </TabsContent>
+
+          <TabsContent value="timeline">
+            <TimelineTracker />
+          </TabsContent>
+
+          <TabsContent value="settlement">
+            <SettlementHub />
           </TabsContent>
         </Tabs>
         
@@ -169,6 +202,14 @@ const RituMeeting = () => {
       
       <Footer />
     </div>
+  );
+};
+
+const RituMeeting = () => {
+  return (
+    <LanguageProvider>
+      <RituMeetingContent />
+    </LanguageProvider>
   );
 };
 
