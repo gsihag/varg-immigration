@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { AssessmentData, PointsBreakdown, Recommendations } from './visa-assessment/types';
