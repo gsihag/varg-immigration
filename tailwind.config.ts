@@ -20,8 +20,6 @@ export default {
     },
     extend: {
       colors: {
-        "australia-blue": "#0033A0",
-        "australia-darkBlue": "#002d8f",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -55,6 +53,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        australia: {
+          blue: "#0033A0",
+          darkBlue: "#002266",
+          gold: "#FFD700",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,15 +73,10 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "pulse-slow": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
       },
     },
   },
