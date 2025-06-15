@@ -30,7 +30,7 @@ const FloatingChatWidget: React.FC = () => {
   return (
     <>
       {/* Floating Widget */}
-      <div className={`fixed bottom-6 left-6 z-50 transition-all duration-300 ${isChatOpen ? 'scale-95 opacity-75' : 'scale-100 opacity-100'}`}>
+      <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${isChatOpen ? 'scale-95 opacity-75' : 'scale-100 opacity-100'}`}>
         <Button
           onClick={handleWidgetClick}
           className={`
