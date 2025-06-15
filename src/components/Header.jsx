@@ -68,6 +68,12 @@ const Header = () => {
               Contact
             </Link>
             
+            <Link to="/ritu">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6">
+                Consult with Ritu
+              </Button>
+            </Link>
+            
             <Button className="bg-green-600 hover:bg-green-700 text-white font-medium px-6">
               Book Consultation
             </Button>
@@ -134,8 +140,17 @@ const Header = () => {
                 Contact
               </Link>
               
+              <Link 
+                to="/ritu" 
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium mt-2 w-full">
+                  Consult with Ritu
+                </Button>
+              </Link>
+              
               <Button 
-                className="bg-green-600 hover:bg-green-700 text-white font-medium mt-4"
+                className="bg-green-600 hover:bg-green-700 text-white font-medium mt-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Book Consultation
