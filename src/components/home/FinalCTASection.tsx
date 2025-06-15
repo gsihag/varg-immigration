@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -39,7 +38,7 @@ const FinalCTASection = () => {
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" className="group bg-white text-trust-blue border-2 border-white hover:bg-white hover:text-trust-deep hover:shadow-xl hover:scale-105 font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 transform hover:border-trust-blue" asChild>
+          <Button size="lg" className="group bg-success-green hover:bg-green-600 text-white hover:shadow-2xl hover:scale-105 font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 transform magnetic-hover attention-grab border-0" asChild>
             <Link to="/contact">
               <Users className="mr-2 w-5 h-5 group-hover:animate-pulse" />
               Book Expert Consultation
