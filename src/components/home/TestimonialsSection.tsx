@@ -1,57 +1,88 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Star, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Star } from 'lucide-react';
+import TestimonialCard from './TestimonialCard';
+import TestimonialNavigation from './TestimonialNavigation';
+
+const testimonials = [
+  {
+    name: "Sarah Chen",
+    role: "Software Engineer",
+    location: "Sydney, Australia",
+    text: "Ritu AI made my PR consultation effortless! The personalized guidance was like having a migration expert in my pocket 24/7.",
+    rating: 5,
+    avatar: "👩‍💻",
+    highlight: "Got PR in 8 months!",
+  },
+  {
+    name: "Ahmed Hassan",
+    role: "Business Analyst",
+    location: "Melbourne, Australia", 
+    text: "The personalized AI predicted every requirement before I even asked. Saved me months of research and thousands in consultant fees.",
+    rating: 5,
+    avatar: "👨‍💼",
+    highlight: "Saved $5,000+"
+  },
+  {
+    name: "Maria Rodriguez",
+    role: "Nurse",
+    location: "Perth, Australia",
+    text: "VARG's human touch combined with personalized AI precision made my family reunion possible. Emotional and efficient support!",
+    rating: 5,
+    avatar: "👩‍⚕️",
+    highlight: "Family reunited!"
+  }
+];
+
+type Direction = 'left' | 'right';
+
+const AUTO_ROTATE_DELAY = 5000; // 5 seconds of inactivity before restarting autorotate
 
 const TestimonialsSection = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [direction, setDirection] = useState<'left' | 'right'>('right');
+  const [direction, setDirection] = useState<Direction>('right');
   const [animating, setAnimating] = useState(false);
-  const timeoutRef = useRef<number | null>(null);
+  const [userActive, setUserActive] = useState(false);
+  const inactivityTimeout = useRef<number | null>(null);
+  const autoRotateTimeout = useRef<number | null>(null);
 
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "Software Engineer",
-      location: "Sydney, Australia",
-      text: "Ritu AI made my PR consultation effortless! The personalized guidance was like having a migration expert in my pocket 24/7.",
-      rating: 5,
-      avatar: "👩‍💻",
-      highlight: "Got PR in 8 months!",
-    },
-    {
-      name: "Ahmed Hassan",
-      role: "Business Analyst",
-      location: "Melbourne, Australia", 
-      text: "The personalized AI predicted every requirement before I even asked. Saved me months of research and thousands in consultant fees.",
-      rating: 5,
-      avatar: "👨‍💼",
-      highlight: "Saved $5,000+"
-    },
-    {
-      name: "Maria Rodriguez",
-      role: "Nurse",
-      location: "Perth, Australia",
-      text: "VARG's human touch combined with personalized AI precision made my family reunion possible. Emotional and efficient support!",
-      rating: 5,
-      avatar: "👩‍⚕️",
-      highlight: "Family reunited!"
-    }
-  ];
-
-  // Auto-rotate testimonials
+  // Clean up timers on unmount
   useEffect(() => {
-    // Reset animation state before starting interval
-    if (animating) return;
-    timeoutRef.current = window.setTimeout(() => {
-      handleNext();
-    }, 5000);
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      inactivityTimeout.current && clearTimeout(inactivityTimeout.current);
+      autoRotateTimeout.current && clearTimeout(autoRotateTimeout.current);
+    };
+  }, []);
+
+  // Auto-rotate logic (only when user not recently active)
+  useEffect(() => {
+    // Clear any previous auto-rotation
+    autoRotateTimeout.current && clearTimeout(autoRotateTimeout.current);
+
+    if (userActive) return; // If user just interacted, don't auto-rotate
+
+    autoRotateTimeout.current = window.setTimeout(() => {
+      handleNext('auto');
+    }, AUTO_ROTATE_DELAY);
+
+    return () => {
+      autoRotateTimeout.current && clearTimeout(autoRotateTimeout.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTestimonial, animating]);
+  }, [activeTestimonial, userActive]);
 
-  const handleAnimation = (callback: () => void, dir: 'left' | 'right') => {
+  // When user interacts, stop auto-rotation temporarily,
+  // and after inactivity for AUTO_ROTATE_DELAY, resume auto-rotation
+  const setUserInteraction = () => {
+    setUserActive(true);
+    inactivityTimeout.current && clearTimeout(inactivityTimeout.current);
+    inactivityTimeout.current = window.setTimeout(() => {
+      setUserActive(false);
+    }, AUTO_ROTATE_DELAY);
+  };
+
+  // Animation handling
+  const animateSwitch = (callback: () => void, dir: Direction) => {
     if (animating) return;
     setDirection(dir);
     setAnimating(true);
@@ -61,18 +92,24 @@ const TestimonialsSection = () => {
     }, 350);
   };
 
-  const handleNext = () => {
-    handleAnimation(() => {
-      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 'right');
+  const handleNext = (mode: 'user' | 'auto' = 'user') => {
+    if (!animating) {
+      animateSwitch(() => {
+        setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+      }, 'right');
+    }
+    if (mode === 'user') setUserInteraction();
   };
 
   const handlePrev = () => {
-    handleAnimation(() => {
-      setActiveTestimonial((prev) =>
-        prev === 0 ? testimonials.length - 1 : prev - 1
-      );
-    }, 'left');
+    if (!animating) {
+      animateSwitch(() => {
+        setActiveTestimonial((prev) =>
+          prev === 0 ? testimonials.length - 1 : prev - 1
+        );
+      }, 'left');
+    }
+    setUserInteraction();
   };
 
   const goToTestimonial = (idx: number) => {
@@ -83,6 +120,35 @@ const TestimonialsSection = () => {
       setActiveTestimonial(idx);
       setAnimating(false);
     }, 350);
+    setUserInteraction();
+  };
+
+  // Animation classes for current/transitioning slides
+  const getAnimationClass = (idx: number): string => {
+    if (idx === activeTestimonial) {
+      if (animating) {
+        return direction === 'right'
+          ? 'animate-[slide-in-right_0.35s_ease-out]'
+          : 'animate-[slide-in-left_0.35s_ease-out]';
+      } else {
+        return 'animate-fade-in';
+      }
+    } else {
+      if (animating) {
+        // figure out which is outgoing?
+        if (
+          (direction === 'right' &&
+            idx === (activeTestimonial - 1 + testimonials.length) % testimonials.length) ||
+          (direction === 'left' &&
+            idx === (activeTestimonial + 1) % testimonials.length)
+        ) {
+          return direction === 'right'
+            ? 'animate-[slide-out-left_0.35s_ease-in]'
+            : 'animate-[slide-out-right_0.35s_ease-in]';
+        }
+      }
+      return '';
+    }
   };
 
   return (
@@ -107,92 +173,30 @@ const TestimonialsSection = () => {
             {/* Testimonial transitions */}
             <div className="relative h-full min-h-[290px] flex items-center justify-center">
               {testimonials.map((testimonial, index) => {
-                // Only render the active and previous/next for animation performance
-                if (
+                // Only active, prev, next for animation
+                const isShow =
                   index === activeTestimonial ||
                   (direction === 'right' && index === (activeTestimonial - 1 + testimonials.length) % testimonials.length) ||
-                  (direction === 'left' && index === (activeTestimonial + 1) % testimonials.length)
-                ) {
-                  return (
-                    <div
-                      key={index}
-                      className={`
-                        absolute inset-0 p-5 lg:p-6 transition-all duration-350 ease-in-out 
-                        ${index === activeTestimonial
-                          ? `opacity-100 z-10 ${animating
-                            ? (direction === 'right'
-                              ? 'animate-[slide-in-right_0.35s_ease-out]'
-                              : 'animate-[slide-in-left_0.35s_ease-out]')
-                            : 'animate-fade-in'}`
-                          : `opacity-0 z-0 pointer-events-none 
-                              ${animating
-                                ? (direction === 'right'
-                                  ? 'animate-[slide-out-left_0.35s_ease-in]'
-                                  : 'animate-[slide-out-right_0.35s_ease-in]')
-                                : ''}`}
-                      `}
-                      style={{ animationFillMode: 'both' }}
-                    >
-                      <div className="text-center">
-                        <div className="text-4xl mb-3 float-animation">{testimonial.avatar}</div>
-                        <div className="inline-block bg-gradient-success rounded-full px-3 py-1 text-white font-bold text-xs mb-3">
-                          {testimonial.highlight}
-                        </div>
-                        <blockquote className="text-lg lg:text-xl text-slate-700 mb-4 italic font-medium leading-relaxed">
-                          &quot;{testimonial.text}&quot;
-                        </blockquote>
-                        <div className="flex justify-center mb-3">
-                          {[...Array(testimonial.rating)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-action-orange text-action-orange" />
-                          ))}
-                        </div>
-                        <div className="font-bold text-base text-slate-800 gradient-text-blue">{testimonial.name}</div>
-                        <div className="text-slate-600 font-medium text-sm">{testimonial.role}</div>
-                        <div className="text-trust-blue font-bold text-sm">{testimonial.location}</div>
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
+                  (direction === 'left' && index === (activeTestimonial + 1) % testimonials.length);
+                return isShow ? (
+                  <TestimonialCard
+                    key={index}
+                    testimonial={testimonial}
+                    show={index === activeTestimonial}
+                    animationClass={getAnimationClass(index)}
+                  />
+                ) : null;
               })}
-              {/* Arrow navigation */}
-              <button
-                aria-label="Previous review"
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
-                onClick={handlePrev}
-                disabled={animating}
-                tabIndex={0}
-                style={{ outline: 'none' }}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <button
-                aria-label="Next review"
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
-                onClick={handleNext}
-                disabled={animating}
-                tabIndex={0}
-                style={{ outline: 'none' }}
-              >
-                <ArrowRight className="w-5 h-5" />
-              </button>
             </div>
-            {/* Dots navigation */}
-            <div className="flex justify-center mt-6 gap-2 z-30 relative">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 
-                    ${index === activeTestimonial 
-                      ? 'bg-action-orange scale-125 shadow-lg' 
-                      : 'bg-slate-300 hover:bg-slate-400'}`
-                  }
-                  onClick={() => goToTestimonial(index)}
-                  disabled={animating}
-                />
-              ))}
-            </div>
+            {/* Navigation (arrows and dots) - dots now at the very bottom */}
+            <TestimonialNavigation
+              testimonialCount={testimonials.length}
+              activeIndex={activeTestimonial}
+              onDotClick={goToTestimonial}
+              onPrev={handlePrev}
+              onNext={handleNext}
+              animating={animating}
+            />
           </div>
         </div>
       </div>
@@ -220,3 +224,4 @@ const TestimonialsSection = () => {
 };
 
 export default TestimonialsSection;
+
