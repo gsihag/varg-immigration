@@ -14,7 +14,7 @@ const corsHeaders = {
 };
 
 // Static knowledge base as fallback
-const staticKnowledge = `
+const staticKnowledgeBase = `
 AUSTRALIAN IMMIGRATION KNOWLEDGE BASE (FALLBACK):
 
 VISA TYPES:
@@ -22,9 +22,9 @@ VISA TYPES:
 - Subclass 190 (Skilled Nominated): Permanent visa, requires state nomination, points-based system
 - Subclass 491 (Skilled Work Regional): Provisional visa, requires regional nomination or family sponsorship
 - Subclass 482 (Temporary Skill Shortage): Temporary visa, requires employer sponsorship
+- Subclass 485 (Temporary Graduate): For recent graduates from Australian institutions
 - Subclass 500 (Student): Temporary visa for full-time study
 - Partner visas (820/801, 309/100): For partners of Australian citizens/residents
-- Parent visas (103/143): For parents of Australian citizens/residents
 
 POINTS TEST FACTORS:
 - Age (18-24: 25 points, 25-32: 30 points, 33-39: 25 points, 40-44: 15 points, 45-49: 0 points)
@@ -40,67 +40,76 @@ ENGLISH REQUIREMENTS:
 - IELTS: Overall 6.0 (Competent), 7.0 (Proficient), 8.0 (Superior)
 - PTE: Overall 50 (Competent), 65 (Proficient), 79 (Superior)
 - TOEFL: Overall 64 (Competent), 94 (Proficient), 110 (Superior)
-
-SKILLS ASSESSMENT:
-- Engineering: Engineers Australia (EA)
-- ICT: Australian Computer Society (ACS)
-- Accounting: CPA Australia, CA ANZ, IPA
-- Health: AHPRA
-- Trades: TRA (Trades Recognition Australia)
-
-COMMON DOCUMENTS:
-- Passport and birth certificate
-- Educational qualifications and transcripts
-- English test results (IELTS/PTE/TOEFL)
-- Skills assessment
-- Work experience references
-- Health examinations
-- Police certificates
-- Financial evidence
 `;
 
-async function getDynamicKnowledge(): Promise<string> {
+async function fetchCurrentImmigrationData(): Promise<string> {
   try {
     const { data, error } = await supabase
-      .from('knowledge_base')
+      .from('immigration_data')
       .select('*')
-      .eq('is_active', true)
       .order('last_updated', { ascending: false });
       
     if (error || !data || data.length === 0) {
       console.log('Using static knowledge base as fallback');
-      return staticKnowledge;
+      return staticKnowledgeBase;
     }
     
     // Build dynamic knowledge from database
-    let dynamicKnowledge = `AUSTRALIAN IMMIGRATION KNOWLEDGE BASE (UPDATED ${new Date().toISOString().split('T')[0]}):\n\n`;
+    let dynamicKnowledge = `CURRENT AUSTRALIAN IMMIGRATION DATA (Updated ${new Date().toISOString().split('T')[0]}):\n\n`;
     
-    data.forEach(section => {
-      if (section.section === 'processing_times') {
-        dynamicKnowledge += "CURRENT PROCESSING TIMES:\n";
-        Object.entries(section.content).forEach(([visa, time]) => {
-          dynamicKnowledge += `- Subclass ${visa}: ${time}\n`;
-        });
-        dynamicKnowledge += `\nLast updated: ${section.last_updated}\nSource: ${section.source_url}\n\n`;
-      }
-      
-      if (section.section === 'visa_costs') {
-        dynamicKnowledge += "CURRENT VISA COSTS:\n";
-        Object.entries(section.content).forEach(([visa, cost]) => {
-          dynamicKnowledge += `- Subclass ${visa}: ${cost}\n`;
-        });
-        dynamicKnowledge += `\nLast updated: ${section.last_updated}\nSource: ${section.source_url}\n\n`;
-      }
-    });
+    // Group data by type
+    const processingTimes = data.filter(item => item.data_type === 'processing_times');
+    
+    if (processingTimes.length > 0) {
+      dynamicKnowledge += "CURRENT PROCESSING TIMES:\n";
+      processingTimes.forEach(item => {
+        const content = item.data_content;
+        dynamicKnowledge += `- ${content.visa_name}: 75% processed in ${content.processing_time_75}, 90% in ${content.processing_time_90}\n`;
+      });
+      dynamicKnowledge += `\nLast updated: ${new Date(processingTimes[0].last_updated).toLocaleDateString()}\n\n`;
+    }
     
     // Add static knowledge for comprehensive coverage
-    dynamicKnowledge += staticKnowledge;
+    dynamicKnowledge += staticKnowledgeBase;
     
     return dynamicKnowledge;
   } catch (error) {
-    console.error('Error fetching dynamic knowledge:', error);
-    return staticKnowledge;
+    console.error('Error fetching current immigration data:', error);
+    return staticKnowledgeBase;
   }
+}
+
+async function getSpecificVisaInfo(userMessage: string): Promise<string> {
+  const message = userMessage.toLowerCase();
+  
+  // Extract visa subclass from message
+  const visaMatches = message.match(/(\d{3})\s*visa|subclass\s*(\d{3})|visa\s*(\d{3})/);
+  const visaSubclass = visaMatches ? (visaMatches[1] || visaMatches[2] || visaMatches[3]) : null;
+  
+  if (visaSubclass && (message.includes('processing') || message.includes('time') || message.includes('how long'))) {
+    try {
+      const { data, error } = await supabase
+        .from('immigration_data')
+        .select('*')
+        .eq('data_type', 'processing_times')
+        .eq('visa_subclass', visaSubclass);
+      
+      if (!error && data && data.length > 0) {
+        const item = data[0];
+        const content = item.data_content;
+        return `\nCURRENT PROCESSING TIMES FOR ${content.visa_name.toUpperCase()}:
+• 75% of applications: ${content.processing_time_75}
+• 90% of applications: ${content.processing_time_90}
+Last updated: ${new Date(item.last_updated).toLocaleDateString()}
+
+Source: Official Department of Home Affairs data\n`;
+      }
+    } catch (error) {
+      console.error('Error fetching specific visa info:', error);
+    }
+  }
+  
+  return '';
 }
 
 serve(async (req) => {
@@ -115,8 +124,11 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    // Get dynamic knowledge base
-    const knowledgeBase = await getDynamicKnowledge();
+    // Get current immigration data and specific visa info
+    const [knowledgeBase, specificInfo] = await Promise.all([
+      fetchCurrentImmigrationData(),
+      getSpecificVisaInfo(message)
+    ]);
     
     const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
@@ -137,20 +149,14 @@ Your personality:
 - Always cite official sources when providing specific information
 - Honest about limitations and when professional consultation is needed
 
-Use the provided knowledge base to give specific, personalized advice. Always:
-1. Start with a direct answer to the user's question
-2. Provide specific, actionable advice in simple language
-3. Break information into digestible paragraphs
-4. Mention current processing times and requirements
-5. Suggest official resources and next steps
-6. Include disclaimers about seeking professional advice when needed
+IMPORTANT: When providing processing times or specific visa information, ALWAYS use the current data from the knowledge base below. Reference exact timeframes and mention when the data was last updated.
 
-IMPORTANT: When providing processing times or visa costs, always mention that this information is regularly updated from official sources and include the recommendation to verify current information with the Department of Home Affairs.
+${specificInfo ? `SPECIFIC INFORMATION FOR THIS QUERY:\n${specificInfo}` : ''}
 
-Knowledge Base:
+Current Knowledge Base:
 ${knowledgeBase}
 
-Important: Always remind users that immigration laws can change and they should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases. Format this reminder naturally within your response, not as a separate disclaimer.`;
+Always remind users that immigration laws can change and they should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases. Format this reminder naturally within your response, not as a separate disclaimer.`;
 
     // Build conversation messages with context
     const messages = [
