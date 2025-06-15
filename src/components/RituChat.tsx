@@ -56,9 +56,15 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
   }, [currentLanguage]);
 
   const updateContextualSuggestions = (messageHistory) => {
-    const context = analyzeUserContext(messageHistory);
-    const newSuggestions = generateContextualSuggestions(context, currentLanguage);
-    setContextualSuggestions(newSuggestions);
+    try {
+      const context = analyzeUserContext(messageHistory);
+      const newSuggestions = generateContextualSuggestions(context, currentLanguage);
+      console.log('Generated suggestions:', newSuggestions);
+      setContextualSuggestions(newSuggestions || []);
+    } catch (error) {
+      console.error('Error generating contextual suggestions:', error);
+      setContextualSuggestions([]);
+    }
   };
 
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -269,21 +275,23 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                     {currentLanguage === 'hi' ? 'आपके लिए सुझाव:' : 'Personalized suggestions for you:'}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {contextualSuggestions.map((suggestion, index) => {
-                      const IconComponent = suggestion.icon;
-                      return (
-                        <Button
-                          key={index}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleSuggestionClick(suggestion.text)}
-                          className={`${suggestion.color} text-white border-none hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg text-xs px-3 py-2 h-auto`}
-                        >
-                          <IconComponent className="w-3 h-3 mr-2" />
-                          {suggestion.text}
-                        </Button>
-                      );
-                    })}
+                    {contextualSuggestions
+                      .filter(suggestion => suggestion && suggestion.icon && suggestion.text && suggestion.color)
+                      .map((suggestion, index) => {
+                        const IconComponent = suggestion.icon;
+                        return (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSuggestionClick(suggestion.text)}
+                            className={`${suggestion.color} text-white border-none hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg text-xs px-3 py-2 h-auto`}
+                          >
+                            <IconComponent className="w-3 h-3 mr-2" />
+                            {suggestion.text}
+                          </Button>
+                        );
+                      })}
                   </div>
                 </div>
               )}
@@ -419,21 +427,23 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                     {currentLanguage === 'hi' ? 'आपके लिए सुझाव:' : 'Personalized suggestions for you:'}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {contextualSuggestions.map((suggestion, index) => {
-                      const IconComponent = suggestion.icon;
-                      return (
-                        <Button
-                          key={index}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleSuggestionClick(suggestion.text)}
-                          className={`${suggestion.color} text-white border-none hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg text-xs px-3 py-2 h-auto`}
-                        >
-                          <IconComponent className="w-3 h-3 mr-2" />
-                          {suggestion.text}
-                        </Button>
-                      );
-                    })}
+                    {contextualSuggestions
+                      .filter(suggestion => suggestion && suggestion.icon && suggestion.text && suggestion.color)
+                      .map((suggestion, index) => {
+                        const IconComponent = suggestion.icon;
+                        return (
+                          <Button
+                            key={index}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSuggestionClick(suggestion.text)}
+                            className={`${suggestion.color} text-white border-none hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg text-xs px-3 py-2 h-auto`}
+                          >
+                            <IconComponent className="w-3 h-3 mr-2" />
+                            {suggestion.text}
+                          </Button>
+                        );
+                      })}
                   </div>
                 </div>
               )}
