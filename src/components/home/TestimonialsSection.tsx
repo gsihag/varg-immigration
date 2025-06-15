@@ -171,7 +171,7 @@ const TestimonialsSection = () => {
                     show={index === activeTestimonial}
                     animationClass={getAnimationClass(index)}
                   >
-                    {/* Navigation goes at the bottom of the card, always */}
+                    {/* Navigation at the very bottom of the card, always inside the box! */}
                     <TestimonialNavigation
                       testimonialCount={testimonials.length}
                       activeIndex={activeTestimonial}

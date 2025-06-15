@@ -31,7 +31,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       style={{ animationFillMode: 'both' }}
       aria-hidden={!show}
     >
-      <div>
+      {/* Main testimonial content */}
+      <div className="grow flex flex-col justify-center">
         <div className="text-center mb-3">
           <div className="text-4xl mb-3 float-animation">{testimonial.avatar}</div>
           <div className="inline-block bg-gradient-success rounded-full px-3 py-1 text-white font-bold text-xs mb-3">
@@ -50,10 +51,13 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
           <div className="text-trust-blue font-bold text-sm">{testimonial.location}</div>
         </div>
       </div>
-      {/* Navigation goes at the bottom */}
-      <div className="mt-4">{children}</div>
+      {/* Navigation (dots + arrows) always inside the box, at the bottom */}
+      <div className="w-full flex flex-col items-center mt-4 pt-2">
+        {children}
+      </div>
     </div>
   );
 };
 
 export default TestimonialCard;
+
