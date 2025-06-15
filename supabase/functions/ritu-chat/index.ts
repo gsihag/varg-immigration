@@ -9,57 +9,67 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+// RAG knowledge base with Australian immigration information
+const immigrationKnowledge = `
+AUSTRALIAN IMMIGRATION KNOWLEDGE BASE:
 
-  try {
-    const { message, conversationHistory = [], language = 'en' } = await req.json();
+VISA TYPES:
+- Subclass 189 (Skilled Independent): Permanent visa, no sponsorship required, points-based system
+- Subclass 190 (Skilled Nominated): Permanent visa, requires state nomination, points-based system
+- Subclass 491 (Skilled Work Regional): Provisional visa, requires regional nomination or family sponsorship
+- Subclass 482 (Temporary Skill Shortage): Temporary visa, requires employer sponsorship
+- Subclass 500 (Student): Temporary visa for full-time study
+- Partner visas (820/801, 309/100): For partners of Australian citizens/residents
+- Parent visas (103/143): For parents of Australian citizens/residents
 
-    // Detailed debugging for API key
-    console.log('=== RITU CHAT FUNCTION DEBUG ===');
-    console.log('Function called at:', new Date().toISOString());
-    console.log('User message:', message);
-    console.log('Language:', language);
-    console.log('Environment variables available:', Object.keys(Deno.env.toObject()));
-    console.log('OpenAI API Key exists:', !!openAIApiKey);
-    console.log('OpenAI API Key type:', typeof openAIApiKey);
-    
-    if (openAIApiKey) {
-      console.log('API Key length:', openAIApiKey.length);
-      console.log('API Key starts with:', openAIApiKey.substring(0, 7));
-      console.log('API Key ends with:', openAIApiKey.substring(openAIApiKey.length - 4));
-    } else {
-      console.error('❌ CRITICAL: OpenAI API Key is null/undefined');
-      console.log('Available environment variables:', Object.keys(Deno.env.toObject()));
-      throw new Error('OpenAI API key not found in environment variables. Please check Supabase Edge Function secrets.');
-    }
+POINTS TEST FACTORS:
+- Age (18-24: 25 points, 25-32: 30 points, 33-39: 25 points, 40-44: 15 points, 45-49: 0 points)
+- English proficiency (Competent: 0, Proficient: 10, Superior: 20 points)
+- Skilled employment (1-2 years: 5, 3-4 years: 10, 5-7 years: 15, 8+ years: 20 points)
+- Australian study (2+ years: 5 points)
+- Professional Year (5 points)
+- Community language (5 points)
+- Regional study (5 points)
+- Partner skills (10 points if applicable)
 
-    // Test API key validity
-    console.log('🔍 Testing OpenAI API connection...');
-    const testResponse = await fetch('https://api.openai.com/v1/models', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-    });
+PROCESSING TIMES (Current estimates):
+- Subclass 189: 8-12 months
+- Subclass 190: 8-15 months
+- Subclass 491: 8-11 months
+- Subclass 482: 3-5 months
+- Subclass 500: 1-4 months
+- Partner visas: 12-29 months
 
-    console.log('OpenAI Models API Status:', testResponse.status);
-    console.log('OpenAI Models API Headers:', Object.fromEntries(testResponse.headers.entries()));
-    
-    if (!testResponse.ok) {
-      const errorText = await testResponse.text();
-      console.error('❌ OpenAI API Key Test Failed');
-      console.error('Status:', testResponse.status);
-      console.error('Error:', errorText);
-      throw new Error(`OpenAI API key validation failed: ${testResponse.status} - ${errorText}`);
-    }
+ENGLISH REQUIREMENTS:
+- IELTS: Overall 6.0 (Competent), 7.0 (Proficient), 8.0 (Superior)
+- PTE: Overall 50 (Competent), 65 (Proficient), 79 (Superior)
+- TOEFL: Overall 64 (Competent), 94 (Proficient), 110 (Superior)
 
-    console.log('✅ OpenAI API key is valid!');
+SKILLS ASSESSMENT:
+- Engineering: Engineers Australia (EA)
+- ICT: Australian Computer Society (ACS)
+- Accounting: CPA Australia, CA ANZ, IPA
+- Health: AHPRA
+- Trades: TRA (Trades Recognition Australia)
 
-    const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
+COMMON DOCUMENTS:
+- Passport and birth certificate
+- Educational qualifications and transcripts
+- English test results (IELTS/PTE/TOEFL)
+- Skills assessment
+- Work experience references
+- Health examinations
+- Police certificates
+- Financial evidence
+
+IMPORTANT NOTES:
+- Always check the latest information on the Department of Home Affairs website
+- Processing times can vary based on country of birth and individual circumstances
+- Seek professional advice from a registered migration agent for complex cases
+- All information is subject to change based on government policy updates
+`;
+
+const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
 CRITICAL RESPONSE FORMAT REQUIREMENTS:
 - Write ALL responses in plain text format only
@@ -78,33 +88,41 @@ Your personality:
 - Always cite official sources when providing specific information
 - Honest about limitations and when professional consultation is needed
 
-Key immigration knowledge to reference:
-- Visa types: 189 (Skilled Independent), 190 (State Nominated), 491 (Regional), 482 (TSS), 500 (Student), Partner visas
-- Points test: Age (25-32 = 30 points), English (Proficient = 10, Superior = 20), Experience, Education
-- Processing times: 189/190 (8-12 months), 491 (8-11 months), 482 (3-5 months), Student (1-4 months)
-- English tests: IELTS, PTE, TOEFL requirements for different visa types
-- Skills assessments: Different authorities for different occupations
+Use the provided knowledge base to give specific, personalized advice. Always:
+1. Start with a direct answer to the user's question
+2. Provide specific, actionable advice in simple language
+3. Break information into digestible paragraphs
+4. Mention current processing times and requirements
+5. Suggest official resources and next steps
+6. Include disclaimers about seeking professional advice when needed
 
-Always provide specific, actionable advice and suggest checking homeaffairs.gov.au for the latest information.
+Knowledge Base:
+${immigrationKnowledge}
 
-IMPORTANT: Format this reminder naturally within your response: Immigration laws can change and users should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases.`;
+Important: Always remind users that immigration laws can change and they should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases. Format this reminder naturally within your response, not as a separate disclaimer.`;
 
-    const userPrompt = `${message}
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
 
-Please provide a helpful, accurate response about Australian immigration based on current policies and requirements. Make the response conversational and actionable.`;
+  try {
+    const { message, conversationHistory = [] } = await req.json();
 
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    // Build conversation messages with context
     const messages = [
       { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-6).map((msg: any) => ({
+      ...conversationHistory.map((msg: any) => ({
         role: msg.type === 'user' ? 'user' : 'assistant',
         content: msg.message
       })),
-      { role: 'user', content: userPrompt }
+      { role: 'user', content: message }
     ];
 
-    console.log('🤖 Sending request to OpenAI chat completions...');
-    console.log('Message count:', messages.length);
-    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -119,26 +137,16 @@ Please provide a helpful, accurate response about Australian immigration based o
       }),
     });
 
-    console.log('OpenAI Chat Response Status:', response.status);
-    console.log('OpenAI Chat Response Headers:', Object.fromEntries(response.headers.entries()));
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ OpenAI Chat Completion Error');
-      console.error('Status:', response.status);
-      console.error('Error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+      throw new Error(`OpenAI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log('✅ OpenAI response received successfully');
-    console.log('Response data structure:', Object.keys(data));
-    
     let aiResponse = data.choices[0].message.content;
-    console.log('Raw AI response length:', aiResponse.length);
 
     // Enhanced text sanitization to remove ALL formatting
     aiResponse = aiResponse
+      // Remove markdown formatting
       .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
       .replace(/\*(.*?)\*/g, '$1') // Italic
       .replace(/__(.*?)__/g, '$1') // Underline
@@ -146,21 +154,22 @@ Please provide a helpful, accurate response about Australian immigration based o
       .replace(/#{1,6}\s/g, '') // Headers
       .replace(/^\s*[\*\-\+]\s/gm, '') // Bullet points
       .replace(/^\s*\d+\.\s/gm, '') // Numbered lists
+      // Remove HTML tags and CSS classes
       .replace(/<[^>]*>/g, '') // HTML tags
       .replace(/class="[^"]*"/g, '') // CSS classes
       .replace(/style="[^"]*"/g, '') // Inline styles
+      // Remove CSS color/styling codes that might leak through
       .replace(/australia-blue/g, '')
       .replace(/font-semibold/g, '')
       .replace(/font-bold/g, '')
       .replace(/text-\w+-\d+/g, '')
       .replace(/bg-\w+-\d+/g, '')
+      // Remove quotes around text that shouldn't be quoted
       .replace(/"\s*([^"]+)\s*"/g, '$1')
+      // Clean up multiple spaces and line breaks
       .replace(/\s+/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
-
-    console.log('✅ Response processed and cleaned successfully');
-    console.log('Final response length:', aiResponse.length);
 
     return new Response(JSON.stringify({ 
       response: aiResponse,
@@ -170,26 +179,13 @@ Please provide a helpful, accurate response about Australian immigration based o
     });
 
   } catch (error) {
-    console.error('❌ ERROR in ritu-chat function:', error);
-    console.error('Error name:', error.name);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
-    
-    const fallbackResponse = language === 'hi' 
-      ? "मैं अभी कुछ तकनीकी कठिनाइयों का सामना कर रही हूँ। कृपया कुछ देर बाद फिर से कोशिश करें या homeaffairs.gov.au पर आधिकारिक जानकारी के लिए जाएं।"
-      : "I'm experiencing some technical difficulties right now. Please try again in a moment, or visit homeaffairs.gov.au for official Australian immigration information.";
-
+    console.error('Error in ritu-chat function:', error);
     return new Response(JSON.stringify({ 
-      response: fallbackResponse,
-      success: false,
       error: error.message,
-      debug: {
-        hasApiKey: !!openAIApiKey,
-        apiKeyLength: openAIApiKey ? openAIApiKey.length : 0,
-        errorType: error.name
-      }
+      success: false,
+      fallback: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or contact our human agents for immediate assistance."
     }), {
-      status: 200,
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
