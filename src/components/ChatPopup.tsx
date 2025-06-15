@@ -21,7 +21,7 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
         <DialogHeader className="flex-shrink-0 p-4 pb-0 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-bold text-gray-900">
-              Chat with Ritu - Your AI Immigration Assistant
+              Ritu - Your Personal AI Immigration Assistant
             </DialogTitle>
             <div className="flex items-center gap-2">
               {/* Language Selector */}
@@ -58,7 +58,7 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
                 )}
               </div>
 
-              {/* Close Button */}
+              {/* Single Close Button */}
               <Button
                 variant="ghost"
                 size="icon"
