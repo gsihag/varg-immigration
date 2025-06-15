@@ -37,16 +37,20 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
         aria-label="Previous review"
         className="bg-white bg-opacity-70 hover:bg-opacity-100 shadow-md w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
         style={{ 
-          color: 'rgb(234, 88, 12)',
-          '&:hover': {
-            color: 'white',
-            backgroundColor: 'rgb(234, 88, 12)'
-          }
+          color: 'rgb(234, 88, 12)'
         }}
         onClick={onPrev}
         disabled={animating}
         tabIndex={0}
         type="button"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = 'white';
+          e.currentTarget.style.backgroundColor = 'rgb(234, 88, 12)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = 'rgb(234, 88, 12)';
+          e.currentTarget.style.backgroundColor = '';
+        }}
       >
         <ArrowLeft className="w-2.5 h-2.5" />
       </button>
@@ -77,16 +81,20 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
         aria-label="Next review"
         className="bg-white bg-opacity-70 hover:bg-opacity-100 shadow-md w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
         style={{ 
-          color: 'rgb(234, 88, 12)',
-          '&:hover': {
-            color: 'white',
-            backgroundColor: 'rgb(234, 88, 12)'
-          }
+          color: 'rgb(234, 88, 12)'
         }}
         onClick={onNext}
         disabled={animating}
         tabIndex={0}
         type="button"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = 'white';
+          e.currentTarget.style.backgroundColor = 'rgb(234, 88, 12)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = 'rgb(234, 88, 12)';
+          e.currentTarget.style.backgroundColor = '';
+        }}
       >
         <ArrowRight className="w-2.5 h-2.5" />
       </button>
