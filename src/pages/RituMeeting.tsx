@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,13 +8,13 @@ import EnhancedPointsCalculator from '@/components/EnhancedPointsCalculator';
 import TimelineTracker from '@/components/TimelineTracker';
 import SettlementHub from '@/components/SettlementHub';
 import Disclaimer from '@/components/Disclaimer';
-import { LanguageProvider, useLanguage } from '@/components/LanguageSelector';
+import { useLanguage } from '@/components/LanguageSelector';
 import LanguageSelector from '@/components/LanguageSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageCircle, Calculator, FileText, BookOpen, Users, Shield, Clock, CheckCircle, Target, Calendar, Home } from 'lucide-react';
 
-const RituMeetingContent = () => {
+const RituMeeting = () => {
   const { t } = useLanguage();
 
   return (
@@ -254,14 +253,6 @@ const RituMeetingContent = () => {
       
       <Footer />
     </div>
-  );
-};
-
-const RituMeeting = () => {
-  return (
-    <LanguageProvider>
-      <RituMeetingContent />
-    </LanguageProvider>
   );
 };
 
