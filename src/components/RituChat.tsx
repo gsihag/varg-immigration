@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, Loader2, MessageCircle } from 'lucide-react';
+import { Send, Bot, User, Loader2, MessageCircle, RefreshCw, AlertTriangle } from 'lucide-react';
 import AgentResponse from '@/components/AgentResponse';
 import { useLanguage } from '@/components/LanguageSelector';
 import { analyzeUserContext, generateContextualSuggestions } from '@/utils/contextualSuggestions';
@@ -18,6 +18,8 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [contextualSuggestions, setContextualSuggestions] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState('connected'); // 'connected', 'disconnected', 'reconnecting'
+  const [retryCount, setRetryCount] = useState(0);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -59,8 +61,18 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
     setContextualSuggestions(newSuggestions);
   };
 
-  const callRituAPI = async (userMessage, conversationHistory) => {
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const callRituAPI = async (userMessage, conversationHistory, attempt = 1) => {
+    const maxRetries = 3;
+    const baseDelay = 1000; // 1 second
+
     try {
+      setConnectionStatus('connected');
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const response = await fetch('/functions/v1/ritu-chat', {
         method: 'POST',
         headers: {
@@ -71,7 +83,14 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
           conversationHistory: conversationHistory,
           language: currentLanguage
         }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
 
       const data = await response.json();
       
@@ -79,36 +98,66 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         throw new Error(data.error || 'API call failed');
       }
 
+      setRetryCount(0); // Reset retry count on success
       return data.response;
+
     } catch (error) {
-      console.error('Ritu API error:', error);
-      return getFallbackResponse(userMessage, currentLanguage);
+      console.error(`Ritu API error (attempt ${attempt}):`, error);
+      
+      if (attempt < maxRetries) {
+        setConnectionStatus('reconnecting');
+        const delay = baseDelay * Math.pow(2, attempt - 1); // Exponential backoff
+        await sleep(delay);
+        setRetryCount(attempt);
+        return callRituAPI(userMessage, conversationHistory, attempt + 1);
+      } else {
+        setConnectionStatus('disconnected');
+        setRetryCount(maxRetries);
+        return getEnhancedFallbackResponse(userMessage, currentLanguage, error);
+      }
     }
   };
 
-  const getFallbackResponse = (userMessage, language) => {
+  const getEnhancedFallbackResponse = (userMessage, language, error) => {
+    const isNetworkError = error.name === 'AbortError' || error.message.includes('fetch');
+    const isServerError = error.message.includes('500') || error.message.includes('502') || error.message.includes('503');
+
     const fallbackResponses = {
       en: {
-        default: "I'm experiencing some technical difficulties connecting to my knowledge base right now. However, I can still help you with general immigration guidance. For the most current and detailed information, I recommend checking the Department of Home Affairs website (homeaffairs.gov.au) or consulting with a registered migration agent. What specific aspect of Australian immigration would you like to discuss?",
-        points: "For the Australian points test, key factors include: Age (maximum 30 points for 25-32 years), English proficiency (up to 20 points for superior level), skilled employment experience (up to 20 points), and education qualifications (up to 20 points). The current pass mark is typically 65-70 points for most skilled visas. Would you like me to help calculate your estimated points?",
-        visa: "Australia offers several visa pathways: Skilled Independent (189) - no sponsorship needed, Skilled Nominated (190) - requires state nomination, Temporary Skill Shortage (482) - employer sponsored, and various family/partner visas. Each has different requirements and processing times. What's your current situation - are you looking for work, study, or family reunion?"
+        network: "I'm having trouble connecting to my knowledge base right now due to a network issue. While I work on reconnecting, here's what I can help you with:\n\nFor immediate assistance, visit the official Department of Home Affairs website at homeaffairs.gov.au for the most current immigration information.\n\nCommon questions I can help with once reconnected:\n• Visa eligibility requirements\n• Points calculation for skilled migration\n• Processing times and costs\n• Document requirements\n\nPlease try asking your question again in a moment, or click the retry button below.",
+        
+        server: "I'm currently updating my systems with the latest immigration policies and will be back shortly. In the meantime:\n\n• Visit homeaffairs.gov.au for official immigration information\n• Check SkillSelect for invitation rounds\n• Review the skilled occupation lists\n• Prepare your documents while waiting\n\nI should be back online within a few minutes. Thank you for your patience!",
+        
+        default: "I'm experiencing temporary difficulties but I'm still here to help! While my advanced features are updating, here are some quick immigration resources:\n\n🇦🇺 Official website: homeaffairs.gov.au\n📊 Points calculator: Use the official Department calculator\n📋 Skilled occupation lists: Available on the Department website\n⏰ Processing times: Check current estimates online\n\nTry asking your question again - I should be back to full capacity shortly!"
       },
       hi: {
-        default: "मैं अभी अपने ज्ञान आधार से जुड़ने में कुछ तकनीकी कठिनाइयों का सामना कर रही हूँ। हालांकि, मैं अभी भी सामान्य इमिग्रेशन मार्गदर्शन में आपकी सहायता कर सकती हूँ। सबसे वर्तमान और विस्तृत जानकारी के लिए, मैं गृह मामलों के विभाग की वेबसाइट (homeaffairs.gov.au) देखने या एक पंजीकृत प्रवासन एजेंट से सलाह लेने की सलाह देती हूँ।",
-        points: "ऑस्ट्रेलियाई अंक परीक्षा के लिए मुख्य कारकों में शामिल हैं: उम्र (25-32 वर्ष के लिए अधिकतम 30 अंक), अंग्रेजी प्रवाहता (उच्च स्तर के लिए 20 अंक तक), और शिक्षा योग्यता। वर्तमान पास मार्क आमतौर पर अधिकांश कुशल वीज़ा के लिए 65-70 अंक है।",
-        visa: "ऑस्ट्रेलिया कई वीज़ा मार्ग प्रदान करता है: कुशल स्वतंत्र (189), कुशल नामांकित (190), अस्थायी कौशल कमी (482), और विभिन्न पारिवारिक वीज़ा। प्रत्येक की अलग आवश्यकताएं और प्रसंस्करण समय हैं।"
+        network: "मैं अभी अपने ज्ञान आधार से जुड़ने में नेटवर्क समस्या का सामना कर रही हूँ। जबकि मैं पुनः कनेक्ट होने पर काम कर रही हूँ, यहाँ कुछ सहायता है:\n\nत्वरित सहायता के लिए, होम अफेयर्स की आधिकारिक वेबसाइट homeaffairs.gov.au पर जाएं।\n\nसामान्य प्रश्न जिनमें मैं मदद कर सकती हूँ:\n• वीज़ा पात्रता आवश्यकताएं\n• कुशल प्रवासन के लिए अंक गणना\n• प्रसंस्करण समय और लागत\n\nकृपया कुछ देर बाद अपना प्रश्न फिर से पूछें।",
+        
+        server: "मैं वर्तमान में नवीनतम इमिग्रेशन नीतियों के साथ अपने सिस्टम को अपडेट कर रही हूँ। इस बीच:\n\n• homeaffairs.gov.au पर आधिकारिक जानकारी देखें\n• SkillSelect पर निमंत्रण राउंड की जांच करें\n• कुशल व्यवसाय सूची की समीक्षा करें\n\nमैं कुछ मिनटों में वापस ऑनलाइन होऊंगी।",
+        
+        default: "मैं अस्थायी कठिनाइयों का सामना कर रही हूँ लेकिन फिर भी यहाँ मदद के लिए हूँ! जबकि मेरी उन्नत सुविधाएं अपडेट हो रही हैं:\n\n🇦🇺 आधिकारिक वेबसाइट: homeaffairs.gov.au\n📊 अंक कैलकुलेटर: विभाग का आधिकारिक कैलकुलेटर उपयोग करें\n\nकृपया अपना प्रश्न फिर से पूछें - मैं जल्द ही पूर्ण क्षमता में वापस आऊंगी!"
       }
     };
 
     const responses = fallbackResponses[language] || fallbackResponses.en;
-    const lowerMessage = userMessage.toLowerCase();
     
-    if (lowerMessage.includes('point') || lowerMessage.includes('अंक') || lowerMessage.includes('calculate')) {
-      return responses.points || responses.default;
-    } else if (lowerMessage.includes('visa') || lowerMessage.includes('वीज़ा')) {
-      return responses.visa || responses.default;
+    if (isNetworkError) {
+      return responses.network;
+    } else if (isServerError) {
+      return responses.server;
     } else {
       return responses.default;
+    }
+  };
+
+  const handleRetry = async () => {
+    if (messages.length > 1) {
+      const lastUserMessage = [...messages].reverse().find(msg => msg.type === 'user');
+      if (lastUserMessage) {
+        setRetryCount(0);
+        setConnectionStatus('reconnecting');
+        await handleSendMessage(lastUserMessage.message);
+      }
     }
   };
 
@@ -152,9 +201,10 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       const errorResponse = {
         id: Date.now() + 1,
         type: 'agent',
-        message: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or feel free to contact our human immigration experts for immediate assistance.",
+        message: getEnhancedFallbackResponse(messageToSend, currentLanguage, error),
         timestamp: new Date(),
-        showSuggestions: true
+        showSuggestions: true,
+        hasError: true
       };
       setMessages(prev => [...prev, errorResponse]);
       setShowSuggestions(true);
@@ -194,7 +244,22 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                     </div>
                   </div>
                 ) : (
-                  <AgentResponse message={message.message} />
+                  <div className="flex flex-col max-w-[85%]">
+                    <AgentResponse message={message.message} />
+                    {message.hasError && connectionStatus === 'disconnected' && (
+                      <div className="mt-2 ml-14">
+                        <Button
+                          onClick={handleRetry}
+                          variant="outline"
+                          size="sm"
+                          className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                        >
+                          <RefreshCw className="w-3 h-3 mr-2" />
+                          Try Again
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
               
@@ -234,7 +299,12 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                 <div className="bg-white border-2 border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Analyzing your query with AI...</span>
+                    <span>
+                      {connectionStatus === 'reconnecting' 
+                        ? `Reconnecting... (attempt ${retryCount + 1})`
+                        : "Analyzing your query with AI..."
+                      }
+                    </span>
                   </div>
                 </div>
               </div>
@@ -245,6 +315,23 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         </div>
         
         <div className="flex-shrink-0 border-t-2 border-gray-200 p-4 bg-white sticky bottom-0 z-10">
+          {/* Connection status indicator */}
+          {connectionStatus !== 'connected' && (
+            <div className="mb-3 p-2 rounded-lg flex items-center gap-2 text-sm">
+              {connectionStatus === 'disconnected' ? (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg flex items-center gap-2 w-full">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>Connection lost - Using offline mode</span>
+                </div>
+              ) : (
+                <div className="bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center gap-2 w-full">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Reconnecting to AI services...</span>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="flex gap-3">
             <Input
               value={inputMessage}
@@ -276,6 +363,15 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         <CardTitle className="flex items-center gap-2 text-white">
           <Bot className="w-5 h-5" />
           {t('chatWithRitu')}
+          {connectionStatus !== 'connected' && (
+            <div className="ml-auto flex items-center gap-1">
+              {connectionStatus === 'disconnected' ? (
+                <AlertTriangle className="w-4 h-4 text-yellow-300" />
+              ) : (
+                <Loader2 className="w-4 h-4 animate-spin text-blue-200" />
+              )}
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
       
@@ -298,7 +394,22 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                     </div>
                   </div>
                 ) : (
-                  <AgentResponse message={message.message} />
+                  <div className="flex flex-col max-w-[85%]">
+                    <AgentResponse message={message.message} />
+                    {message.hasError && connectionStatus === 'disconnected' && (
+                      <div className="mt-2 ml-14">
+                        <Button
+                          onClick={handleRetry}
+                          variant="outline"
+                          size="sm"
+                          className="bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100"
+                        >
+                          <RefreshCw className="w-3 h-3 mr-2" />
+                          Try Again
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
               
@@ -338,7 +449,12 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                 <div className="bg-white border-2 border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Analyzing your query with AI...</span>
+                    <span>
+                      {connectionStatus === 'reconnecting' 
+                        ? `Reconnecting... (attempt ${retryCount + 1})`
+                        : "Analyzing your query with AI..."
+                      }
+                    </span>
                   </div>
                 </div>
               </div>
@@ -349,6 +465,23 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         </div>
         
         <div className="flex-shrink-0 border-t-2 border-gray-200 p-4 bg-white">
+          {/* Connection status indicator */}
+          {connectionStatus !== 'connected' && (
+            <div className="mb-3 p-2 rounded-lg flex items-center gap-2 text-sm">
+              {connectionStatus === 'disconnected' ? (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg flex items-center gap-2 w-full">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>Connection lost - Using offline mode</span>
+                </div>
+              ) : (
+                <div className="bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-lg flex items-center gap-2 w-full">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Reconnecting to AI services...</span>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="flex gap-3">
             <Input
               value={inputMessage}
