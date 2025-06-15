@@ -1,17 +1,21 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// RAG knowledge base with Australian immigration information
-const immigrationKnowledge = `
-AUSTRALIAN IMMIGRATION KNOWLEDGE BASE:
+// Static knowledge base as fallback
+const staticKnowledge = `
+AUSTRALIAN IMMIGRATION KNOWLEDGE BASE (FALLBACK):
 
 VISA TYPES:
 - Subclass 189 (Skilled Independent): Permanent visa, no sponsorship required, points-based system
@@ -31,14 +35,6 @@ POINTS TEST FACTORS:
 - Community language (5 points)
 - Regional study (5 points)
 - Partner skills (10 points if applicable)
-
-PROCESSING TIMES (Current estimates):
-- Subclass 189: 8-12 months
-- Subclass 190: 8-15 months
-- Subclass 491: 8-11 months
-- Subclass 482: 3-5 months
-- Subclass 500: 1-4 months
-- Partner visas: 12-29 months
 
 ENGLISH REQUIREMENTS:
 - IELTS: Overall 6.0 (Competent), 7.0 (Proficient), 8.0 (Superior)
@@ -61,15 +57,68 @@ COMMON DOCUMENTS:
 - Health examinations
 - Police certificates
 - Financial evidence
-
-IMPORTANT NOTES:
-- Always check the latest information on the Department of Home Affairs website
-- Processing times can vary based on country of birth and individual circumstances
-- Seek professional advice from a registered migration agent for complex cases
-- All information is subject to change based on government policy updates
 `;
 
-const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
+async function getDynamicKnowledge(): Promise<string> {
+  try {
+    const { data, error } = await supabase
+      .from('knowledge_base')
+      .select('*')
+      .eq('is_active', true)
+      .order('last_updated', { ascending: false });
+      
+    if (error || !data || data.length === 0) {
+      console.log('Using static knowledge base as fallback');
+      return staticKnowledge;
+    }
+    
+    // Build dynamic knowledge from database
+    let dynamicKnowledge = `AUSTRALIAN IMMIGRATION KNOWLEDGE BASE (UPDATED ${new Date().toISOString().split('T')[0]}):\n\n`;
+    
+    data.forEach(section => {
+      if (section.section === 'processing_times') {
+        dynamicKnowledge += "CURRENT PROCESSING TIMES:\n";
+        Object.entries(section.content).forEach(([visa, time]) => {
+          dynamicKnowledge += `- Subclass ${visa}: ${time}\n`;
+        });
+        dynamicKnowledge += `\nLast updated: ${section.last_updated}\nSource: ${section.source_url}\n\n`;
+      }
+      
+      if (section.section === 'visa_costs') {
+        dynamicKnowledge += "CURRENT VISA COSTS:\n";
+        Object.entries(section.content).forEach(([visa, cost]) => {
+          dynamicKnowledge += `- Subclass ${visa}: ${cost}\n`;
+        });
+        dynamicKnowledge += `\nLast updated: ${section.last_updated}\nSource: ${section.source_url}\n\n`;
+      }
+    });
+    
+    // Add static knowledge for comprehensive coverage
+    dynamicKnowledge += staticKnowledge;
+    
+    return dynamicKnowledge;
+  } catch (error) {
+    console.error('Error fetching dynamic knowledge:', error);
+    return staticKnowledge;
+  }
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { message, conversationHistory = [] } = await req.json();
+
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    // Get dynamic knowledge base
+    const knowledgeBase = await getDynamicKnowledge();
+    
+    const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
 CRITICAL RESPONSE FORMAT REQUIREMENTS:
 - Write ALL responses in plain text format only
@@ -96,22 +145,12 @@ Use the provided knowledge base to give specific, personalized advice. Always:
 5. Suggest official resources and next steps
 6. Include disclaimers about seeking professional advice when needed
 
+IMPORTANT: When providing processing times or visa costs, always mention that this information is regularly updated from official sources and include the recommendation to verify current information with the Department of Home Affairs.
+
 Knowledge Base:
-${immigrationKnowledge}
+${knowledgeBase}
 
 Important: Always remind users that immigration laws can change and they should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases. Format this reminder naturally within your response, not as a separate disclaimer.`;
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const { message, conversationHistory = [] } = await req.json();
-
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
-    }
 
     // Build conversation messages with context
     const messages = [
@@ -146,27 +185,22 @@ serve(async (req) => {
 
     // Enhanced text sanitization to remove ALL formatting
     aiResponse = aiResponse
-      // Remove markdown formatting
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
-      .replace(/\*(.*?)\*/g, '$1') // Italic
-      .replace(/__(.*?)__/g, '$1') // Underline
-      .replace(/`(.*?)`/g, '$1') // Code backticks
-      .replace(/#{1,6}\s/g, '') // Headers
-      .replace(/^\s*[\*\-\+]\s/gm, '') // Bullet points
-      .replace(/^\s*\d+\.\s/gm, '') // Numbered lists
-      // Remove HTML tags and CSS classes
-      .replace(/<[^>]*>/g, '') // HTML tags
-      .replace(/class="[^"]*"/g, '') // CSS classes
-      .replace(/style="[^"]*"/g, '') // Inline styles
-      // Remove CSS color/styling codes that might leak through
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/__(.*?)__/g, '$1')
+      .replace(/`(.*?)`/g, '$1')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/^\s*[\*\-\+]\s/gm, '')
+      .replace(/^\s*\d+\.\s/gm, '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/class="[^"]*"/g, '')
+      .replace(/style="[^"]*"/g, '')
       .replace(/australia-blue/g, '')
       .replace(/font-semibold/g, '')
       .replace(/font-bold/g, '')
       .replace(/text-\w+-\d+/g, '')
       .replace(/bg-\w+-\d+/g, '')
-      // Remove quotes around text that shouldn't be quoted
       .replace(/"\s*([^"]+)\s*"/g, '$1')
-      // Clean up multiple spaces and line breaks
       .replace(/\s+/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
