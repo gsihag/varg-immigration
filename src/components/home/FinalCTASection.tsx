@@ -39,9 +39,9 @@ const FinalCTASection = () => {
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
             </Link>
           </Button>
-          <Button variant="outline" size="lg" className="group bg-white text-trust-blue border-3 border-white hover:bg-blue-50 hover:border-blue-100 hover:text-trust-deep hover:shadow-lg font-bold text-lg px-8 py-4 rounded-xl magnetic-hover transition-all duration-300" asChild>
+          <Button variant="outline" size="lg" className="group bg-white text-trust-blue border-2 border-white hover:bg-white hover:text-trust-deep hover:shadow-xl hover:scale-105 font-bold text-lg px-8 py-4 rounded-xl transition-all duration-300 transform hover:border-trust-blue" asChild>
             <Link to="/contact">
-              <Users className="mr-2 w-5 h-5" />
+              <Users className="mr-2 w-5 h-5 group-hover:animate-pulse" />
               Book Expert Consultation
             </Link>
           </Button>
