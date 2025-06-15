@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,10 +62,13 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
 
   const callRituAPI = async (userMessage, conversationHistory) => {
     try {
-      const response = await fetch('/functions/v1/ritu-chat', {
+      console.log('Calling Ritu API with message:', userMessage);
+      
+      const response = await fetch('https://ewmrovhtpewutepgimth.supabase.co/functions/v1/ritu-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3bXJvdmh0cGV3dXRlcGdpbXRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MTUwNDUsImV4cCI6MjA2NTQ5MTA0NX0.RdOeh-5AdITHS_TEJ6gCEJgbU5hSkzZ9JITolNzcJiY`
         },
         body: JSON.stringify({
           message: userMessage,
@@ -73,7 +77,14 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         }),
       });
 
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`API call failed with status: ${response.status}`);
+      }
+
       const data = await response.json();
+      console.log('API response data:', data);
       
       if (!data.success) {
         throw new Error(data.error || 'API call failed');

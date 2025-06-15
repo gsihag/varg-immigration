@@ -13,10 +13,70 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Static knowledge base as fallback
-const staticKnowledgeBase = `
-AUSTRALIAN IMMIGRATION KNOWLEDGE BASE (FALLBACK):
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
 
+  try {
+    const { message, conversationHistory = [] } = await req.json();
+
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    console.log('Processing message:', message);
+
+    // Fetch current immigration data from Supabase
+    const { data: immigrationData, error } = await supabase
+      .from('immigration_data')
+      .select('*')
+      .order('last_updated', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching immigration data:', error);
+    }
+
+    // Build enhanced knowledge base with current data
+    let knowledgeBase = `CURRENT AUSTRALIAN IMMIGRATION DATA (Updated ${new Date().toISOString().split('T')[0]}):\n\n`;
+    
+    if (immigrationData && immigrationData.length > 0) {
+      const processingTimes = immigrationData.filter(item => item.data_type === 'processing_times');
+      
+      if (processingTimes.length > 0) {
+        knowledgeBase += "CURRENT PROCESSING TIMES:\n";
+        processingTimes.forEach(item => {
+          const content = item.data_content;
+          knowledgeBase += `- ${content.visa_name}: 75% processed in ${content.processing_time_75}, 90% in ${content.processing_time_90}\n`;
+        });
+        knowledgeBase += `\nLast updated: ${new Date(processingTimes[0].last_updated).toLocaleDateString()}\n\n`;
+      }
+    }
+
+    // Check if user is asking about specific visa processing times
+    const lowerMessage = message.toLowerCase();
+    const visaMatches = lowerMessage.match(/(\d{3})\s*visa|subclass\s*(\d{3})|visa\s*(\d{3})/);
+    const visaSubclass = visaMatches ? (visaMatches[1] || visaMatches[2] || visaMatches[3]) : null;
+    
+    let specificInfo = '';
+    if (visaSubclass && (lowerMessage.includes('processing') || lowerMessage.includes('time') || lowerMessage.includes('how long'))) {
+      const specificVisa = immigrationData?.find(item => 
+        item.data_type === 'processing_times' && item.visa_subclass === visaSubclass
+      );
+      
+      if (specificVisa) {
+        const content = specificVisa.data_content;
+        specificInfo = `\nCURRENT PROCESSING TIMES FOR ${content.visa_name.toUpperCase()}:
+• 75% of applications: ${content.processing_time_75}
+• 90% of applications: ${content.processing_time_90}
+Last updated: ${new Date(specificVisa.last_updated).toLocaleDateString()}
+
+Source: Official Department of Home Affairs data\n`;
+      }
+    }
+
+    // Add static knowledge for comprehensive coverage
+    knowledgeBase += `
 VISA TYPES:
 - Subclass 189 (Skilled Independent): Permanent visa, no sponsorship required, points-based system
 - Subclass 190 (Skilled Nominated): Permanent visa, requires state nomination, points-based system
@@ -42,94 +102,6 @@ ENGLISH REQUIREMENTS:
 - TOEFL: Overall 64 (Competent), 94 (Proficient), 110 (Superior)
 `;
 
-async function fetchCurrentImmigrationData(): Promise<string> {
-  try {
-    const { data, error } = await supabase
-      .from('immigration_data')
-      .select('*')
-      .order('last_updated', { ascending: false });
-      
-    if (error || !data || data.length === 0) {
-      console.log('Using static knowledge base as fallback');
-      return staticKnowledgeBase;
-    }
-    
-    // Build dynamic knowledge from database
-    let dynamicKnowledge = `CURRENT AUSTRALIAN IMMIGRATION DATA (Updated ${new Date().toISOString().split('T')[0]}):\n\n`;
-    
-    // Group data by type
-    const processingTimes = data.filter(item => item.data_type === 'processing_times');
-    
-    if (processingTimes.length > 0) {
-      dynamicKnowledge += "CURRENT PROCESSING TIMES:\n";
-      processingTimes.forEach(item => {
-        const content = item.data_content;
-        dynamicKnowledge += `- ${content.visa_name}: 75% processed in ${content.processing_time_75}, 90% in ${content.processing_time_90}\n`;
-      });
-      dynamicKnowledge += `\nLast updated: ${new Date(processingTimes[0].last_updated).toLocaleDateString()}\n\n`;
-    }
-    
-    // Add static knowledge for comprehensive coverage
-    dynamicKnowledge += staticKnowledgeBase;
-    
-    return dynamicKnowledge;
-  } catch (error) {
-    console.error('Error fetching current immigration data:', error);
-    return staticKnowledgeBase;
-  }
-}
-
-async function getSpecificVisaInfo(userMessage: string): Promise<string> {
-  const message = userMessage.toLowerCase();
-  
-  // Extract visa subclass from message
-  const visaMatches = message.match(/(\d{3})\s*visa|subclass\s*(\d{3})|visa\s*(\d{3})/);
-  const visaSubclass = visaMatches ? (visaMatches[1] || visaMatches[2] || visaMatches[3]) : null;
-  
-  if (visaSubclass && (message.includes('processing') || message.includes('time') || message.includes('how long'))) {
-    try {
-      const { data, error } = await supabase
-        .from('immigration_data')
-        .select('*')
-        .eq('data_type', 'processing_times')
-        .eq('visa_subclass', visaSubclass);
-      
-      if (!error && data && data.length > 0) {
-        const item = data[0];
-        const content = item.data_content;
-        return `\nCURRENT PROCESSING TIMES FOR ${content.visa_name.toUpperCase()}:
-• 75% of applications: ${content.processing_time_75}
-• 90% of applications: ${content.processing_time_90}
-Last updated: ${new Date(item.last_updated).toLocaleDateString()}
-
-Source: Official Department of Home Affairs data\n`;
-      }
-    } catch (error) {
-      console.error('Error fetching specific visa info:', error);
-    }
-  }
-  
-  return '';
-}
-
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const { message, conversationHistory = [] } = await req.json();
-
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
-    }
-
-    // Get current immigration data and specific visa info
-    const [knowledgeBase, specificInfo] = await Promise.all([
-      fetchCurrentImmigrationData(),
-      getSpecificVisaInfo(message)
-    ]);
-    
     const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
 CRITICAL RESPONSE FORMAT REQUIREMENTS:
@@ -167,6 +139,8 @@ Always remind users that immigration laws can change and they should verify info
       })),
       { role: 'user', content: message }
     ];
+
+    console.log('Calling OpenAI with enhanced prompt');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -210,6 +184,8 @@ Always remind users that immigration laws can change and they should verify info
       .replace(/\s+/g, ' ')
       .replace(/\n{3,}/g, '\n\n')
       .trim();
+
+    console.log('Returning AI response:', aiResponse.substring(0, 100) + '...');
 
     return new Response(JSON.stringify({ 
       response: aiResponse,
