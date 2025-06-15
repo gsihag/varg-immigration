@@ -1,3 +1,19 @@
+import { 
+  Calculator, 
+  FileText, 
+  Clock, 
+  Users, 
+  MapPin, 
+  GraduationCap, 
+  Briefcase, 
+  Heart, 
+  DollarSign, 
+  CheckCircle, 
+  AlertCircle, 
+  Globe, 
+  CalendarDays 
+} from 'lucide-react';
+
 interface ChatMessage {
   type: 'user' | 'agent';
   message: string;
@@ -112,9 +128,6 @@ export const analyzeUserContext = (messages: ChatMessage[]): UserContext => {
 
 export const generateContextualSuggestions = (context: UserContext, language: string = 'en') => {
   const suggestions: ContextualSuggestion[] = [];
-  
-  // Import icons dynamically - Fixed Calendar import
-  const { Calculator, FileText, Clock, Users, MapPin, GraduationCap, Briefcase, Heart, DollarSign, CheckCircle, AlertCircle, Globe, CalendarDays } = require('lucide-react');
 
   const suggestionTemplates = {
     en: {
