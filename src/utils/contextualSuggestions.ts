@@ -1,4 +1,3 @@
-
 interface ChatMessage {
   type: 'user' | 'agent';
   message: string;
@@ -114,8 +113,8 @@ export const analyzeUserContext = (messages: ChatMessage[]): UserContext => {
 export const generateContextualSuggestions = (context: UserContext, language: string = 'en') => {
   const suggestions: ContextualSuggestion[] = [];
   
-  // Import icons dynamically
-  const { Calculator, FileText, Clock, Users, MapPin, GraduationCap, Briefcase, Heart, DollarSign, CheckCircle, AlertCircle, Globe } = require('lucide-react');
+  // Import icons dynamically - Fixed Calendar import
+  const { Calculator, FileText, Clock, Users, MapPin, GraduationCap, Briefcase, Heart, DollarSign, CheckCircle, AlertCircle, Globe, CalendarDays } = require('lucide-react');
 
   const suggestionTemplates = {
     en: {
@@ -139,7 +138,7 @@ export const generateContextualSuggestions = (context: UserContext, language: st
       
       // Cost and timeline suggestions
       visaCosts: { text: "Complete cost breakdown for my visa pathway", icon: DollarSign, color: "bg-emerald-500 hover:bg-emerald-600" },
-      timeline: { text: "Immigration timeline and planning guide", icon: Calendar, color: "bg-violet-500 hover:bg-violet-600" },
+      timeline: { text: "Immigration timeline and planning guide", icon: CalendarDays, color: "bg-violet-500 hover:bg-violet-600" },
       
       // Student-specific suggestions
       studentToSkilled: { text: "Student to skilled migration pathway", icon: GraduationCap, color: "bg-blue-600 hover:bg-blue-700" },
