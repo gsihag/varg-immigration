@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Star } from 'lucide-react';
 import TestimonialCard from './TestimonialCard';
@@ -150,7 +149,7 @@ const TestimonialsSection = () => {
           </h2>
           <div className="flex justify-center items-center gap-2 mb-4">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-5 h-5 fill-action-orange text-action-orange" />
+              <svg key={i} className="w-5 h-5 fill-action-orange text-action-orange" viewBox="0 0 24 24" fill="currentColor"><polygon points="12,17.75 5.95,21 7.13,13.97 2,9.24 9.03,8.18 12,2 14.97,8.18 22,9.24 16.87,13.97 18.05,21" /></svg>
             ))}
             <span className="ml-2 text-slate-700 font-bold text-sm">4.9/5 from 2,000+ happy clients</span>
           </div>
@@ -171,19 +170,20 @@ const TestimonialsSection = () => {
                     testimonial={testimonial}
                     show={index === activeTestimonial}
                     animationClass={getAnimationClass(index)}
-                  />
+                  >
+                    {/* Navigation goes at the bottom of the card, always */}
+                    <TestimonialNavigation
+                      testimonialCount={testimonials.length}
+                      activeIndex={activeTestimonial}
+                      onDotClick={goToTestimonial}
+                      onPrev={handlePrev}
+                      onNext={handleNext}
+                      animating={animating}
+                    />
+                  </TestimonialCard>
                 ) : null;
               })}
             </div>
-            {/* Navigation (arrows and dots) - INSIDE the testimonial card at bottom */}
-            <TestimonialNavigation
-              testimonialCount={testimonials.length}
-              activeIndex={activeTestimonial}
-              onDotClick={goToTestimonial}
-              onPrev={handlePrev}
-              onNext={handleNext}
-              animating={animating}
-            />
           </div>
         </div>
       </div>
