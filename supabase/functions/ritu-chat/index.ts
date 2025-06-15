@@ -17,9 +17,36 @@ serve(async (req) => {
   try {
     const { message, conversationHistory = [], language = 'en' } = await req.json();
 
+    // Debug logging
+    console.log('Ritu Chat Function Called');
+    console.log('OpenAI API Key exists:', !!openAIApiKey);
+    console.log('OpenAI API Key length:', openAIApiKey ? openAIApiKey.length : 0);
+    console.log('User message received:', message);
+
     if (!openAIApiKey) {
+      console.error('OpenAI API key not found in environment variables');
       throw new Error('OpenAI API key not configured');
     }
+
+    // Test API key validity with a simple request first
+    console.log('Testing OpenAI API connection...');
+    const testResponse = await fetch('https://api.openai.com/v1/models', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('OpenAI Models API Response Status:', testResponse.status);
+    
+    if (!testResponse.ok) {
+      const errorText = await testResponse.text();
+      console.error('OpenAI API Key Test Failed:', errorText);
+      throw new Error(`OpenAI API key validation failed: ${testResponse.status} - ${errorText}`);
+    }
+
+    console.log('OpenAI API key is valid, proceeding with chat completion...');
 
     const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
@@ -64,6 +91,7 @@ Please provide a helpful, accurate response about Australian immigration based o
       { role: 'user', content: userPrompt }
     ];
 
+    console.log('Sending request to OpenAI chat completions...');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -78,11 +106,17 @@ Please provide a helpful, accurate response about Australian immigration based o
       }),
     });
 
+    console.log('OpenAI Chat Completion Response Status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('OpenAI Chat Completion Error:', errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('OpenAI response received successfully');
+    
     let aiResponse = data.choices[0].message.content;
 
     // Enhanced text sanitization to remove ALL formatting
@@ -107,6 +141,8 @@ Please provide a helpful, accurate response about Australian immigration based o
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
+    console.log('Response processed and cleaned successfully');
+
     return new Response(JSON.stringify({ 
       response: aiResponse,
       success: true 
@@ -116,6 +152,7 @@ Please provide a helpful, accurate response about Australian immigration based o
 
   } catch (error) {
     console.error('Error in ritu-chat function:', error);
+    console.error('Error stack:', error.stack);
     
     const fallbackResponse = language === 'hi' 
       ? "मैं अभी कुछ तकनीकी कठिनाइयों का सामना कर रही हूँ। कृपया कुछ देर बाद फिर से कोशिश करें या homeaffairs.gov.au पर आधिकारिक जानकारी के लिए जाएं।"
@@ -123,7 +160,8 @@ Please provide a helpful, accurate response about Australian immigration based o
 
     return new Response(JSON.stringify({ 
       response: fallbackResponse,
-      success: false 
+      success: false,
+      error: error.message // Include error message for debugging
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
