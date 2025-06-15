@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X, Globe } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageSelector';
 import RituChat from '@/components/RituChat';
 
@@ -38,7 +37,6 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
                   className="flex items-center gap-2 h-8 px-2"
                 >
-                  <Globe className="w-4 h-4" />
                   <span className="text-sm">{languages[currentLanguage as keyof typeof languages]?.flag || languages.en.flag}</span>
                   <span className="hidden sm:inline text-xs">{languages[currentLanguage as keyof typeof languages]?.name || languages.en.name}</span>
                 </Button>
@@ -71,7 +69,7 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
                 onClick={onClose}
                 className="h-8 w-8 hover:bg-gray-100"
               >
-                <X className="h-4 w-4" />
+                Close
               </Button>
             </div>
           </div>
