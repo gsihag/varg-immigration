@@ -75,9 +75,27 @@ const AgentResponse = ({ message }) => {
       /(\d+\s+points?)/gi,
       '<span class="text-green-600 font-semibold bg-green-50 px-1 rounded">$1</span>'
     );
+
+    // Convert line breaks to proper HTML line breaks for plain text formatting
+    highlightedText = highlightedText.replace(/\n/g, '<br/>');
     
     return { __html: highlightedText };
   };
+  
+  // Sanitize message to ensure consistent plain text formatting
+  const sanitizeMessage = (text) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove any remaining bold markdown
+      .replace(/\*(.*?)\*/g, '$1') // Remove any remaining italic markdown
+      .replace(/__(.*?)__/g, '$1') // Remove any remaining underline markdown
+      .replace(/`(.*?)`/g, '$1') // Remove any remaining code backticks
+      .replace(/#{1,6}\s/g, '') // Remove any remaining markdown headers
+      .replace(/^\s*[\*\-\+]\s/gm, '') // Remove any remaining bullet points
+      .replace(/^\s*\d+\.\s/gm, '') // Remove any remaining numbered lists
+      .trim();
+  };
+  
+  const cleanMessage = sanitizeMessage(message);
   
   return (
     <div className="flex gap-3 max-w-[85%]">
@@ -86,8 +104,9 @@ const AgentResponse = ({ message }) => {
       </div>
       <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
         <div 
-          className="text-gray-800 leading-relaxed text-base"
-          dangerouslySetInnerHTML={highlightTerms(message)}
+          className="text-gray-800 leading-relaxed text-base font-normal"
+          style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+          dangerouslySetInnerHTML={highlightTerms(cleanMessage)}
         />
         <div className="mt-2 text-xs text-gray-500 border-t pt-2">
           💡 <em>AI-powered advice by Ritu • Always verify with official sources</em>

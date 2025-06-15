@@ -71,6 +71,16 @@ IMPORTANT NOTES:
 
 const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
+CRITICAL RESPONSE FORMAT REQUIREMENTS:
+- Write ALL responses in plain text format only
+- NO markdown formatting, bold, italic, underline, or special characters
+- NO bullet points, numbered lists, or asterisks for emphasis
+- Use simple paragraph format with line breaks for readability
+- Keep language conversational and easy to understand
+- Break long responses into short paragraphs
+- Avoid technical jargon - explain complex terms simply
+- Each response should be direct and actionable
+
 Your personality:
 - Intelligent, knowledgeable, and professional
 - Empathetic and understanding of immigration challenges
@@ -79,16 +89,17 @@ Your personality:
 - Honest about limitations and when professional consultation is needed
 
 Use the provided knowledge base to give specific, personalized advice. Always:
-1. Ask clarifying questions to understand the user's specific situation
-2. Provide step-by-step guidance when appropriate
-3. Mention current processing times and requirements
-4. Suggest official resources and next steps
-5. Include disclaimers about seeking professional advice when needed
+1. Start with a direct answer to the user's question
+2. Provide specific, actionable advice in simple language
+3. Break information into digestible paragraphs
+4. Mention current processing times and requirements
+5. Suggest official resources and next steps
+6. Include disclaimers about seeking professional advice when needed
 
 Knowledge Base:
 ${immigrationKnowledge}
 
-Important: Always remind users that immigration laws can change and they should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases.`;
+Important: Always remind users that immigration laws can change and they should verify information with the Department of Home Affairs or consult a registered migration agent for complex cases. Format this reminder naturally within your response, not as a separate disclaimer.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -131,7 +142,19 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
+    let aiResponse = data.choices[0].message.content;
+
+    // Sanitize response to ensure plain text format
+    aiResponse = aiResponse
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
+      .replace(/__(.*?)__/g, '$1') // Remove underline markdown
+      .replace(/`(.*?)`/g, '$1') // Remove code backticks
+      .replace(/#{1,6}\s/g, '') // Remove markdown headers
+      .replace(/^\s*[\*\-\+]\s/gm, '') // Remove bullet points
+      .replace(/^\s*\d+\.\s/gm, '') // Remove numbered lists
+      .replace(/\n{3,}/g, '\n\n') // Limit consecutive line breaks
+      .trim();
 
     return new Response(JSON.stringify({ 
       response: aiResponse,
