@@ -17,19 +17,27 @@ serve(async (req) => {
   try {
     const { message, conversationHistory = [], language = 'en' } = await req.json();
 
-    // Debug logging
-    console.log('Ritu Chat Function Called');
+    // Detailed debugging for API key
+    console.log('=== RITU CHAT FUNCTION DEBUG ===');
+    console.log('Function called at:', new Date().toISOString());
+    console.log('User message:', message);
+    console.log('Language:', language);
+    console.log('Environment variables available:', Object.keys(Deno.env.toObject()));
     console.log('OpenAI API Key exists:', !!openAIApiKey);
-    console.log('OpenAI API Key length:', openAIApiKey ? openAIApiKey.length : 0);
-    console.log('User message received:', message);
-
-    if (!openAIApiKey) {
-      console.error('OpenAI API key not found in environment variables');
-      throw new Error('OpenAI API key not configured');
+    console.log('OpenAI API Key type:', typeof openAIApiKey);
+    
+    if (openAIApiKey) {
+      console.log('API Key length:', openAIApiKey.length);
+      console.log('API Key starts with:', openAIApiKey.substring(0, 7));
+      console.log('API Key ends with:', openAIApiKey.substring(openAIApiKey.length - 4));
+    } else {
+      console.error('❌ CRITICAL: OpenAI API Key is null/undefined');
+      console.log('Available environment variables:', Object.keys(Deno.env.toObject()));
+      throw new Error('OpenAI API key not found in environment variables. Please check Supabase Edge Function secrets.');
     }
 
-    // Test API key validity with a simple request first
-    console.log('Testing OpenAI API connection...');
+    // Test API key validity
+    console.log('🔍 Testing OpenAI API connection...');
     const testResponse = await fetch('https://api.openai.com/v1/models', {
       method: 'GET',
       headers: {
@@ -38,15 +46,18 @@ serve(async (req) => {
       },
     });
 
-    console.log('OpenAI Models API Response Status:', testResponse.status);
+    console.log('OpenAI Models API Status:', testResponse.status);
+    console.log('OpenAI Models API Headers:', Object.fromEntries(testResponse.headers.entries()));
     
     if (!testResponse.ok) {
       const errorText = await testResponse.text();
-      console.error('OpenAI API Key Test Failed:', errorText);
+      console.error('❌ OpenAI API Key Test Failed');
+      console.error('Status:', testResponse.status);
+      console.error('Error:', errorText);
       throw new Error(`OpenAI API key validation failed: ${testResponse.status} - ${errorText}`);
     }
 
-    console.log('OpenAI API key is valid, proceeding with chat completion...');
+    console.log('✅ OpenAI API key is valid!');
 
     const systemPrompt = `You are Ritu, Australia's most intelligent AI immigration agent. You provide personalized, accurate advice based on current Australian immigration policies and requirements.
 
@@ -91,7 +102,9 @@ Please provide a helpful, accurate response about Australian immigration based o
       { role: 'user', content: userPrompt }
     ];
 
-    console.log('Sending request to OpenAI chat completions...');
+    console.log('🤖 Sending request to OpenAI chat completions...');
+    console.log('Message count:', messages.length);
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -106,18 +119,23 @@ Please provide a helpful, accurate response about Australian immigration based o
       }),
     });
 
-    console.log('OpenAI Chat Completion Response Status:', response.status);
+    console.log('OpenAI Chat Response Status:', response.status);
+    console.log('OpenAI Chat Response Headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI Chat Completion Error:', errorText);
+      console.error('❌ OpenAI Chat Completion Error');
+      console.error('Status:', response.status);
+      console.error('Error:', errorText);
       throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log('OpenAI response received successfully');
+    console.log('✅ OpenAI response received successfully');
+    console.log('Response data structure:', Object.keys(data));
     
     let aiResponse = data.choices[0].message.content;
+    console.log('Raw AI response length:', aiResponse.length);
 
     // Enhanced text sanitization to remove ALL formatting
     aiResponse = aiResponse
@@ -141,7 +159,8 @@ Please provide a helpful, accurate response about Australian immigration based o
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
-    console.log('Response processed and cleaned successfully');
+    console.log('✅ Response processed and cleaned successfully');
+    console.log('Final response length:', aiResponse.length);
 
     return new Response(JSON.stringify({ 
       response: aiResponse,
@@ -151,7 +170,9 @@ Please provide a helpful, accurate response about Australian immigration based o
     });
 
   } catch (error) {
-    console.error('Error in ritu-chat function:', error);
+    console.error('❌ ERROR in ritu-chat function:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
     console.error('Error stack:', error.stack);
     
     const fallbackResponse = language === 'hi' 
@@ -161,7 +182,12 @@ Please provide a helpful, accurate response about Australian immigration based o
     return new Response(JSON.stringify({ 
       response: fallbackResponse,
       success: false,
-      error: error.message // Include error message for debugging
+      error: error.message,
+      debug: {
+        hasApiKey: !!openAIApiKey,
+        apiKeyLength: openAIApiKey ? openAIApiKey.length : 0,
+        errorType: error.name
+      }
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
