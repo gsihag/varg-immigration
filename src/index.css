@@ -210,10 +210,10 @@
 /* Psychology-Based Animations */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(234, 88, 12, 0.3);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(234, 88, 12, 0.6);
+    box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
   }
 }
 
@@ -343,4 +343,35 @@
   box-shadow: 
     inset 20px 20px 60px #d1d5db,
     inset -20px -20px 60px #ffffff;
+}
+
+/* Floating Chat Widget Specific Animations */
+@keyframes widget-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02);
+  }
+}
+
+@keyframes widget-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(37, 99, 235, 0.7);
+  }
+}
+
+.animate-attention-grab {
+  animation: widget-bounce 2s ease-in-out infinite;
+}
+
+/* Mobile-specific adjustments for floating widget */
+@media (max-width: 640px) {
+  .floating-chat-widget {
+    bottom: 1rem;
+    left: 1rem;
+  }
 }
