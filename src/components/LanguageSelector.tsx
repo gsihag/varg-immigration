@@ -1,4 +1,3 @@
-
 import React, { useState, useContext, createContext, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Globe, ChevronDown } from 'lucide-react';
@@ -34,7 +33,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [currentLanguage, setCurrentLanguage] = useState('en');
 
   const languages: Record<string, Language> = {
-    en: { name: 'English', flag: '🇺🇸' },
+    en: { name: 'English', flag: '🇬🇧' },
     hi: { name: 'हिंदी', flag: '🇮🇳' },
     zh: { name: '中文', flag: '🇨🇳' },
     ar: { name: 'العربية', flag: '🇸🇦' },

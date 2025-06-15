@@ -12,8 +12,14 @@ interface ChatPopupProps {
 }
 
 const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
-  const { currentLanguage, setCurrentLanguage, languages } = useLanguage();
+  const { currentLanguage, setCurrentLanguage } = useLanguage();
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+
+  // Only English and Hindi options
+  const languages = {
+    en: { name: 'English', flag: '🇬🇧' },
+    hi: { name: 'हिंदी', flag: '🇮🇳' }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -33,8 +39,8 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
                   className="flex items-center gap-2 h-8 px-2"
                 >
                   <Globe className="w-4 h-4" />
-                  <span className="text-sm">{languages[currentLanguage].flag}</span>
-                  <span className="hidden sm:inline text-xs">{languages[currentLanguage].name}</span>
+                  <span className="text-sm">{languages[currentLanguage as keyof typeof languages]?.flag || languages.en.flag}</span>
+                  <span className="hidden sm:inline text-xs">{languages[currentLanguage as keyof typeof languages]?.name || languages.en.name}</span>
                 </Button>
 
                 {showLanguageDropdown && (
@@ -63,7 +69,7 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ isOpen, onClose }) => {
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                className="h-8 w-8"
+                className="h-8 w-8 hover:bg-gray-100"
               >
                 <X className="h-4 w-4" />
               </Button>
