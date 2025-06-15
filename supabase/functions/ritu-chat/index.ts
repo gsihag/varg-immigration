@@ -144,16 +144,31 @@ serve(async (req) => {
     const data = await response.json();
     let aiResponse = data.choices[0].message.content;
 
-    // Sanitize response to ensure plain text format
+    // Enhanced text sanitization to remove ALL formatting
     aiResponse = aiResponse
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold markdown
-      .replace(/\*(.*?)\*/g, '$1') // Remove italic markdown
-      .replace(/__(.*?)__/g, '$1') // Remove underline markdown
-      .replace(/`(.*?)`/g, '$1') // Remove code backticks
-      .replace(/#{1,6}\s/g, '') // Remove markdown headers
-      .replace(/^\s*[\*\-\+]\s/gm, '') // Remove bullet points
-      .replace(/^\s*\d+\.\s/gm, '') // Remove numbered lists
-      .replace(/\n{3,}/g, '\n\n') // Limit consecutive line breaks
+      // Remove markdown formatting
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Bold
+      .replace(/\*(.*?)\*/g, '$1') // Italic
+      .replace(/__(.*?)__/g, '$1') // Underline
+      .replace(/`(.*?)`/g, '$1') // Code backticks
+      .replace(/#{1,6}\s/g, '') // Headers
+      .replace(/^\s*[\*\-\+]\s/gm, '') // Bullet points
+      .replace(/^\s*\d+\.\s/gm, '') // Numbered lists
+      // Remove HTML tags and CSS classes
+      .replace(/<[^>]*>/g, '') // HTML tags
+      .replace(/class="[^"]*"/g, '') // CSS classes
+      .replace(/style="[^"]*"/g, '') // Inline styles
+      // Remove CSS color/styling codes that might leak through
+      .replace(/australia-blue/g, '')
+      .replace(/font-semibold/g, '')
+      .replace(/font-bold/g, '')
+      .replace(/text-\w+-\d+/g, '')
+      .replace(/bg-\w+-\d+/g, '')
+      // Remove quotes around text that shouldn't be quoted
+      .replace(/"\s*([^"]+)\s*"/g, '$1')
+      // Clean up multiple spaces and line breaks
+      .replace(/\s+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
       .trim();
 
     return new Response(JSON.stringify({ 

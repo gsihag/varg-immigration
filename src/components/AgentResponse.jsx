@@ -3,6 +3,32 @@ import React from 'react';
 
 const AgentResponse = ({ message }) => {
   const highlightTerms = (text) => {
+    // First, ensure the text is completely clean of any formatting codes
+    let cleanText = text
+      // Remove any remaining markdown
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/__(.*?)__/g, '$1')
+      .replace(/`(.*?)`/g, '$1')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/^\s*[\*\-\+]\s/gm, '')
+      .replace(/^\s*\d+\.\s/gm, '')
+      // Remove HTML tags and CSS classes
+      .replace(/<[^>]*>/g, '')
+      .replace(/class="[^"]*"/g, '')
+      .replace(/style="[^"]*"/g, '')
+      // Remove CSS styling codes
+      .replace(/australia-blue/g, '')
+      .replace(/font-semibold/g, '')
+      .replace(/font-bold/g, '')
+      .replace(/text-\w+-\d+/g, '')
+      .replace(/bg-\w+-\d+/g, '')
+      // Remove stray quotes
+      .replace(/"\s*([^"]+)\s*"/g, '$1')
+      // Clean up spaces
+      .replace(/\s+/g, ' ')
+      .trim();
+
     const terms = [
       // Visa types and subcasses
       "Skilled Independent visa", "Skilled Nominated visa", "Partner visa", "Student visa", 
@@ -36,7 +62,7 @@ const AgentResponse = ({ message }) => {
       "Ritu", "VARG Immigration"
     ];
     
-    let highlightedText = text;
+    let highlightedText = cleanText;
     
     // First handle the special case for "Ritu" name highlighting
     highlightedText = highlightedText.replace(
@@ -82,16 +108,33 @@ const AgentResponse = ({ message }) => {
     return { __html: highlightedText };
   };
   
-  // Sanitize message to ensure consistent plain text formatting
+  // Enhanced sanitization to completely clean the message
   const sanitizeMessage = (text) => {
     return text
-      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove any remaining bold markdown
-      .replace(/\*(.*?)\*/g, '$1') // Remove any remaining italic markdown
-      .replace(/__(.*?)__/g, '$1') // Remove any remaining underline markdown
-      .replace(/`(.*?)`/g, '$1') // Remove any remaining code backticks
-      .replace(/#{1,6}\s/g, '') // Remove any remaining markdown headers
-      .replace(/^\s*[\*\-\+]\s/gm, '') // Remove any remaining bullet points
-      .replace(/^\s*\d+\.\s/gm, '') // Remove any remaining numbered lists
+      // Remove all markdown formatting
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/__(.*?)__/g, '$1')
+      .replace(/`(.*?)`/g, '$1')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/^\s*[\*\-\+]\s/gm, '')
+      .replace(/^\s*\d+\.\s/gm, '')
+      // Remove HTML tags and CSS classes completely
+      .replace(/<[^>]*>/g, '')
+      .replace(/class="[^"]*"/g, '')
+      .replace(/style="[^"]*"/g, '')
+      // Remove any CSS styling codes that might appear
+      .replace(/australia-blue/g, '')
+      .replace(/font-semibold/g, '')
+      .replace(/font-bold/g, '')
+      .replace(/text-\w+-\d+/g, '')
+      .replace(/bg-\w+-\d+/g, '')
+      .replace(/hover:\w+-\w+-\d+/g, '')
+      // Remove stray quotes around words
+      .replace(/"\s*([^"]+)\s*"/g, '$1')
+      // Clean up multiple spaces and normalize whitespace
+      .replace(/\s+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
       .trim();
   };
   
