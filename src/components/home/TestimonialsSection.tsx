@@ -36,7 +36,7 @@ const testimonials = [
 
 type Direction = 'left' | 'right';
 
-const AUTO_ROTATE_DELAY = 5000; // 5 seconds of inactivity before restarting autorotate
+const AUTO_ROTATE_DELAY = 5000;
 
 const TestimonialsSection = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -46,7 +46,6 @@ const TestimonialsSection = () => {
   const inactivityTimeout = useRef<number | null>(null);
   const autoRotateTimeout = useRef<number | null>(null);
 
-  // Clean up timers on unmount
   useEffect(() => {
     return () => {
       inactivityTimeout.current && clearTimeout(inactivityTimeout.current);
@@ -54,13 +53,9 @@ const TestimonialsSection = () => {
     };
   }, []);
 
-  // Auto-rotate logic (only when user not recently active)
   useEffect(() => {
-    // Clear any previous auto-rotation
     autoRotateTimeout.current && clearTimeout(autoRotateTimeout.current);
-
-    if (userActive) return; // If user just interacted, don't auto-rotate
-
+    if (userActive) return;
     autoRotateTimeout.current = window.setTimeout(() => {
       handleNext('auto');
     }, AUTO_ROTATE_DELAY);
@@ -71,8 +66,6 @@ const TestimonialsSection = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTestimonial, userActive]);
 
-  // When user interacts, stop auto-rotation temporarily,
-  // and after inactivity for AUTO_ROTATE_DELAY, resume auto-rotation
   const setUserInteraction = () => {
     setUserActive(true);
     inactivityTimeout.current && clearTimeout(inactivityTimeout.current);
@@ -81,7 +74,6 @@ const TestimonialsSection = () => {
     }, AUTO_ROTATE_DELAY);
   };
 
-  // Animation handling
   const animateSwitch = (callback: () => void, dir: Direction) => {
     if (animating) return;
     setDirection(dir);
@@ -123,7 +115,6 @@ const TestimonialsSection = () => {
     setUserInteraction();
   };
 
-  // Animation classes for current/transitioning slides
   const getAnimationClass = (idx: number): string => {
     if (idx === activeTestimonial) {
       if (animating) {
@@ -135,7 +126,6 @@ const TestimonialsSection = () => {
       }
     } else {
       if (animating) {
-        // figure out which is outgoing?
         if (
           (direction === 'right' &&
             idx === (activeTestimonial - 1 + testimonials.length) % testimonials.length) ||
@@ -165,15 +155,12 @@ const TestimonialsSection = () => {
             <span className="ml-2 text-slate-700 font-bold text-sm">4.9/5 from 2,000+ happy clients</span>
           </div>
         </div>
-        
         <div className="max-w-3xl mx-auto relative">
-          <div className="bg-white rounded-2xl shadow-2xl p-5 lg:p-6 relative overflow-hidden border border-slate-200 min-h-[370px]">
+          <div className="bg-white rounded-2xl shadow-2xl p-5 lg:p-6 relative overflow-hidden border border-slate-200 min-h-[400px]">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-action" />
-            
             {/* Testimonial transitions */}
             <div className="relative h-full min-h-[290px] flex items-center justify-center">
               {testimonials.map((testimonial, index) => {
-                // Only active, prev, next for animation
                 const isShow =
                   index === activeTestimonial ||
                   (direction === 'right' && index === (activeTestimonial - 1 + testimonials.length) % testimonials.length) ||
@@ -188,7 +175,7 @@ const TestimonialsSection = () => {
                 ) : null;
               })}
             </div>
-            {/* Navigation (arrows and dots) - dots now at the very bottom */}
+            {/* Navigation (arrows and dots) - INSIDE the testimonial card at bottom */}
             <TestimonialNavigation
               testimonialCount={testimonials.length}
               activeIndex={activeTestimonial}
@@ -200,7 +187,6 @@ const TestimonialsSection = () => {
           </div>
         </div>
       </div>
-      {/* Animations — Tailwind with custom keyframes */}
       <style>{`
         @keyframes slide-in-right {
           from {opacity: 0; transform: translateX(72px);}
@@ -224,4 +210,3 @@ const TestimonialsSection = () => {
 };
 
 export default TestimonialsSection;
-

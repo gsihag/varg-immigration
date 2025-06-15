@@ -26,7 +26,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, show, an
       style={{ animationFillMode: 'both' }}
       aria-hidden={!show}
     >
-      <div className="text-center">
+      <div className="text-center mb-7"> {/* This mb-7 ensures space between content and dots/navigation */}
         <div className="text-4xl mb-3 float-animation">{testimonial.avatar}</div>
         <div className="inline-block bg-gradient-success rounded-full px-3 py-1 text-white font-bold text-xs mb-3">
           {testimonial.highlight}
@@ -48,4 +48,3 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, show, an
 };
 
 export default TestimonialCard;
-

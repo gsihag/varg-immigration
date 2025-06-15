@@ -19,32 +19,34 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
   onNext,
   animating
 }) => (
-  <div className="relative w-full flex flex-col items-center">
+  <div className="w-full flex flex-col items-center mt-7">
     {/* Arrow Navigation */}
-    <button
-      aria-label="Previous review"
-      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
-      onClick={onPrev}
-      disabled={animating}
-      tabIndex={0}
-      style={{ outline: 'none' }}
-      type="button"
-    >
-      <ArrowLeft className="w-5 h-5" />
-    </button>
-    <button
-      aria-label="Next review"
-      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
-      onClick={onNext}
-      disabled={animating}
-      tabIndex={0}
-      style={{ outline: 'none' }}
-      type="button"
-    >
-      <ArrowRight className="w-5 h-5" />
-    </button>
+    <div className="flex items-center justify-center gap-12 mb-4">
+      <button
+        aria-label="Previous review"
+        className="bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
+        onClick={onPrev}
+        disabled={animating}
+        tabIndex={0}
+        style={{ outline: 'none' }}
+        type="button"
+      >
+        <ArrowLeft className="w-4 h-4" />
+      </button>
+      <button
+        aria-label="Next review"
+        className="bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
+        onClick={onNext}
+        disabled={animating}
+        tabIndex={0}
+        style={{ outline: 'none' }}
+        type="button"
+      >
+        <ArrowRight className="w-4 h-4" />
+      </button>
+    </div>
     {/* Dots Navigation */}
-    <div className="flex justify-center mt-8 gap-2 z-30 relative">
+    <div className="flex justify-center mt-2 gap-2 z-30 relative">
       {Array.from({ length: testimonialCount }).map((_, idx) => (
         <button
           key={idx}
@@ -64,4 +66,3 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
 );
 
 export default TestimonialNavigation;
-
