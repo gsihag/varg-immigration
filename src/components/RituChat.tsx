@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, Loader2, MessageCircle, Calculator, FileText, Clock, Users, MapPin } from 'lucide-react';
+import { Send, Bot, User, Loader2, MessageCircle } from 'lucide-react';
 import AgentResponse from '@/components/AgentResponse';
 import { useLanguage } from '@/components/LanguageSelector';
+import { analyzeUserContext, generateContextualSuggestions } from '@/utils/contextualSuggestions';
 
 interface RituChatProps {
   isInPopup?: boolean;
@@ -16,6 +17,7 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [contextualSuggestions, setContextualSuggestions] = useState([]);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -34,7 +36,6 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
   }, [messages, isLoading]);
 
   useEffect(() => {
-    // Enhanced welcome message showcasing Ritu's intelligence
     const enhancedGreeting = currentLanguage === 'hi' 
       ? "नमस्ते! मैं रितु हूँ, ऑस्ट्रेलिया की सबसे बुद्धिमान AI इमिग्रेशन एजेंट। मैं नवीनतम सरकारी डेटा और नीतियों का उपयोग करके व्यक्तिगत सलाह प्रदान करती हूँ। आज मैं आपकी ऑस्ट्रेलियाई प्रवासन यात्रा में कैसे सहायता कर सकती हूँ?"
       : "Hello! I'm Ritu, Australia's most intelligent AI immigration agent. I provide personalized advice using the latest government data and immigration policies. How can I assist you with your Australian migration journey today?";
@@ -47,26 +48,15 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       showSuggestions: true
     };
     setMessages([initialGreeting]);
+    
+    // Generate initial contextual suggestions
+    updateContextualSuggestions([]);
   }, [currentLanguage]);
 
-  const getSuggestions = (language) => {
-    const suggestions = {
-      en: [
-        { icon: Calculator, text: "Calculate my points for skilled visa", color: "bg-green-500 hover:bg-green-600" },
-        { icon: FileText, text: "What documents do I need?", color: "bg-purple-500 hover:bg-purple-600" },
-        { icon: Clock, text: "Current visa processing times", color: "bg-blue-500 hover:bg-blue-600" },
-        { icon: Users, text: "Family visa eligibility check", color: "bg-orange-500 hover:bg-orange-600" },
-        { icon: MapPin, text: "State nomination requirements", color: "bg-teal-500 hover:bg-teal-600" }
-      ],
-      hi: [
-        { icon: Calculator, text: "कुशल वीज़ा के लिए मेरे अंकों की गणना करें", color: "bg-green-500 hover:bg-green-600" },
-        { icon: FileText, text: "मुझे कौन से दस्तावेज़ चाहिए?", color: "bg-purple-500 hover:bg-purple-600" },
-        { icon: Clock, text: "वर्तमान वीज़ा प्रसंस्करण समय", color: "bg-blue-500 hover:bg-blue-600" },
-        { icon: Users, text: "पारिवारिक वीज़ा पात्रता जांच", color: "bg-orange-500 hover:bg-orange-600" },
-        { icon: MapPin, text: "राज्य नामांकन आवश्यकताएं", color: "bg-teal-500 hover:bg-teal-600" }
-      ]
-    };
-    return suggestions[language] || suggestions.en;
+  const updateContextualSuggestions = (messageHistory) => {
+    const context = analyzeUserContext(messageHistory);
+    const newSuggestions = generateContextualSuggestions(context, currentLanguage);
+    setContextualSuggestions(newSuggestions);
   };
 
   const callRituAPI = async (userMessage, conversationHistory) => {
@@ -92,7 +82,6 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       return data.response;
     } catch (error) {
       console.error('Ritu API error:', error);
-      // Fallback to enhanced static responses if API fails
       return getFallbackResponse(userMessage, currentLanguage);
     }
   };
@@ -134,16 +123,14 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     if (!messageText) setInputMessage('');
     setIsLoading(true);
     setShowSuggestions(false);
 
     try {
-      // Get conversation history for context
-      const conversationHistory = messages.slice(-10); // Last 10 messages for context
-      
-      // Call the enhanced AI API
+      const conversationHistory = messages.slice(-10);
       const aiResponseText = await callRituAPI(messageToSend, conversationHistory);
       
       const aiResponse = {
@@ -154,7 +141,11 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         showSuggestions: true
       };
       
-      setMessages(prev => [...prev, aiResponse]);
+      const finalMessages = [...updatedMessages, aiResponse];
+      setMessages(finalMessages);
+      
+      // Update contextual suggestions based on conversation history
+      updateContextualSuggestions(finalMessages);
       setShowSuggestions(true);
     } catch (error) {
       console.error('Error getting AI response:', error);
@@ -183,12 +174,9 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
     }
   };
 
-  const suggestions = getSuggestions(currentLanguage);
-
   if (isInPopup) {
     return (
       <div className="h-full flex flex-col bg-gray-50">
-        {/* Messages Container - Scrollable Area */}
         <div 
           ref={chatContainerRef}
           className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth bg-white"
@@ -210,12 +198,13 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                 )}
               </div>
               
-              {/* Suggestions - Show after agent responses */}
-              {message.type === 'agent' && message.showSuggestions && showSuggestions && (
+              {message.type === 'agent' && message.showSuggestions && showSuggestions && contextualSuggestions.length > 0 && (
                 <div className="mt-4 ml-14">
-                  <p className="text-sm text-gray-600 mb-3 font-medium">Quick suggestions:</p>
+                  <p className="text-sm text-gray-600 mb-3 font-medium">
+                    {currentLanguage === 'hi' ? 'आपके लिए सुझाव:' : 'Personalized suggestions for you:'}
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    {suggestions.map((suggestion, index) => {
+                    {contextualSuggestions.map((suggestion, index) => {
                       const IconComponent = suggestion.icon;
                       return (
                         <Button
@@ -252,11 +241,9 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
             </div>
           )}
           
-          {/* Invisible element to help with scrolling */}
           <div ref={messagesEndRef} />
         </div>
         
-        {/* Input Area - Sticky at Bottom */}
         <div className="flex-shrink-0 border-t-2 border-gray-200 p-4 bg-white sticky bottom-0 z-10">
           <div className="flex gap-3">
             <Input
@@ -293,7 +280,6 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-0 bg-gray-50">
-        {/* Messages Container - Fixed Height with Scroll */}
         <div 
           ref={chatContainerRef}
           className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 scroll-smooth bg-white"
@@ -316,12 +302,13 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                 )}
               </div>
               
-              {/* Suggestions - Show after agent responses */}
-              {message.type === 'agent' && message.showSuggestions && showSuggestions && (
+              {message.type === 'agent' && message.showSuggestions && showSuggestions && contextualSuggestions.length > 0 && (
                 <div className="mt-4 ml-14">
-                  <p className="text-sm text-gray-600 mb-3 font-medium">Quick suggestions:</p>
+                  <p className="text-sm text-gray-600 mb-3 font-medium">
+                    {currentLanguage === 'hi' ? 'आपके लिए सुझाव:' : 'Personalized suggestions for you:'}
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    {suggestions.map((suggestion, index) => {
+                    {contextualSuggestions.map((suggestion, index) => {
                       const IconComponent = suggestion.icon;
                       return (
                         <Button
@@ -358,11 +345,9 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
             </div>
           )}
           
-          {/* Invisible element to help with scrolling */}
           <div ref={messagesEndRef} />
         </div>
         
-        {/* Input Area - Fixed at Bottom with Enhanced Styling */}
         <div className="flex-shrink-0 border-t-2 border-gray-200 p-4 bg-white">
           <div className="flex gap-3">
             <Input
