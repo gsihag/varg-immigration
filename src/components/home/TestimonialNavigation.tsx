@@ -11,15 +11,6 @@ interface TestimonialNavigationProps {
   animating: boolean;
 }
 
-const getDotRange = (testimonialCount: number, activeIndex: number) => {
-  if (testimonialCount <= 3) {
-    return { start: 0, end: testimonialCount };
-  }
-  if (activeIndex === 0) return { start: 0, end: 3 };
-  if (activeIndex === testimonialCount - 1) return { start: testimonialCount - 3, end: testimonialCount };
-  return { start: activeIndex - 1, end: activeIndex + 2 };
-};
-
 const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
   testimonialCount,
   activeIndex,
@@ -28,15 +19,15 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
   onNext,
   animating
 }) => {
-  // Manage sliding dot window. Always show at most 3 dots.
+  // Show only 3 dots maximum, sliding window
   let visibleDots: number[] = [];
   if (testimonialCount <= 3) {
     visibleDots = Array.from({ length: testimonialCount }, (_, i) => i);
   } else {
     // Sliding window for 3 dots
-    if (activeIndex === 0) visibleDots = [0,1,2];
-    else if (activeIndex === testimonialCount-1) visibleDots = [testimonialCount-3, testimonialCount-2, testimonialCount-1];
-    else visibleDots = [activeIndex-1, activeIndex, activeIndex+1];
+    if (activeIndex === 0) visibleDots = [0, 1, 2];
+    else if (activeIndex === testimonialCount - 1) visibleDots = [testimonialCount - 3, testimonialCount - 2, testimonialCount - 1];
+    else visibleDots = [activeIndex - 1, activeIndex, activeIndex + 1];
   }
 
   return (
@@ -44,14 +35,20 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
       {/* Arrow left */}
       <button
         aria-label="Previous review"
-        className="bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
+        className="bg-white bg-opacity-70 hover:bg-opacity-100 shadow-md w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
+        style={{ 
+          color: 'rgb(234, 88, 12)',
+          '&:hover': {
+            color: 'white',
+            backgroundColor: 'rgb(234, 88, 12)'
+          }
+        }}
         onClick={onPrev}
         disabled={animating}
         tabIndex={0}
-        style={{ outline: 'none' }}
         type="button"
       >
-        <ArrowLeft className="w-3 h-3" /> {/* Smol arrow! */}
+        <ArrowLeft className="w-2.5 h-2.5" />
       </button>
 
       {/* The Dots */}
@@ -60,27 +57,38 @@ const TestimonialNavigation: React.FC<TestimonialNavigationProps> = ({
           <button
             key={idx}
             aria-label={`Go to testimonial ${idx + 1}`}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300
-              ${activeIndex === idx 
-                ? 'bg-action-orange scale-125 shadow-lg'
-                : 'bg-slate-300 hover:bg-slate-400'}`}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+              activeIndex === idx 
+                ? 'scale-125 shadow-lg'
+                : 'hover:bg-slate-400'
+            }`}
+            style={{
+              backgroundColor: activeIndex === idx ? 'rgb(234, 88, 12)' : 'rgb(203, 213, 225)'
+            }}
             onClick={() => onDotClick(idx)}
             disabled={animating}
             type="button"
           />
         ))}
       </div>
+      
       {/* Arrow right */}
       <button
         aria-label="Next review"
-        className="bg-white bg-opacity-70 hover:bg-opacity-100 text-action-orange hover:text-white hover:bg-action-orange shadow-md w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
+        className="bg-white bg-opacity-70 hover:bg-opacity-100 shadow-md w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 border border-slate-200 hover:scale-110"
+        style={{ 
+          color: 'rgb(234, 88, 12)',
+          '&:hover': {
+            color: 'white',
+            backgroundColor: 'rgb(234, 88, 12)'
+          }
+        }}
         onClick={onNext}
         disabled={animating}
         tabIndex={0}
-        style={{ outline: 'none' }}
         type="button"
       >
-        <ArrowRight className="w-3 h-3" /> {/* Smol arrow! */}
+        <ArrowRight className="w-2.5 h-2.5" />
       </button>
     </div>
   );

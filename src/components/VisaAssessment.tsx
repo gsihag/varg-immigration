@@ -1,206 +1,150 @@
-
 import React, { useState } from 'react';
-import { Progress } from '@/components/ui/progress';
-import { AssessmentData, PointsBreakdown, Recommendations } from './visa-assessment/types';
-import { calculatePoints, generateRecommendations, validateAge } from './visa-assessment/utils';
-import QuestionStep from './visa-assessment/QuestionStep';
-import ResultsDisplay from './visa-assessment/ResultsDisplay';
 
-const VisaAssessment = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(1);
-  const [assessmentData, setAssessmentData] = useState<AssessmentData>({
-    age: '',
-    occupation: '',
-    education: '',
-    englishTest: '',
-    englishScores: {
-      listening: '',
-      reading: '',
-      writing: '',
-      speaking: ''
-    },
-    workExperienceAustralia: '',
-    workExperienceOverseas: '',
-    currentLocation: '',
-    visaStatus: '',
-    familyStatus: '',
-    hasAustralianQualification: null,
-    isFromRegionalAustralia: null,
-    hasMastersOrDoctorate: null,
-    hasNAATICredential: null,
-    hasCompletedProfessionalYear: null,
-    partnerStatus: '',
-    partnerEnglishTest: '',
-    partnerEnglishScores: {
-      listening: '',
-      reading: '',
-      writing: '',
-      speaking: ''
-    },
-    partnerHasSkillAssessment: null,
-    stateInterest: '',
-    australianStudy: '',
-    regionalStudy: '',
-    mastersPhd: '',
-    naatiCredential: '',
-    professionalYear: ''
-  });
-  const [pointsBreakdown, setPointsBreakdown] = useState<PointsBreakdown | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendations | null>(null);
+interface Question {
+  id: string;
+  text: string;
+  options: { value: string; label: string; description?: string }[];
+}
 
-  const totalQuestions = 11;
+const questions: Question[] = [
+  {
+    id: 'age',
+    text: 'What is your age?',
+    options: [
+      { value: '18-24', label: '18-24 years' },
+      { value: '25-34', label: '25-34 years' },
+      { value: '35-44', label: '35-44 years' },
+      { value: '45+', label: '45 years or older' },
+    ],
+  },
+  {
+    id: 'education',
+    text: 'What is your highest level of education?',
+    options: [
+      { value: 'high-school', label: 'High School Diploma' },
+      { value: 'bachelor', label: 'Bachelor\'s Degree' },
+      { value: 'master', label: 'Master\'s Degree' },
+      { value: 'doctorate', label: 'Doctorate (Ph.D.)' },
+    ],
+  },
+  {
+    id: 'experience',
+    text: 'How many years of professional experience do you have?',
+    options: [
+      { value: '0-2', label: '0-2 years' },
+      { value: '3-5', label: '3-5 years' },
+      { value: '6-10', label: '6-10 years' },
+      { value: '10+', label: 'More than 10 years' },
+    ],
+  },
+  {
+    id: 'english',
+    text: 'What is your English language proficiency level?',
+    options: [
+      { value: 'basic', label: 'Basic' },
+      { value: 'intermediate', label: 'Intermediate' },
+      { value: 'advanced', label: 'Advanced' },
+      { value: 'native', label: 'Native Speaker' },
+    ],
+  },
+];
 
-  const getCanProceed = () => {
-    switch (currentQuestion) {
-      case 1:
-        return assessmentData.age && validateAge(assessmentData.age);
-      case 2:
-        return assessmentData.englishTest && Object.values(assessmentData.englishScores).some(score => score !== '');
-      case 3:
-        return assessmentData.education && assessmentData.occupation;
-      case 4:
-        return true; // Work experience is optional
-      case 5:
-        return assessmentData.hasAustralianQualification !== null;
-      case 6:
-        return assessmentData.hasAustralianQualification === false || assessmentData.isFromRegionalAustralia !== null;
-      case 7:
-        return assessmentData.hasMastersOrDoctorate !== null;
-      case 8:
-        return assessmentData.hasNAATICredential !== null;
-      case 9:
-        return assessmentData.hasCompletedProfessionalYear !== null;
-      case 10:
-        return assessmentData.partnerStatus !== '';
-      case 11:
-        if (assessmentData.partnerStatus !== 'non-australian') return true;
-        return assessmentData.partnerEnglishTest && 
-               Object.values(assessmentData.partnerEnglishScores).some(score => score !== '') &&
-               assessmentData.partnerHasSkillAssessment !== null;
-      default:
-        return false;
-    }
+const VisaAssessment: React.FC = () => {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [answers, setAnswers] = useState<{ [key: string]: string }>({});
+
+  const currentStep = questions[currentStepIndex];
+  const totalSteps = questions.length;
+
+  const handleAnswer = (answer: string) => {
+    setAnswers({ ...answers, [currentStep.id]: answer });
   };
 
   const handleNext = () => {
-    if (currentQuestion < totalQuestions) {
-      // Skip question 6 if no Australian qualification
-      if (currentQuestion === 5 && assessmentData.hasAustralianQualification === false) {
-        setCurrentQuestion(7);
-      }
-      // Skip question 11 if not applicable
-      else if (currentQuestion === 10 && assessmentData.partnerStatus !== 'non-australian') {
-        // Calculate results
-        const points = calculatePoints(assessmentData);
-        const recs = generateRecommendations(points, assessmentData);
-        setPointsBreakdown(points);
-        setRecommendations(recs);
-      } else {
-        setCurrentQuestion(currentQuestion + 1);
-      }
-    } else {
-      // Calculate results
-      const points = calculatePoints(assessmentData);
-      const recs = generateRecommendations(points, assessmentData);
-      setPointsBreakdown(points);
-      setRecommendations(recs);
+    if (currentStepIndex < totalSteps - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
     }
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 1) {
-      // Handle skipped questions when going back
-      if (currentQuestion === 7 && assessmentData.hasAustralianQualification === false) {
-        setCurrentQuestion(5);
-      } else {
-        setCurrentQuestion(currentQuestion - 1);
-      }
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(currentStepIndex - 1);
     }
   };
 
-  const handleStartNew = () => {
-    setCurrentQuestion(1);
-    setPointsBreakdown(null);
-    setRecommendations(null);
-    setAssessmentData({
-      age: '',
-      occupation: '',
-      education: '',
-      englishTest: '',
-      englishScores: {
-        listening: '',
-        reading: '',
-        writing: '',
-        speaking: ''
-      },
-      workExperienceAustralia: '',
-      workExperienceOverseas: '',
-      currentLocation: '',
-      visaStatus: '',
-      familyStatus: '',
-      hasAustralianQualification: null,
-      isFromRegionalAustralia: null,
-      hasMastersOrDoctorate: null,
-      hasNAATICredential: null,
-      hasCompletedProfessionalYear: null,
-      partnerStatus: '',
-      partnerEnglishTest: '',
-      partnerEnglishScores: {
-        listening: '',
-        reading: '',
-        writing: '',
-        speaking: ''
-      },
-      partnerHasSkillAssessment: null,
-      stateInterest: '',
-      australianStudy: '',
-      regionalStudy: '',
-      mastersPhd: '',
-      naatiCredential: '',
-      professionalYear: ''
-    });
+  const handleSubmit = () => {
+    alert('Assessment submitted! Results: ' + JSON.stringify(answers));
   };
 
-  if (pointsBreakdown && recommendations) {
-    return (
-      <ResultsDisplay
-        pointsBreakdown={pointsBreakdown}
-        recommendations={recommendations}
-        assessmentData={assessmentData}
-        onStartNew={handleStartNew}
-      />
-    );
-  }
-
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Progress Header with Enhanced Contrast */}
-      <div className="bg-white rounded-lg p-6 shadow-lg border-2 border-gray-200">
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-3xl font-bold text-gray-900">Australian Visa Assessment</h2>
-            <span className="text-lg font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-              Question {currentQuestion} of {totalQuestions}
-            </span>
-          </div>
-          <Progress value={(currentQuestion / totalQuestions) * 100} className="h-4 bg-gray-200" />
-          <p className="text-base text-gray-700 mt-3 font-medium">
-            Answer each question to get your personalized visa eligibility report
-          </p>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Visa Assessment</h2>
+      <div className="mb-6">
+        <div className="text-gray-600 text-sm">Step {currentStepIndex + 1} of {totalSteps}</div>
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+          <div
+            className="bg-blue-600 h-2.5 rounded-full"
+            style={{ width: `${((currentStepIndex + 1) / totalSteps) * 100}%` }}
+          ></div>
         </div>
+        <h3 className="text-xl font-semibold text-gray-700 mb-3">{currentStep.text}</h3>
       </div>
 
-      {/* Question Step with Enhanced Styling */}
-      <div className="bg-white rounded-lg shadow-lg border-2 border-gray-200">
-        <QuestionStep
-          currentQuestion={currentQuestion}
-          totalQuestions={totalQuestions}
-          assessmentData={assessmentData}
-          setAssessmentData={setAssessmentData}
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          canProceed={getCanProceed()}
-        />
+      <div className="space-y-4">
+        {currentStep.options?.map((option, index) => (
+          <button
+            key={index}
+            onClick={() => handleAnswer(option.value)}
+            className={`w-full p-4 text-left border-2 rounded-lg transition-all duration-200 ${
+              answers[currentStep.id] === option.value
+                ? 'border-blue-600 bg-blue-50 text-blue-900'
+                : 'border-gray-300 bg-white text-gray-700 hover:border-blue-600 hover:bg-gray-50'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-semibold">{option.label}</div>
+                {option.description && (
+                  <div className="text-sm text-gray-500 mt-1">{option.description}</div>
+                )}
+              </div>
+              <div className={`w-4 h-4 rounded-full border-2 ${
+                answers[currentStep.id] === option.value
+                  ? 'border-blue-600 bg-blue-600'
+                  : 'border-gray-300'
+              }`}>
+                {answers[currentStep.id] === option.value && (
+                  <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                )}
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <div className="flex justify-between mt-6">
+        <button
+          onClick={handlePrevious}
+          disabled={currentStepIndex === 0}
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {currentStepIndex === totalSteps - 1 ? (
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Submit
+          </button>
+        ) : (
+          <button
+            onClick={handleNext}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Next
+          </button>
+        )}
       </div>
     </div>
   );
