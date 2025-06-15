@@ -4,13 +4,36 @@ import React from 'react';
 const AgentResponse = ({ message }) => {
   const highlightTerms = (text) => {
     const terms = [
-      "Skilled Independent visa", "Partner visa", "Student visa", "subclass 189", "subclass 190", "subclass 482",
-      "Temporary Skill Shortage visa", "Working Holiday visa", "Business visa", "subclass 500",
-      "Department of Home Affairs", "points test", "skills assessment", "IELTS", "PTE", "TOEFL",
-      "English requirement", "expression of interest", "EOI", "invitation to apply", "ITA",
+      // Visa types and subcasses
+      "Skilled Independent visa", "Skilled Nominated visa", "Partner visa", "Student visa", 
+      "subclass 189", "subclass 190", "subclass 491", "subclass 482", "subclass 500",
+      "subclass 820", "subclass 801", "subclass 309", "subclass 100", "subclass 103", "subclass 143",
+      "Temporary Skill Shortage visa", "Working Holiday visa", "Business visa",
+      
+      // Government departments and organizations
+      "Department of Home Affairs", "Home Affairs", "homeaffairs.gov.au",
+      "Engineers Australia", "Australian Computer Society", "ACS", "CPA Australia",
+      "AHPRA", "TRA", "Trades Recognition Australia",
+      
+      // Assessment and testing
+      "points test", "skills assessment", "IELTS", "PTE", "TOEFL", "English requirement",
+      "expression of interest", "EOI", "invitation to apply", "ITA", "SkillSelect",
+      
+      // Visa conditions and status
       "bridging visa", "permanent residency", "PR", "visa condition", "sponsorship", "nomination",
-      "CRICOS", "ACS", "Engineers Australia", "VARG Immigration", "Australian study", 
-      "Community language", "Professional Year", "Australia", "migration", "visa"
+      "state nomination", "regional nomination", "employer sponsorship",
+      
+      // Study and qualifications
+      "CRICOS", "Australian study", "Community language", "Professional Year",
+      "vocational education", "higher education", "qualification recognition",
+      
+      // Location and general terms
+      "Australia", "migration", "visa", "immigration", "processing time",
+      "character requirement", "health examination", "police certificate",
+      "registered migration agent", "MARA", "Migration Agent",
+      
+      // Special highlighting for Ritu
+      "Ritu", "VARG Immigration"
     ];
     
     let highlightedText = text;
@@ -18,14 +41,40 @@ const AgentResponse = ({ message }) => {
     // First handle the special case for "Ritu" name highlighting
     highlightedText = highlightedText.replace(
       /\bRitu\b/gi, 
-      '<span class="text-australia-blue font-semibold">Ritu</span>'
+      '<span class="text-australia-blue font-bold">Ritu</span>'
     );
     
-    // Then handle other terms
+    // Handle VARG Immigration
+    highlightedText = highlightedText.replace(
+      /\bVARG Immigration\b/gi,
+      '<span class="text-australia-blue font-semibold">VARG Immigration</span>'
+    );
+    
+    // Handle other important terms
     terms.forEach(term => {
-      const regex = new RegExp(`\\b(${term})\\b`, 'gi');
-      highlightedText = highlightedText.replace(regex, '<span class="text-australia-blue font-semibold">$1</span>');
+      if (term !== 'Ritu' && term !== 'VARG Immigration') {
+        const regex = new RegExp(`\\b(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'gi');
+        highlightedText = highlightedText.replace(regex, '<span class="text-australia-blue font-semibold">$1</span>');
+      }
     });
+    
+    // Highlight website URLs
+    highlightedText = highlightedText.replace(
+      /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9-]+\.gov\.au)/gi,
+      '<span class="text-blue-600 underline font-medium">$1</span>'
+    );
+    
+    // Highlight processing times
+    highlightedText = highlightedText.replace(
+      /(\d+[-–]\d+\s+months?)/gi,
+      '<span class="text-orange-600 font-semibold bg-orange-50 px-1 rounded">$1</span>'
+    );
+    
+    // Highlight point values
+    highlightedText = highlightedText.replace(
+      /(\d+\s+points?)/gi,
+      '<span class="text-green-600 font-semibold bg-green-50 px-1 rounded">$1</span>'
+    );
     
     return { __html: highlightedText };
   };
@@ -40,6 +89,9 @@ const AgentResponse = ({ message }) => {
           className="text-gray-800 leading-relaxed text-base"
           dangerouslySetInnerHTML={highlightTerms(message)}
         />
+        <div className="mt-2 text-xs text-gray-500 border-t pt-2">
+          💡 <em>AI-powered advice by Ritu • Always verify with official sources</em>
+        </div>
       </div>
     </div>
   );

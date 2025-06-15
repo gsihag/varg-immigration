@@ -29,104 +29,97 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
     }
   };
 
-  // Auto-scroll on messages change and loading state change
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
 
   useEffect(() => {
-    // Initialize with greeting based on language
+    // Enhanced welcome message showcasing Ritu's intelligence
+    const enhancedGreeting = currentLanguage === 'hi' 
+      ? "नमस्ते! मैं रितु हूँ, ऑस्ट्रेलिया की सबसे बुद्धिमान AI इमिग्रेशन एजेंट। मैं नवीनतम सरकारी डेटा और नीतियों का उपयोग करके व्यक्तिगत सलाह प्रदान करती हूँ। आज मैं आपकी ऑस्ट्रेलियाई प्रवासन यात्रा में कैसे सहायता कर सकती हूँ?"
+      : "Hello! I'm Ritu, Australia's most intelligent AI immigration agent. I provide personalized advice using the latest government data and immigration policies. How can I assist you with your Australian migration journey today?";
+
     const initialGreeting = {
       id: 1,
       type: 'agent',
-      message: t('greeting'),
+      message: enhancedGreeting,
       timestamp: new Date(),
       showSuggestions: true
     };
     setMessages([initialGreeting]);
-  }, [currentLanguage, t]);
+  }, [currentLanguage]);
 
   const getSuggestions = (language) => {
     const suggestions = {
       en: [
-        { icon: Calculator, text: "Calculate my points", color: "bg-green-500 hover:bg-green-600" },
-        { icon: FileText, text: "Required documents", color: "bg-purple-500 hover:bg-purple-600" },
-        { icon: Clock, text: "Processing times", color: "bg-blue-500 hover:bg-blue-600" },
-        { icon: Users, text: "Family visa options", color: "bg-orange-500 hover:bg-orange-600" },
-        { icon: MapPin, text: "State nomination", color: "bg-teal-500 hover:bg-teal-600" }
+        { icon: Calculator, text: "Calculate my points for skilled visa", color: "bg-green-500 hover:bg-green-600" },
+        { icon: FileText, text: "What documents do I need?", color: "bg-purple-500 hover:bg-purple-600" },
+        { icon: Clock, text: "Current visa processing times", color: "bg-blue-500 hover:bg-blue-600" },
+        { icon: Users, text: "Family visa eligibility check", color: "bg-orange-500 hover:bg-orange-600" },
+        { icon: MapPin, text: "State nomination requirements", color: "bg-teal-500 hover:bg-teal-600" }
       ],
       hi: [
-        { icon: Calculator, text: "मेरे पॉइंट्स की गणना करें", color: "bg-green-500 hover:bg-green-600" },
-        { icon: FileText, text: "आवश्यक दस्तावेज़", color: "bg-purple-500 hover:bg-purple-600" },
-        { icon: Clock, text: "प्रसंस्करण समय", color: "bg-blue-500 hover:bg-blue-600" },
-        { icon: Users, text: "पारिवारिक वीज़ा विकल्प", color: "bg-orange-500 hover:bg-orange-600" },
-        { icon: MapPin, text: "राज्य नामांकन", color: "bg-teal-500 hover:bg-teal-600" }
-      ],
-      zh: [
-        { icon: Calculator, text: "计算我的积分", color: "bg-green-500 hover:bg-green-600" },
-        { icon: FileText, text: "所需文件", color: "bg-purple-500 hover:bg-purple-600" },
-        { icon: Clock, text: "处理时间", color: "bg-blue-500 hover:bg-blue-600" },
-        { icon: Users, text: "家庭签证选项", color: "bg-orange-500 hover:bg-orange-600" },
-        { icon: MapPin, text: "州担保", color: "bg-teal-500 hover:bg-teal-600" }
+        { icon: Calculator, text: "कुशल वीज़ा के लिए मेरे अंकों की गणना करें", color: "bg-green-500 hover:bg-green-600" },
+        { icon: FileText, text: "मुझे कौन से दस्तावेज़ चाहिए?", color: "bg-purple-500 hover:bg-purple-600" },
+        { icon: Clock, text: "वर्तमान वीज़ा प्रसंस्करण समय", color: "bg-blue-500 hover:bg-blue-600" },
+        { icon: Users, text: "पारिवारिक वीज़ा पात्रता जांच", color: "bg-orange-500 hover:bg-orange-600" },
+        { icon: MapPin, text: "राज्य नामांकन आवश्यकताएं", color: "bg-teal-500 hover:bg-teal-600" }
       ]
     };
     return suggestions[language] || suggestions.en;
   };
 
-  const getAIResponse = (userMessage, language) => {
-    const responses = {
+  const callRituAPI = async (userMessage, conversationHistory) => {
+    try {
+      const response = await fetch('/functions/v1/ritu-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          conversationHistory: conversationHistory,
+          language: currentLanguage
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'API call failed');
+      }
+
+      return data.response;
+    } catch (error) {
+      console.error('Ritu API error:', error);
+      // Fallback to enhanced static responses if API fails
+      return getFallbackResponse(userMessage, currentLanguage);
+    }
+  };
+
+  const getFallbackResponse = (userMessage, language) => {
+    const fallbackResponses = {
       en: {
-        'hello': "Hello! I'm here to help with your Australian immigration journey. What would you like to know?",
-        'visa': "Australia offers various visa types including Skilled Independent (189), Skilled Nominated (190), Temporary Skill Shortage (482), and Partner visas. Which category interests you?",
-        'points': "The points test evaluates factors like age, English proficiency, education, work experience, and Australian study. I can help calculate your points score.",
-        'documents': "Common documents include passport, education transcripts, English test results, work references, and health/character certificates. What visa type are you considering?",
-        'processing': "Processing times vary by visa type: 189 (8-12 months), 190 (8-15 months), 482 (3-5 months). Current times may differ based on your country and circumstances.",
-        'family': "Family visas include Partner visas (820/801), Parent visas (103/143), and Child visas (101/102). Each has specific requirements and processing times.",
-        'state': "State nomination programs like 190 and 491 visas offer additional pathways. Popular states include NSW, Victoria, Queensland, and South Australia with varying occupation lists.",
-        'default': "I understand you're asking about Australian immigration. Let me help you with that. Can you be more specific about what aspect you'd like to know about - visa types, points calculation, documents, or processing times?"
+        default: "I'm experiencing some technical difficulties connecting to my knowledge base right now. However, I can still help you with general immigration guidance. For the most current and detailed information, I recommend checking the Department of Home Affairs website (homeaffairs.gov.au) or consulting with a registered migration agent. What specific aspect of Australian immigration would you like to discuss?",
+        points: "For the Australian points test, key factors include: Age (maximum 30 points for 25-32 years), English proficiency (up to 20 points for superior level), skilled employment experience (up to 20 points), and education qualifications (up to 20 points). The current pass mark is typically 65-70 points for most skilled visas. Would you like me to help calculate your estimated points?",
+        visa: "Australia offers several visa pathways: Skilled Independent (189) - no sponsorship needed, Skilled Nominated (190) - requires state nomination, Temporary Skill Shortage (482) - employer sponsored, and various family/partner visas. Each has different requirements and processing times. What's your current situation - are you looking for work, study, or family reunion?"
       },
       hi: {
-        'hello': "नमस्ते! मैं आपकी ऑस्ट्रेलियाई इमिग्रेशन यात्रा में सहायता के लिए यहाँ हूँ। आप क्या जानना चाहते हैं?",
-        'visa': "ऑस्ट्रेलिया विभिन्न वीज़ा प्रकार प्रदान करता है जैसे कुशल स्वतंत्र (189), कुशल नामांकित (190), अस्थायी कौशल कमी (482), और पार्टनर वीज़ा। कौन सी श्रेणी आपकी रुचि है?",
-        'points': "पॉइंट्स टेस्ट उम्र, अंग्रेजी प्रवाहता, शिक्षा, कार्य अनुभव, और ऑस्ट्रेलियाई अध्ययन जैसे कारकों का मूल्यांकन करता है। मैं आपके पॉइंट्स स्कोर की गणना में मदद कर सकती हूँ।",
-        'documents': "सामान्य दस्तावेजों में पासपोर्ट, शिक्षा प्रमाण पत्र, अंग्रेजी टेस्ट परिणाम, कार्य संदर्भ, और स्वास्थ्य/चरित्र प्रमाण पत्र शामिल हैं। आप किस वीज़ा प्रकार पर विचार कर रहे हैं?",
-        'processing': "प्रसंस्करण समय वीज़ा प्रकार के अनुसार भिन्न होता है: 189 (8-12 महीने), 190 (8-15 महीने), 482 (3-5 महीने)। वर्तमान समय आपके देश और परिस्थितियों के आधार पर भिन्न हो सकता है।",
-        'family': "पारिवारिक वीज़ा में पार्टनर वीज़ा (820/801), माता-पिता वीज़ा (103/143), और बच्चे वीज़ा (101/102) शामिल हैं। प्रत्येक की विशिष्ट आवश्यकताएं और प्रसंस्करण समय हैं।",
-        'state': "राज्य नामांकन कार्यक्रम जैसे 190 और 491 वीज़ा अतिरिक्त मार्ग प्रदान करते हैं। लोकप्रिय राज्यों में NSW, विक्टोरिया, क्वींसलैंड, और दक्षिण ऑस्ट्रेलिया शामिल हैं।",
-        'default': "मैं समझती हूँ कि आप ऑस्ट्रेलियाई इमिग्रेशन के बारे में पूछ रहे हैं। मैं इसमें आपकी मदद करती हूँ। क्या आप अधिक विशिष्ट बता सकते हैं कि आप किस पहलू के बारे में जानना चाहते हैं - वीज़ा प्रकार, पॉइंट्स गणना, दस्तावेज़, या प्रसंस्करण समय?"
-      },
-      zh: {
-        'hello': "您好！我在这里帮助您的澳洲移民之旅。您想了解什么？",
-        'visa': "澳洲提供各种签证类型，包括技术独立移民(189)、技术提名移民(190)、临时技术短缺签证(482)和配偶签证。您对哪个类别感兴趣？",
-        'points': "积分测试评估年龄、英语水平、教育、工作经验和澳洲学习等因素。我可以帮助计算您的积分。",
-        'documents': "常见文件包括护照、教育成绩单、英语考试成绩、工作推荐信和健康/品格证明。您考虑申请哪种签证类型？",
-        'processing': "处理时间因签证类型而异：189（8-12个月）、190（8-15个月）、482（3-5个月）。当前时间可能因您的国家和情况而有所不同。",
-        'family': "家庭签证包括配偶签证(820/801)、父母签证(103/143)和子女签证(101/102)。每种都有特定要求和处理时间。",
-        'state': "州担保项目如190和491签证提供额外途径。热门州包括新南威尔士、维多利亚、昆士兰和南澳，各有不同职业清单。",
-        'default': "我理解您询问澳洲移民事宜。让我来帮助您。您能更具体地说明想了解哪个方面吗 - 签证类型、积分计算、文件要求还是处理时间？"
+        default: "मैं अभी अपने ज्ञान आधार से जुड़ने में कुछ तकनीकी कठिनाइयों का सामना कर रही हूँ। हालांकि, मैं अभी भी सामान्य इमिग्रेशन मार्गदर्शन में आपकी सहायता कर सकती हूँ। सबसे वर्तमान और विस्तृत जानकारी के लिए, मैं गृह मामलों के विभाग की वेबसाइट (homeaffairs.gov.au) देखने या एक पंजीकृत प्रवासन एजेंट से सलाह लेने की सलाह देती हूँ।",
+        points: "ऑस्ट्रेलियाई अंक परीक्षा के लिए मुख्य कारकों में शामिल हैं: उम्र (25-32 वर्ष के लिए अधिकतम 30 अंक), अंग्रेजी प्रवाहता (उच्च स्तर के लिए 20 अंक तक), और शिक्षा योग्यता। वर्तमान पास मार्क आमतौर पर अधिकांश कुशल वीज़ा के लिए 65-70 अंक है।",
+        visa: "ऑस्ट्रेलिया कई वीज़ा मार्ग प्रदान करता है: कुशल स्वतंत्र (189), कुशल नामांकित (190), अस्थायी कौशल कमी (482), और विभिन्न पारिवारिक वीज़ा। प्रत्येक की अलग आवश्यकताएं और प्रसंस्करण समय हैं।"
       }
     };
 
-    const langResponses = responses[language] || responses.en;
-    
-    // Simple keyword matching for demo purposes
+    const responses = fallbackResponses[language] || fallbackResponses.en;
     const lowerMessage = userMessage.toLowerCase();
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('नमस्ते') || lowerMessage.includes('你好')) {
-      return langResponses.hello;
-    } else if (lowerMessage.includes('visa') || lowerMessage.includes('वीज़ा') || lowerMessage.includes('签证')) {
-      return langResponses.visa;
-    } else if (lowerMessage.includes('point') || lowerMessage.includes('पॉइंट') || lowerMessage.includes('积分')) {
-      return langResponses.points;
-    } else if (lowerMessage.includes('document') || lowerMessage.includes('दस्तावेज') || lowerMessage.includes('文件')) {
-      return langResponses.documents;
-    } else if (lowerMessage.includes('processing') || lowerMessage.includes('time') || lowerMessage.includes('प्रसंस्करण') || lowerMessage.includes('处理')) {
-      return langResponses.processing;
-    } else if (lowerMessage.includes('family') || lowerMessage.includes('पारिवारिक') || lowerMessage.includes('家庭')) {
-      return langResponses.family;
-    } else if (lowerMessage.includes('state') || lowerMessage.includes('nomination') || lowerMessage.includes('राज्य') || lowerMessage.includes('州担保')) {
-      return langResponses.state;
+    
+    if (lowerMessage.includes('point') || lowerMessage.includes('अंक') || lowerMessage.includes('calculate')) {
+      return responses.points || responses.default;
+    } else if (lowerMessage.includes('visa') || lowerMessage.includes('वीज़ा')) {
+      return responses.visa || responses.default;
     } else {
-      return langResponses.default;
+      return responses.default;
     }
   };
 
@@ -141,26 +134,42 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       timestamp: new Date()
     };
 
-    // Add user message and clear input immediately
     setMessages(prev => [...prev, userMessage]);
     if (!messageText) setInputMessage('');
     setIsLoading(true);
     setShowSuggestions(false);
 
-    // Simulate AI response delay
-    setTimeout(() => {
+    try {
+      // Get conversation history for context
+      const conversationHistory = messages.slice(-10); // Last 10 messages for context
+      
+      // Call the enhanced AI API
+      const aiResponseText = await callRituAPI(messageToSend, conversationHistory);
+      
       const aiResponse = {
         id: Date.now() + 1,
         type: 'agent',
-        message: getAIResponse(messageToSend, currentLanguage),
+        message: aiResponseText,
         timestamp: new Date(),
         showSuggestions: true
       };
       
       setMessages(prev => [...prev, aiResponse]);
-      setIsLoading(false);
       setShowSuggestions(true);
-    }, 1000 + Math.random() * 2000);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      const errorResponse = {
+        id: Date.now() + 1,
+        type: 'agent',
+        message: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or feel free to contact our human immigration experts for immediate assistance.",
+        timestamp: new Date(),
+        showSuggestions: true
+      };
+      setMessages(prev => [...prev, errorResponse]);
+      setShowSuggestions(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSuggestionClick = (suggestionText) => {
@@ -236,7 +245,7 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                 <div className="bg-white border-2 border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>{t('loading')}</span>
+                    <span>Analyzing your query with AI...</span>
                   </div>
                 </div>
               </div>
@@ -267,7 +276,7 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
             </Button>
           </div>
           <p className="text-xs text-gray-600 mt-2 text-center font-medium">
-            Ask Ritu about Australian visas, points calculation, documents, and migration process
+            Ritu provides AI-powered guidance. For official advice, consult a registered migration agent.
           </p>
         </div>
       </div>
@@ -342,7 +351,7 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
                 <div className="bg-white border-2 border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
                   <div className="flex items-center gap-2 text-gray-600">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>{t('loading')}</span>
+                    <span>Analyzing your query with AI...</span>
                   </div>
                 </div>
               </div>
@@ -373,7 +382,7 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
             </Button>
           </div>
           <p className="text-xs text-gray-600 mt-2 text-center font-medium">
-            Ask Ritu about Australian visas, points calculation, documents, and migration process
+            Ritu provides AI-powered guidance. For official advice, consult a registered migration agent.
           </p>
         </div>
       </CardContent>
