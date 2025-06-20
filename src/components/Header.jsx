@@ -33,7 +33,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             <Link 
               to="/about" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
@@ -69,19 +69,19 @@ const Header = () => {
             </Link>
             
             <Link to="/ritu">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4">
                 Consult with Ritu
               </Button>
             </Link>
             
-            <Button className="bg-green-600 hover:bg-green-700 text-white font-medium px-6">
+            <Button className="bg-green-600 hover:bg-green-700 text-white font-medium px-4">
               Book Consultation
             </Button>
           </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 text-gray-600 hover:text-gray-800"
+            className="md:hidden p-2 text-gray-600 hover:text-gray-800"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -90,7 +90,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200">
+          <div className="md:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-3">
               <Link 
                 to="/about" 
