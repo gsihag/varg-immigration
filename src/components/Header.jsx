@@ -33,7 +33,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation - Always visible on desktop */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-8">
             <Link 
               to="/about" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
@@ -67,21 +67,17 @@ const Header = () => {
             >
               Contact
             </Link>
-            
-            <Link to="/ritu">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4">
-                Consult with Ritu
-              </Button>
-            </Link>
           </nav>
 
           {/* Mobile Menu Button - Only visible on mobile */}
-          <button
-            className="md:hidden p-2 text-gray-600 hover:text-gray-800"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="md:hidden">
+            <button
+              className="p-2 text-gray-600 hover:text-gray-800"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation - Only visible on mobile */}
@@ -134,15 +130,6 @@ const Header = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
-              </Link>
-              
-              <Link 
-                to="/ritu" 
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white font-medium mt-2 w-full">
-                  Consult with Ritu
-                </Button>
               </Link>
             </nav>
           </div>
