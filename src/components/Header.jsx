@@ -32,6 +32,15 @@ const Header = () => {
             </div>
           </Link>
 
+          {/* About Us */}
+          <Link to="/about" className="flex items-center gap-3 group">
+            <div className="flex flex-col">
+              <div className="text-gray-700 hover:text-green-600 font-medium transition-colors">
+                About Us
+              </div>
+            </div>
+          </Link>
+
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
             <Link 
