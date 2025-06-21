@@ -21,8 +21,8 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
-  // Webhook URL - will be provided later
-  const WEBHOOK_URL = ''; // TODO: Add webhook URL here
+  // N8N Webhook URL
+  const WEBHOOK_URL = 'https://gsihag.app.n8n.cloud/webhook-test/3c70de15-b6f6-4b6e-a0fb-f36cbd70f837';
 
   const scrollToBottom = () => {
     const container = chatContainerRef.current;
@@ -63,11 +63,6 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
   };
 
   const sendToWebhook = async (userMessage, conversationHistory) => {
-    if (!WEBHOOK_URL) {
-      console.warn('Webhook URL not configured');
-      return "I'm currently being configured to connect to our backend. Please try again later.";
-    }
-
     try {
       console.log('Sending message to webhook:', userMessage);
       
