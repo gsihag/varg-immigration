@@ -88,7 +88,22 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
       const data = await response.json();
       console.log('Webhook response data:', data);
       
-      return data.response || "Thank you for your message. I'm processing your request.";
+      // Extract the actual response message from n8n
+      // Handle different possible response formats from n8n
+      let responseText = '';
+      if (typeof data === 'string') {
+        responseText = data;
+      } else if (data.response) {
+        responseText = data.response;
+      } else if (data.message) {
+        responseText = data.message;
+      } else if (data.output) {
+        responseText = data.output;
+      } else {
+        responseText = "Thank you for your message. I'm processing your request.";
+      }
+      
+      return responseText;
     } catch (error) {
       console.error('Webhook error:', error);
       return "I'm experiencing some technical difficulties. Please try again in a moment.";
