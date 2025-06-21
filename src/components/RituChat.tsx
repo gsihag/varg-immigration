@@ -85,25 +85,33 @@ const RituChat: React.FC<RituChatProps> = ({ isInPopup = false }) => {
         throw new Error(`Webhook call failed with status: ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log('Webhook response data:', data);
+      // First, get the response as text
+      const responseText = await response.text();
+      console.log('Raw webhook response:', responseText);
       
-      // Extract the actual response message from n8n
-      // Handle different possible response formats from n8n
-      let responseText = '';
-      if (typeof data === 'string') {
-        responseText = data;
-      } else if (data.response) {
-        responseText = data.response;
-      } else if (data.message) {
-        responseText = data.message;
-      } else if (data.output) {
-        responseText = data.output;
-      } else {
-        responseText = "Thank you for your message. I'm processing your request.";
+      // Try to parse as JSON, if it fails, use the text directly
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+        console.log('Parsed JSON response:', responseData);
+        
+        // Extract message from JSON response
+        if (typeof responseData === 'string') {
+          return responseData;
+        } else if (responseData.response) {
+          return responseData.response;
+        } else if (responseData.message) {
+          return responseData.message;
+        } else if (responseData.output) {
+          return responseData.output;
+        } else {
+          return responseText; // Use raw text if no expected fields found
+        }
+      } catch (jsonError) {
+        console.log('Response is not JSON, using as plain text:', responseText);
+        // If JSON parsing fails, return the text directly
+        return responseText;
       }
-      
-      return responseText;
     } catch (error) {
       console.error('Webhook error:', error);
       return "I'm experiencing some technical difficulties. Please try again in a moment.";
