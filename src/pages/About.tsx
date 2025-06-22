@@ -23,12 +23,12 @@ const About = () => {
     {
       icon: Users,
       title: "Expert Human Support",
-      description: "Registered Migration Agents with decades of combined experience in Australian immigration."
+      description: "Migration Consultants with decades of combined experience in Australian immigration."
     },
     {
       icon: Shield,
       title: "Compliance & Security", 
-      description: "Fully compliant with MARA regulations and committed to protecting your personal information."
+      description: "Fully compliant with regulations and committed to protecting your personal information."
     },
     {
       icon: Clock,
@@ -53,11 +53,11 @@ const About = () => {
                 <p className="text-xl text-blue-100 mb-8">
                   We're Australia's most innovative immigration consultancy, combining cutting-edge AI technology with expert human guidance to make your migration journey seamless and successful.
                 </p>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-australia-blue" asChild>
+                <Button size="lg" variant="outline" className="border-white text-australia-blue transition-all duration-300 hover:scale-105 hover:text-xl hover:text-bold hover:text-australia-blue" asChild>
                   <a href="/contact">Get Started Today</a>
                 </Button>
               </div>
-              <div className="bg-white/10 rounded-2xl p-8 backdrop-blur-sm">
+              <div className="bg-white/10 rounded-2xl p-8 backdrop-blur-sm transition-all duration-300 hover:scale-105">
                 <div className="grid grid-cols-2 gap-6">
                   {stats.map((stat, index) => (
                     <div key={index} className="text-center">
@@ -77,7 +77,7 @@ const About = () => {
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold text-gray-800 mb-8">Our Story</h2>
               <p className="text-lg text-gray-600 mb-8">
-                Founded with a vision to revolutionize immigration services, VARG Immigration combines traditional expertise with innovative AI technology. Our team of registered migration agents has helped thousands of individuals and families achieve their Australian dreams.
+                Founded with a vision to revolutionize immigration services, VARG Immigration combines traditional expertise with innovative AI technology. Our team of expert migration consultants has helped thousands of individuals and families achieve their Australian dreams.
               </p>
               <p className="text-lg text-gray-600">
                 With Ritu AI, we've created the first 24/7 AI immigration assistant that provides instant, accurate guidance while our human experts handle complex cases and provide personalized support when needed.
@@ -143,7 +143,7 @@ const About = () => {
                       Our AI assistant is trained on thousands of successful cases and the latest immigration laws to provide you with accurate, instant guidance 24/7.
                     </p>
                     <Button className="w-full bg-australia-blue hover:bg-australia-darkBlue" asChild>
-                      <a href="/meeting">Chat with Ritu Now</a>
+                      <a href="/about">Chat with Ritu Now</a>
                     </Button>
                   </div>
                 </CardContent>
