@@ -12,7 +12,6 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 // Public pages
 import Index from "./pages/Index";
 import Meeting from "./pages/Meeting";
-import RituMeeting from "./pages/RituMeeting";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import About from "./pages/About";
@@ -27,7 +26,6 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Documents from "./pages/Documents";
 import Cases from "./pages/Cases";
-import ChatPage from "./pages/ChatPage";
 import Consultations from "./pages/Consultations";
 
 const queryClient = new QueryClient();
@@ -45,7 +43,6 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/meeting" element={<Meeting />} />
-              <Route path="/ritu" element={<RituMeeting />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/services" element={<Services />} />
               <Route path="/about" element={<About />} />
@@ -72,11 +69,6 @@ const App = () => (
               <Route path="/dashboard/cases" element={
                 <ProtectedRoute>
                   <Cases />
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/chat" element={
-                <ProtectedRoute>
-                  <ChatPage />
                 </ProtectedRoute>
               } />
               <Route path="/dashboard/consultations" element={
