@@ -9,6 +9,201 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      cases: {
+        Row: {
+          actual_submission_date: string | null
+          assigned_consultant: string | null
+          case_number: string
+          case_type: Database["public"]["Enums"]["visa_type"]
+          client_id: string
+          created_date: string | null
+          decision_date: string | null
+          id: string
+          notes: string | null
+          priority: Database["public"]["Enums"]["priority_level"] | null
+          status: Database["public"]["Enums"]["case_status"] | null
+          target_submission_date: string | null
+        }
+        Insert: {
+          actual_submission_date?: string | null
+          assigned_consultant?: string | null
+          case_number: string
+          case_type: Database["public"]["Enums"]["visa_type"]
+          client_id: string
+          created_date?: string | null
+          decision_date?: string | null
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"] | null
+          status?: Database["public"]["Enums"]["case_status"] | null
+          target_submission_date?: string | null
+        }
+        Update: {
+          actual_submission_date?: string | null
+          assigned_consultant?: string | null
+          case_number?: string
+          case_type?: Database["public"]["Enums"]["visa_type"]
+          client_id?: string
+          created_date?: string | null
+          decision_date?: string | null
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"] | null
+          status?: Database["public"]["Enums"]["case_status"] | null
+          target_submission_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cases_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          assigned_agent: string | null
+          country_of_origin: string | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          phone: string | null
+          registration_date: string | null
+          ritu_chat_enabled: boolean | null
+          status: Database["public"]["Enums"]["client_status"] | null
+          updated_at: string | null
+          visa_type_interested: Database["public"]["Enums"]["visa_type"] | null
+        }
+        Insert: {
+          assigned_agent?: string | null
+          country_of_origin?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          registration_date?: string | null
+          ritu_chat_enabled?: boolean | null
+          status?: Database["public"]["Enums"]["client_status"] | null
+          updated_at?: string | null
+          visa_type_interested?: Database["public"]["Enums"]["visa_type"] | null
+        }
+        Update: {
+          assigned_agent?: string | null
+          country_of_origin?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          registration_date?: string | null
+          ritu_chat_enabled?: boolean | null
+          status?: Database["public"]["Enums"]["client_status"] | null
+          updated_at?: string | null
+          visa_type_interested?: Database["public"]["Enums"]["visa_type"] | null
+        }
+        Relationships: []
+      }
+      consultations: {
+        Row: {
+          client_id: string
+          consultant_name: string
+          created_at: string | null
+          duration_minutes: number | null
+          follow_up_required: boolean | null
+          id: string
+          meeting_link: string | null
+          notes: string | null
+          scheduled_date: string
+          status: Database["public"]["Enums"]["consultation_status"] | null
+        }
+        Insert: {
+          client_id: string
+          consultant_name: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          follow_up_required?: boolean | null
+          id?: string
+          meeting_link?: string | null
+          notes?: string | null
+          scheduled_date: string
+          status?: Database["public"]["Enums"]["consultation_status"] | null
+        }
+        Update: {
+          client_id?: string
+          consultant_name?: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          follow_up_required?: boolean | null
+          id?: string
+          meeting_link?: string | null
+          notes?: string | null
+          scheduled_date?: string
+          status?: Database["public"]["Enums"]["consultation_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          client_id: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["document_status"] | null
+          upload_date: string | null
+          verified_by: string | null
+          verified_date: string | null
+        }
+        Insert: {
+          client_id: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["document_status"] | null
+          upload_date?: string | null
+          verified_by?: string | null
+          verified_date?: string | null
+        }
+        Update: {
+          client_id?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["document_status"] | null
+          upload_date?: string | null
+          verified_by?: string | null
+          verified_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       immigration_data: {
         Row: {
           created_at: string | null
@@ -36,15 +231,104 @@ export type Database = {
         }
         Relationships: []
       }
+      ritu_conversations: {
+        Row: {
+          client_id: string
+          id: string
+          message: string
+          message_type: Database["public"]["Enums"]["message_type"] | null
+          sender: Database["public"]["Enums"]["message_sender"]
+          session_id: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          client_id: string
+          id?: string
+          message: string
+          message_type?: Database["public"]["Enums"]["message_type"] | null
+          sender: Database["public"]["Enums"]["message_sender"]
+          session_id?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          client_id?: string
+          id?: string
+          message?: string
+          message_type?: Database["public"]["Enums"]["message_type"] | null
+          sender?: Database["public"]["Enums"]["message_sender"]
+          session_id?: string | null
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ritu_conversations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_case_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      case_status:
+        | "initiated"
+        | "documents_collection"
+        | "application_preparation"
+        | "submitted"
+        | "awaiting_response"
+        | "approved"
+        | "rejected"
+        | "closed"
+      client_status:
+        | "new"
+        | "documents_pending"
+        | "under_review"
+        | "consultation_scheduled"
+        | "application_in_progress"
+        | "approved"
+        | "rejected"
+      consultation_status:
+        | "scheduled"
+        | "completed"
+        | "cancelled"
+        | "rescheduled"
+      document_status:
+        | "uploaded"
+        | "under_review"
+        | "verified"
+        | "rejected"
+        | "needs_replacement"
+      document_type:
+        | "passport"
+        | "ielts_certificate"
+        | "degree_certificate"
+        | "transcripts"
+        | "experience_letter"
+        | "bank_statement"
+        | "other"
+      message_sender: "client" | "ritu"
+      message_type:
+        | "text"
+        | "document_request"
+        | "appointment_booking"
+        | "escalation"
+      priority_level: "low" | "medium" | "high" | "urgent"
+      visa_type:
+        | "Student Visa"
+        | "Work Visa"
+        | "Permanent Residence"
+        | "Visitor Visa"
+        | "Partner Visa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -159,6 +443,63 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      case_status: [
+        "initiated",
+        "documents_collection",
+        "application_preparation",
+        "submitted",
+        "awaiting_response",
+        "approved",
+        "rejected",
+        "closed",
+      ],
+      client_status: [
+        "new",
+        "documents_pending",
+        "under_review",
+        "consultation_scheduled",
+        "application_in_progress",
+        "approved",
+        "rejected",
+      ],
+      consultation_status: [
+        "scheduled",
+        "completed",
+        "cancelled",
+        "rescheduled",
+      ],
+      document_status: [
+        "uploaded",
+        "under_review",
+        "verified",
+        "rejected",
+        "needs_replacement",
+      ],
+      document_type: [
+        "passport",
+        "ielts_certificate",
+        "degree_certificate",
+        "transcripts",
+        "experience_letter",
+        "bank_statement",
+        "other",
+      ],
+      message_sender: ["client", "ritu"],
+      message_type: [
+        "text",
+        "document_request",
+        "appointment_booking",
+        "escalation",
+      ],
+      priority_level: ["low", "medium", "high", "urgent"],
+      visa_type: [
+        "Student Visa",
+        "Work Visa",
+        "Permanent Residence",
+        "Visitor Visa",
+        "Partner Visa",
+      ],
+    },
   },
 } as const
