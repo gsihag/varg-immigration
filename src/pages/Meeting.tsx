@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import VideoInterface from '@/components/VideoInterface';
-import ChatBox from '@/components/ChatBox';
+//import ChatBox from '@/components/ChatBox';
 import Disclaimer from '@/components/Disclaimer';
 import { Shield, Clock, Users, CheckCircle } from 'lucide-react';
 
@@ -103,12 +103,13 @@ const Meeting = () => {
             <VideoInterface onMessageReceived={handleMessageReceived} />
           </div>
           
+          {/*
           <div className="order-1 lg:order-2 h-[600px]">
             <ChatBox 
               messages={messages} 
               onSendMessage={handleSendMessage} 
             />
-          </div>
+          </div>*/}
         </div>
         
         {/* Features Section */}

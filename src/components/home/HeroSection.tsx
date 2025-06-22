@@ -73,16 +73,16 @@ const HeroSection = () => {
             {/* Primary CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <Button size="lg" className="group bg-gradient-action hover:shadow-2xl text-white font-bold text-base px-6 py-3 rounded-xl magnetic-hover attention-grab border-0" asChild>
-                <Link to="/ritu">
+                <Link to="/">
                   <Bot className="mr-2 w-4 h-4 group-hover:animate-bounce" />
                   <span>Chat with Ritu - FREE</span>
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="group border-2 border-white text-white hover:bg-white hover:text-trust-blue font-bold text-base px-6 py-3 rounded-xl magnetic-hover backdrop-blur-sm" asChild>
+              <Button variant="outline" size="lg" className="group border-2 border-white text-trust-blue hover:bg-white hover:text-trust-blue font-bold text-base px-6 py-3 rounded-xl magnetic-hover backdrop-blur-sm" asChild>
                 <Link to="/contact">
-                  <Users className="mr-2 w-4 h-4" />
-                  Book Expert Consultation
+                  <span>Book Expert Consultation</span>
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform" />
                 </Link>
               </Button>
             </div>

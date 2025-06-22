@@ -23,7 +23,7 @@ const VideoInterface = ({ onMessageReceived }) => {
           onMessageReceived({
             id: 'welcome',
             isAgent: true,
-            message: "Hello! I'm Gulshan, your Australian migration assistant. How can I help you with your visa or migration questions today?",
+            message: "Hello! I'm Ritu, your Australian migration assistant. How can I help you with your visa or migration questions today?",
             timestamp: new Date()
           });
         }, 1000);
@@ -43,9 +43,9 @@ const VideoInterface = ({ onMessageReceived }) => {
           <div className="bg-australia-blue/10 p-8 rounded-full mb-4">
             <Video size={48} className="text-australia-blue" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Meet with Gulshan</h3>
+          <h3 className="text-xl font-semibold mb-2">Meet with Ritu</h3>
           <p className="text-gray-600 text-center max-w-md mb-6">
-            Connect with Gulshan AI for personalized guidance on Australian migration and visa processes
+            Connect with Ritu for personalized guidance on Australian migration and visa processes
           </p>
           <Button 
             onClick={handleConnect} 
@@ -74,7 +74,7 @@ const VideoInterface = ({ onMessageReceived }) => {
               <div className="w-40 h-40 rounded-full bg-australia-blue/20 flex items-center justify-center">
                 <div className="w-32 h-32 rounded-full bg-australia-blue/30 flex items-center justify-center">
                   <div className="w-24 h-24 rounded-full bg-australia-blue flex items-center justify-center text-4xl font-bold text-white">
-                    G
+                    R
                   </div>
                 </div>
               </div>
