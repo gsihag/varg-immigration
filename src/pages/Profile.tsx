@@ -29,7 +29,7 @@ const Profile = () => {
     email: '',
     phone: '',
     country_of_origin: '',
-    visa_type_interested: ''
+    visa_type_interested: '' as 'Student Visa' | 'Work Visa' | 'Permanent Residence' | 'Visitor Visa' | 'Partner Visa' | ''
   });
 
   const { useClient, useUpdateClient } = useCRM();
@@ -72,7 +72,13 @@ const Profile = () => {
     try {
       await updateClientMutation.mutateAsync({
         clientId: user.id,
-        updates: formData
+        updates: {
+          full_name: formData.full_name,
+          email: formData.email,
+          phone: formData.phone,
+          country_of_origin: formData.country_of_origin,
+          visa_type_interested: formData.visa_type_interested as any
+        }
       });
       
       toast.success('Profile updated successfully!');
@@ -138,7 +144,7 @@ const Profile = () => {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       className="pl-10"
                       required
-                      disabled // Email cannot be changed
+                      disabled
                     />
                   </div>
                   <p className="text-xs text-gray-500">Email cannot be changed. Contact support if needed.</p>

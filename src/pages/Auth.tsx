@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -311,7 +310,7 @@ const Auth = () => {
                     <Checkbox
                       id="remember"
                       checked={rememberMe}
-                      onCheckedChange={setRememberMe}
+                      onCheckedChange={(checked) => setRememberMe(checked === true)}
                     />
                     <Label htmlFor="remember" className="text-sm">Remember me</Label>
                   </div>
