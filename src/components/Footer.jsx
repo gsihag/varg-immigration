@@ -87,7 +87,7 @@ const Footer = () => {
                 <div className="bg-trust-blue/20 rounded-lg p-2">
                   <Phone className="w-5 h-5 text-trust-blue" />
                 </div>
-                <span className="text-slate-700 font-medium group-hover:text-slate-900 transition-colors">+61 2 1234 5678</span>
+                <span className="text-slate-700 font-medium group-hover:text-slate-900 transition-colors">+61 420 575 011</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="bg-success-green/20 rounded-lg p-2">
@@ -99,7 +99,7 @@ const Footer = () => {
                 <div className="bg-energy-pink/20 rounded-lg p-2">
                   <MapPin className="w-5 h-5 text-energy-pink" />
                 </div>
-                <span className="text-slate-700 font-medium group-hover:text-slate-900 transition-colors">Level 10, 123 Collins Street<br />Melbourne VIC 3000</span>
+                <span className="text-slate-700 font-medium group-hover:text-slate-900 transition-colors">1 Renou Rd<br /> Wantirna South VIC <br />Australia 3152</span>
               </li>
               <li className="flex items-center gap-3 group">
                 <div className="bg-action-orange/20 rounded-lg p-2">
@@ -115,7 +115,7 @@ const Footer = () => {
         <div className="border-t border-slate-300 mt-16 pt-8">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <p className="text-slate-600 text-sm font-medium">
-              &copy; {new Date().getFullYear()} VARG Immigration Consultancy. All rights reserved. | Best in Business Migration Consulting
+              &copy; {new Date().getFullYear()} VARG Immigration. All rights reserved.
             </p>
             <p className="text-slate-600 text-sm font-medium">
               For official information, visit 
@@ -130,21 +130,7 @@ const Footer = () => {
             </p>
           </div>
           
-          {/* Additional Trust Elements */}
-          <div className="flex justify-center items-center gap-8 mt-6 text-sm text-slate-600">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-success-green rounded-full animate-pulse"></div>
-              <span className="text-slate-700">Secure & Confidential</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-trust-blue rounded-full animate-pulse"></div>
-              <span className="text-slate-700">Expert Consultants</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-action-orange rounded-full animate-pulse"></div>
-              <span className="text-slate-700">Personalized Excellence</span>
-            </div>
-          </div>
+          
         </div>
       </div>
     </footer>
