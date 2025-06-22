@@ -3,21 +3,16 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+
+
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const handleServicesClick = () => {
+    navigate('/services');
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
@@ -39,44 +34,60 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation - Always visible on desktop */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center gap-40 ml-auto">
             <Link 
               to="/about" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
             >
               About Us
             </Link>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger className="text-gray-700 hover:text-green-600 font-medium transition-colors">
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsDropdownOpen(true)}
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
+              <button
+                onClick={handleServicesClick}
+                className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
+              >
                 Our Services
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem asChild>
-                  <Link to="/services">All Services</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/family-visas">Family Visas</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/work-visas">Work Visas</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/study-visas">Study Visas</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 bg-white border border-gray-200 rounded-md shadow-lg py-2 min-w-[160px] z-50">
+                  <Link
+                    to="/family-visas" 
+                    className="block px-4 py-2 text-gray-700 hover:text-green-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Family Visas
+                  </Link>
+                  <Link 
+                    to="/work-visas" 
+                    className="block px-4 py-2 text-gray-700 hover:text-green-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Work Visas
+                  </Link>
+                  <Link 
+                    to="/study-visas" 
+                    className="block px-4 py-2 text-gray-700 hover:text-green-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Study Visas
+                  </Link>
+                </div>
+              )}
+            </div>
 
             <Link 
               to="/contact" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
             >
               Contact
             </Link>
           </nav>
 
           {/* Mobile Menu Button - Only visible on mobile */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               className="p-2 text-gray-600 hover:text-gray-800"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -88,11 +99,11 @@ const Header = () => {
 
         {/* Mobile Navigation - Only visible on mobile */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+          <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-3">
               <Link 
                 to="/about" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About Us
@@ -100,7 +111,7 @@ const Header = () => {
               
               <Link 
                 to="/services" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Our Services
@@ -108,7 +119,7 @@ const Header = () => {
               
               <Link 
                 to="/family-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 pl-4 transition-colors"
+                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 - Family Visas
@@ -116,7 +127,7 @@ const Header = () => {
               
               <Link 
                 to="/work-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 pl-4 transition-colors"
+                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 - Work Visas
@@ -124,7 +135,7 @@ const Header = () => {
               
               <Link 
                 to="/study-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 pl-4 transition-colors"
+                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 - Study Visas
@@ -132,7 +143,7 @@ const Header = () => {
               
               <Link 
                 to="/contact" 
-                className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
