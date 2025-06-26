@@ -21,10 +21,10 @@ const Dashboard = () => {
     getUser();
   }, []);
 
-  const { useClient, useDocuments, useCases } = useCRM();
+  const { useClient, useClientDocuments, useClientCases } = useCRM();
   const { data: client } = useClient(user?.id || '');
-  const { data: documents } = useDocuments(user?.id || '');
-  const { data: cases } = useCases(user?.id || '');
+  const { data: documents } = useClientDocuments(user?.id || '');
+  const { data: cases } = useClientCases(user?.id || '');
 
   const recentDocuments = documents?.slice(0, 3) || [];
   const activeCase = cases?.[0];
@@ -128,7 +128,7 @@ const Dashboard = () => {
                     <div>
                       <p className="font-semibold">{activeCase.case_number}</p>
                       <p className="text-sm text-gray-600 capitalize">
-                        {activeCase.visa_type?.replace('_', ' ')} Application
+                        {activeCase.case_type?.replace('_', ' ')} Application
                       </p>
                     </div>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
