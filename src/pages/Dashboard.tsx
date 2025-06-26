@@ -132,8 +132,9 @@ const Dashboard = () => {
                       </p>
                     </div>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      activeCase.status === 'active' ? 'bg-green-100 text-green-800' :
-                      activeCase.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      activeCase.status === 'approved' ? 'bg-green-100 text-green-800' :
+                      activeCase.status === 'submitted' || activeCase.status === 'awaiting_response' ? 'bg-yellow-100 text-yellow-800' :
+                      activeCase.status === 'initiated' || activeCase.status === 'documents_collection' ? 'bg-blue-100 text-blue-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
                       {activeCase.status?.replace('_', ' ')}
