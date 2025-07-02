@@ -31,7 +31,7 @@ import {
 import { Link } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
 
-const Dashboard = () => {
+const Overview = () => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ const Dashboard = () => {
       <DashboardLayout>
         <div className="flex flex-col items-center justify-center h-64 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="text-gray-600">Loading your dashboard...</p>
+          <p className="text-gray-600">Loading your overview...</p>
         </div>
       </DashboardLayout>
     );
@@ -454,4 +454,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Overview;

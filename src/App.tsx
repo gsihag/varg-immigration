@@ -23,7 +23,7 @@ import StudyVisas from "./pages/StudyVisas";
 import Auth from "./pages/Auth";
 
 // Protected pages
-import Dashboard from "./pages/Dashboard";
+import Overview from "./pages/Overview";
 import Profile from "./pages/Profile";
 import Documents from "./pages/Documents";
 import Cases from "./pages/Cases";
@@ -55,7 +55,7 @@ const App = () => (
               {/* Protected Routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <Overview />
                 </ProtectedRoute>
               } />
               <Route path="/dashboard/profile" element={

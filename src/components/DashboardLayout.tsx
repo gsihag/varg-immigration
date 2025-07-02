@@ -31,7 +31,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
+    { name: 'Overview', href: '/dashboard', icon: Home },
     { name: 'My Profile', href: '/dashboard/profile', icon: User },
     { name: 'Documents', href: '/dashboard/documents', icon: Upload },
     { name: 'My Cases', href: '/dashboard/cases', icon: FileText },
