@@ -45,9 +45,14 @@ const Dashboard = () => {
   }, []);
 
   const { useClient, useClientDocuments, useClientCases } = useCRM();
-  const { data: client } = useClient(user?.id || '');
-  const { data: documents } = useClientDocuments(user?.id || '');
-  const { data: cases } = useClientCases(user?.id || '');
+  
+  // Only fetch data if user exists - this prevents unnecessary API calls
+  const { data: client, isLoading: clientLoading } = useClient(user?.id || '');
+  const { data: documents, isLoading: documentsLoading } = useClientDocuments(user?.id || '');  
+  const { data: cases, isLoading: casesLoading } = useClientCases(user?.id || '');
+
+  // Show loading state while any critical data is loading
+  const isLoading = clientLoading || documentsLoading || casesLoading;
 
   const recentDocuments = documents?.slice(0, 3) || [];
   const activeCase = cases?.[0];
@@ -82,11 +87,13 @@ const Dashboard = () => {
 
   const profileCompletion = getProfileCompletion();
 
-  if (!client) {
+  // Show loading state while user authentication or critical data is loading
+  if (!user || isLoading) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">Loading your dashboard...</p>
         </div>
       </DashboardLayout>
     );
@@ -107,7 +114,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
-                  G'day, {client.full_name?.split(' ')[0] || 'Mate'}! 🇦🇺
+                  G'day, {client?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Mate'}! 🇦🇺
                 </h1>
                 <p className="text-gray-600">Your Australian immigration journey is progressing beautifully</p>
               </div>
