@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useCRM } from '@/hooks/useCRM';
-import { ReactMarkdown } from 'react-markdown';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -267,9 +267,11 @@ const FloatingChatWidget: React.FC = () => {
                               : 'bg-white border border-border shadow-sm'
                           }`}
                         >
-                          <ReactMarkdown className="text-sm whitespace-pre-wrap leading-relaxed">
-                            {message.message}
-                          </ReactMarkdown>
+                          <div className="text-sm whitespace-pre-wrap leading-relaxed">
+                            <ReactMarkdown>
+                              {message.message}
+                            </ReactMarkdown>
+                          </div>
                           <p className={`text-xs mt-2 ${
                             message.sender === 'user' ? 'text-white/70' : 'text-muted-foreground'
                           }`}>
