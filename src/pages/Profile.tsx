@@ -56,7 +56,7 @@ const Profile = () => {
     getUser();
   }, []);
 
-  const { data: client } = useClient(user?.id || '');
+  const { data: client, isLoading: clientLoading } = useClient(user?.id || '');
 
   useEffect(() => {
     if (client) {
@@ -116,7 +116,8 @@ const Profile = () => {
     }
   };
 
-  if (!client) {
+  // Show loading only when user is not yet loaded or client is being fetched for the first time
+  if (!user || (clientLoading && !client)) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
