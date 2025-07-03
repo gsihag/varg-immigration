@@ -59,8 +59,9 @@ const ServicesSection = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {services.map((service, index) => (
-            <Card key={index} className={`group cursor-pointer border-2 hover:border-opacity-60 interactive-card ${service.popular ? 'ring-4 ring-action-orange/20 shadow-xl border-action-orange/30' : 'border-slate-200'}`}>
-              <CardContent className="p-5 relative bg-white">
+            <Card key={index} className={`group cursor-pointer border-2 hover:border-opacity-60 interactive-card flex flex-col justify-between h-full ${service.popular ? 'ring-4 ring-action-orange/20 shadow-xl border-action-orange/30' : 'border-slate-200'}`}>
+              <CardContent className="p-5 relative bg-white flex flex-col h-full">
+                <div>
                 {service.popular && (
                   <div className="absolute -top-2 left-3 bg-gradient-action text-white px-3 py-1 rounded-full text-xs font-bold shadow-xl attention-grab">
                     🔥 Most Popular
@@ -71,22 +72,29 @@ const ServicesSection = () => {
                   {service.name}
                 </h3>
                 <p className="text-slate-600 leading-relaxed mb-3 font-medium text-sm">{service.description}</p>
-                
+                </div>
+
+                {/* Bottom: Metric Box and Get Started */}
+                <div className="mt-auto flex flex-col gap-4">
                 {/* Success Metrics */}
                 <div className={`flex justify-between items-center mb-3 p-2 bg-gradient-to-r ${service.gradient} bg-opacity-10 rounded-lg border border-opacity-20`}>
                   <div className="text-center">
-                    <div className="text-sm font-bold text-success-green">{service.successRate}</div>
-                    <div className="text-xs text-slate-600 font-medium">Success Rate</div>
+                    <div className="text-sm font-bold text-white">{service.successRate}</div>
+                    <div className="text-xs text-white font-medium">Success Rate</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-sm font-bold text-trust-blue">{service.avgTime}</div>
-                    <div className="text-xs text-slate-600 font-medium">Avg. Time</div>
+                    <div className="text-sm font-bold text-white">{service.avgTime}</div>
+                    <div className="text-xs text-white font-medium">Avg. Time</div>
                   </div>
                 </div>
                 
-                <div className="text-trust-blue font-bold group-hover:text-action-orange transition-colors flex items-center justify-between text-sm">
+                <Link
+                  to="/contact"
+                  className="text-trust-blue font-bold group-hover:text-action-orange transition-colors flex items-center justify-between text-sm"
+                >
                   <span>Get Started</span>
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-2 transition-transform" />
+                </Link>
                 </div>
               </CardContent>
             </Card>

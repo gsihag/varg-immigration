@@ -18,7 +18,7 @@ const StatsSection = () => {
             {stat.icon}
           </div>
           <div className="text-lg lg:text-xl font-bold text-action-warm mb-1">{stat.number}</div>
-          <div className="text-xs text-blue-100 font-medium">{stat.label}</div>
+          <div className="text-xs text-action-warm font-medium">{stat.label}</div>
         </div>
       ))}
     </div>
