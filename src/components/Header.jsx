@@ -107,7 +107,7 @@ const Header = () => {
 
             {/* Mobile Menu Button - Only visible on mobile */}
             <div className="lg:hidden">
-              <button
+              <button 
                 className="p-2 text-gray-600 hover:text-gray-800"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
