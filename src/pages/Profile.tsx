@@ -1,25 +1,28 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useCRM } from '@/hooks/useCRM';
-import { toast } from '@/components/ui/sonner';
-import { User, Mail, Phone, Globe, Save } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 import DashboardLayout from '@/components/DashboardLayout';
-
-const countries = [
-  'India', 'Philippines', 'Nepal', 'Bangladesh', 'Pakistan', 'Sri Lanka', 'China', 'Vietnam',
-  'Thailand', 'Malaysia', 'Indonesia', 'South Korea', 'Japan', 'United Kingdom', 'United States',
-  'Canada', 'Germany', 'France', 'Brazil', 'Colombia', 'Other'
-];
-
-const visaTypes = [
-  'Student Visa', 'Work Visa', 'Permanent Residence', 'Visitor Visa', 'Partner Visa'
-];
+import { PersonalInfoHub } from '@/components/profile/PersonalInfoHub';
+import { VisaEligibilityDashboard } from '@/components/profile/VisaEligibilityDashboard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  User, 
+  Calculator, 
+  Users, 
+  Bell, 
+  FileText, 
+  Award, 
+  Heart, 
+  Shield,
+  CheckCircle,
+  Clock,
+  Settings
+} from 'lucide-react';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -29,7 +32,15 @@ const Profile = () => {
     email: '',
     phone: '',
     country_of_origin: '',
-    visa_type_interested: '' as 'Student Visa' | 'Work Visa' | 'Permanent Residence' | 'Visitor Visa' | 'Partner Visa' | ''
+    visa_type_interested: '',
+    date_of_birth: '',
+    current_address: '',
+    passport_number: '',
+    passport_expiry: '',
+    age: '',
+    education_level: '',
+    work_experience: '',
+    english_test_score: ''
   });
 
   const { useClient, useUpdateClient } = useCRM();
@@ -54,7 +65,15 @@ const Profile = () => {
         email: client.email || '',
         phone: client.phone || '',
         country_of_origin: client.country_of_origin || '',
-        visa_type_interested: client.visa_type_interested || ''
+        visa_type_interested: client.visa_type_interested || '',
+        date_of_birth: '',
+        current_address: '',
+        passport_number: '',
+        passport_expiry: '',
+        age: '',
+        education_level: '',
+        work_experience: '',
+        english_test_score: ''
       });
     }
   }, [client]);
@@ -81,10 +100,17 @@ const Profile = () => {
         }
       });
       
-      toast.success('Profile updated successfully!');
+      toast({
+        title: "Success",
+        description: "Profile updated successfully!",
+      });
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -94,7 +120,7 @@ const Profile = () => {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-australia-blue"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-trust-blue"></div>
         </div>
       </DashboardLayout>
     );
@@ -102,161 +128,200 @@ const Profile = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-          <p className="text-gray-600">Manage your personal information and preferences</p>
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
+            <p className="text-muted-foreground">
+              Manage your personal information, track your eligibility, and configure preferences
+            </p>
+          </div>
+          <div className="flex items-center space-x-3 mt-4 lg:mt-0">
+            <Badge className="bg-success-green/10 text-success-green border-success-green/20">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Profile Active
+            </Badge>
+            <Badge className="bg-trust-blue/10 text-trust-blue border-trust-blue/20">
+              Member since {new Date(client.created_at).toLocaleDateString()}
+            </Badge>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <User className="h-5 w-5" />
-              <span>Personal Information</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="full_name">Full Name *</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="full_name"
-                      type="text"
-                      value={formData.full_name}
-                      onChange={(e) => handleInputChange('full_name', e.target.value)}
-                      className="pl-10"
-                      required
-                    />
+        {/* Main Tabs */}
+        <Tabs defaultValue="personal" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
+            <TabsTrigger value="personal" className="flex items-center space-x-2">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Personal</span>
+            </TabsTrigger>
+            <TabsTrigger value="eligibility" className="flex items-center space-x-2">
+              <Calculator className="h-4 w-4" />
+              <span className="hidden sm:inline">Eligibility</span>
+            </TabsTrigger>
+            <TabsTrigger value="family" className="flex items-center space-x-2">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Family</span>
+            </TabsTrigger>
+            <TabsTrigger value="documents" className="flex items-center space-x-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Documents</span>
+            </TabsTrigger>
+            <TabsTrigger value="health" className="flex items-center space-x-2">
+              <Heart className="h-4 w-4" />
+              <span className="hidden sm:inline">Health</span>
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="flex items-center space-x-2">
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Settings</span>
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Personal Information Tab */}
+          <TabsContent value="personal">
+            <PersonalInfoHub 
+              formData={formData}
+              onInputChange={handleInputChange}
+              onSubmit={handleSubmit}
+              loading={loading}
+              client={client}
+            />
+          </TabsContent>
+
+          {/* Visa Eligibility Tab */}
+          <TabsContent value="eligibility">
+            <VisaEligibilityDashboard 
+              formData={formData}
+              onInputChange={handleInputChange}
+            />
+          </TabsContent>
+
+          {/* Family Members Tab */}
+          <TabsContent value="family">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="h-5 w-5 text-energy-pink" />
+                  <span>Family Member Management</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <Users className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Family Members</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Add and manage family members who will be included in your visa application
+                  </p>
+                  <Button className="bg-energy-pink hover:bg-energy-pink/90">
+                    Add Family Member
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Documents Checklist Tab */}
+          <TabsContent value="documents">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5 text-action-orange" />
+                  <span>Document Checklist</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Document Requirements</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Personalized document checklist based on your visa type and circumstances
+                  </p>
+                  <Button className="bg-action-orange hover:bg-action-orange/90">
+                    Generate Checklist
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Health & Character Tab */}
+          <TabsContent value="health">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Heart className="h-5 w-5 text-calm-teal" />
+                  <span>Health & Character Status</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-6 border border-border rounded-lg">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Heart className="h-8 w-8 text-calm-teal" />
+                      <div>
+                        <h3 className="font-semibold">Health Examination</h3>
+                        <p className="text-sm text-muted-foreground">Medical check status</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-action-orange/10 text-action-orange border-action-orange/20">
+                      <Clock className="h-3 w-3 mr-1" />
+                      Not Started
+                    </Badge>
+                  </div>
+                  
+                  <div className="p-6 border border-border rounded-lg">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Shield className="h-8 w-8 text-confidence-purple" />
+                      <div>
+                        <h3 className="font-semibold">Character Assessment</h3>
+                        <p className="text-sm text-muted-foreground">Police clearance status</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-action-orange/10 text-action-orange border-action-orange/20">
+                      <Clock className="h-3 w-3 mr-1" />
+                      Not Started
+                    </Badge>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address *</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="pl-10"
-                      required
-                      disabled
-                    />
+          {/* Preferences Tab */}
+          <TabsContent value="preferences">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Bell className="h-5 w-5 text-confidence-purple" />
+                  <span>Contact Preferences & Settings</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="p-4 border border-border rounded-lg">
+                    <h3 className="font-semibold mb-4">Notification Preferences</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Email notifications</span>
+                        <Badge className="bg-success-green/10 text-success-green border-success-green/20">Enabled</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">SMS notifications</span>
+                        <Badge className="bg-muted/10 text-muted-foreground border-muted/20">Disabled</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm">Ritu Chat assistance</span>
+                        <Badge className="bg-success-green/10 text-success-green border-success-green/20">
+                          {client.ritu_chat_enabled ? 'Enabled' : 'Disabled'}
+                        </Badge>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500">Email cannot be changed. Contact support if needed.</p>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="pl-10"
-                      placeholder="+61 xxx xxx xxx"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country of Origin</Label>
-                  <Select
-                    value={formData.country_of_origin}
-                    onValueChange={(value) => handleInputChange('country_of_origin', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countries.map((country) => (
-                        <SelectItem key={country} value={country}>
-                          {country}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="visa_type">Visa Type of Interest</Label>
-                <Select
-                  value={formData.visa_type_interested}
-                  onValueChange={(value) => handleInputChange('visa_type_interested', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select visa type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {visaTypes.map((visa) => (
-                      <SelectItem key={visa} value={visa}>
-                        {visa}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-australia-blue hover:bg-australia-darkBlue"
-                  disabled={loading}
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  {loading ? 'Saving...' : 'Save Changes'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Account Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium">Account Status</p>
-                  <p className="text-sm text-gray-600 capitalize">
-                    {client.status?.replace('_', ' ') || 'Active'}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">Member Since</p>
-                  <p className="text-sm font-medium">
-                    {new Date(client.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium">Assigned Agent</p>
-                  <p className="text-sm text-gray-600">
-                    {client.assigned_agent || 'Not assigned yet'}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">Ritu Chat</p>
-                  <p className="text-sm font-medium">
-                    {client.ritu_chat_enabled ? 'Enabled' : 'Disabled'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
