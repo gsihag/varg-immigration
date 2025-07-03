@@ -42,7 +42,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation - Always visible on desktop */}
-          <nav className="hidden md:flex items-center gap-8 ml-auto mr-4">
+          <nav className="flex items-center gap-8 ml-auto mr-4">
             <Link 
               to="/about" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
@@ -106,7 +106,7 @@ const Header = () => {
             </Button>
 
             {/* Mobile Menu Button - Only visible on mobile */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button
                 className="p-2 text-gray-600 hover:text-gray-800"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
