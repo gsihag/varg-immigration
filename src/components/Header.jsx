@@ -1,17 +1,24 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
-
-
+import { ChevronDown } from 'lucide-react';
+import { useAuth } from '@/components/AuthProvider';
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
   const handleServicesClick = () => {
     navigate('/services');
+  };
+
+  const handleDashboardClick = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
   };
 
   return (
@@ -33,8 +40,8 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation - Always visible on desktop */}
-          <nav className="hidden md:flex items-center gap-40 ml-auto">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
             <Link 
               to="/about" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
@@ -49,9 +56,10 @@ const Header = () => {
             >
               <button
                 onClick={handleServicesClick}
-                className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
+                className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 flex items-center"
               >
                 Our Services
+                <ChevronDown className="ml-1 w-4 h-4" />
               </button>
               
               {isDropdownOpen && (
@@ -86,71 +94,42 @@ const Header = () => {
             </Link>
           </nav>
 
-          {/* Mobile Menu Button - Only visible on mobile */}
-          <div className="lg:hidden">
-            <button
-              className="p-2 text-gray-600 hover:text-gray-800"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+          {/* Dashboard Button */}
+          <div className="flex items-center">
+            <Button
+              onClick={handleDashboardClick}
+              className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition-colors"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {user ? 'Your Dashboard' : 'Login / Register'}
+            </Button>
           </div>
         </div>
 
-        {/* Mobile Navigation - Only visible on mobile */}
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-200">
-            <nav className="flex flex-col space-y-3">
-              <Link 
-                to="/about" 
-                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About Us
-              </Link>
-              
-              <Link 
-                to="/services" 
-                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Our Services
-              </Link>
-              
-              <Link 
-                to="/family-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                - Family Visas
-              </Link>
-              
-              <Link 
-                to="/work-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                - Work Visas
-              </Link>
-              
-              <Link 
-                to="/study-visas" 
-                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                - Study Visas
-              </Link>
-              
-              <Link 
-                to="/contact" 
-                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
-            </nav>
-          </div>
-        )}
+        {/* Mobile Navigation - Simplified */}
+        <div className="md:hidden pb-4">
+          <nav className="flex flex-col space-y-2">
+            <Link 
+              to="/about" 
+              className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+            >
+              About Us
+            </Link>
+            
+            <Link 
+              to="/services" 
+              className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+            >
+              Our Services
+            </Link>
+            
+            <Link 
+              to="/contact" 
+              className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
+            >
+              Contact
+            </Link>
+          </nav>
+        </div>
       </div>
     </header>
   );
