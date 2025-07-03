@@ -117,17 +117,6 @@ const Footer = () => {
             <p className="text-slate-600 text-sm font-medium">
               &copy; {new Date().getFullYear()} VARG Immigration. All rights reserved.
             </p>
-            <p className="text-slate-600 text-sm font-medium">
-              For official information, visit 
-              <a 
-                href="https://immi.homeaffairs.gov.au/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-action-orange hover:text-slate-900 transition-colors font-bold ml-1"
-              >
-                Department of Home Affairs
-              </a>
-            </p>
           </div>
           
           
