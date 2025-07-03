@@ -42,10 +42,10 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation - Always visible on desktop */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-8 ml-auto mr-4">
             <Link 
               to="/about" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
             >
               About Us
             </Link>
@@ -57,7 +57,7 @@ const Header = () => {
             >
               <button
                 onClick={handleServicesClick}
-                className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4 flex items-center"
+                className="text-gray-700 hover:text-green-600 font-medium transition-colors flex items-center"
               >
                 Our Services
                 <ChevronDown className="ml-1 w-4 h-4" />
@@ -89,7 +89,7 @@ const Header = () => {
 
             <Link 
               to="/contact" 
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors px-4"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
             >
               Contact
             </Link>
