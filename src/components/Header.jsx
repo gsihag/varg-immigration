@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 
 const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -22,7 +23,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
+    <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50 border-b border-gray-200">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -40,7 +41,7 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Always visible on desktop */}
           <nav className="hidden md:flex items-center gap-8">
             <Link 
               to="/about" 
@@ -94,42 +95,82 @@ const Header = () => {
             </Link>
           </nav>
 
-          {/* Dashboard Button */}
-          <div className="flex items-center">
+          {/* Right side - Dashboard Button + Mobile Menu Toggle */}
+          <div className="flex items-center gap-4">
+            {/* Dashboard Button */}
             <Button
               onClick={handleDashboardClick}
               className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition-colors"
             >
               {user ? 'Your Dashboard' : 'Login / Register'}
             </Button>
+
+            {/* Mobile Menu Button - Only visible on mobile */}
+            <div className="md:hidden">
+              <button
+                className="p-2 text-gray-600 hover:text-gray-800"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Mobile Navigation - Simplified */}
-        <div className="md:hidden pb-4">
-          <nav className="flex flex-col space-y-2">
-            <Link 
-              to="/about" 
-              className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-            >
-              About Us
-            </Link>
-            
-            <Link 
-              to="/services" 
-              className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-            >
-              Our Services
-            </Link>
-            
-            <Link 
-              to="/contact" 
-              className="text-gray-700 hover:text-green-600 font-medium py-2 transition-colors"
-            >
-              Contact
-            </Link>
-          </nav>
-        </div>
+        {/* Mobile Navigation - Only visible when menu is open on mobile */}
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t border-gray-200">
+            <nav className="flex flex-col space-y-3">
+              <Link 
+                to="/about" 
+                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About Us
+              </Link>
+              
+              <Link 
+                to="/services" 
+                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Our Services
+              </Link>
+              
+              <Link 
+                to="/family-visas" 
+                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                - Family Visas
+              </Link>
+              
+              <Link 
+                to="/work-visas" 
+                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                - Work Visas
+              </Link>
+              
+              <Link 
+                to="/study-visas" 
+                className="text-gray-700 hover:text-green-600 font-medium py-1 pl-4 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                - Study Visas
+              </Link>
+              
+              <Link 
+                to="/contact" 
+                className="text-gray-700 hover:text-green-600 font-medium py-1 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );
