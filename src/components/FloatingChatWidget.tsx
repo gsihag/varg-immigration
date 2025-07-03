@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useCRM } from '@/hooks/useCRM';
+import { ReactMarkdown } from 'react-markdown';
 
 interface Message {
   id: string;
@@ -53,7 +54,7 @@ const FloatingChatWidget: React.FC = () => {
       const welcomeMessage: Message = {
         id: 'welcome-' + Date.now(),
         sender: 'ritu',
-        message: "G'day! 👋 I'm Ritu, your personal Australian immigration assistant from VARG Immigration! 🇦🇺\n\nI'm here to help you navigate your journey to Australia with expert guidance on visas, requirements, and everything in between. Whether you're looking at student visas, work opportunities, or permanent residence - I've got you covered! ✨\n\nWhat brings you to Australia? I'd love to help you get started! 😊",
+        message: "G'day! 👋 I'm Ritu, your personal Australian immigration assistant from VARG Immigration! 🇦🇺\n\nIf you want guidance on visas, requirements, and everything in between - I've got you covered! \n\nLet's get started! 😊",
         timestamp: new Date().toISOString()
       };
       setMessages([welcomeMessage]);
@@ -204,7 +205,7 @@ const FloatingChatWidget: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
+        <div className={`fixed bottom-20 right-6 z-50 transition-all duration-300 ${
           isMinimized ? 'w-80' : 'w-96 h-[600px]'
         }`}>
           <Card className="h-full shadow-2xl border-2 border-trust-blue/20 bg-white">
@@ -219,12 +220,12 @@ const FloatingChatWidget: React.FC = () => {
                   </Avatar>
                   <div>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      Ritu AI Assistant
+                      Ritu - Your AI Assistant
                       <Sparkles className="w-4 h-4 animate-pulse" />
                     </CardTitle>
                     <p className="text-xs text-white/90 flex items-center gap-1">
                       <div className="w-2 h-2 bg-success-green rounded-full animate-pulse"></div>
-                      Your Immigration Expert • Online
+                      Online
                     </p>
                   </div>
                 </div>
@@ -266,7 +267,9 @@ const FloatingChatWidget: React.FC = () => {
                               : 'bg-white border border-border shadow-sm'
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.message}</p>
+                          <ReactMarkdown className="text-sm whitespace-pre-wrap leading-relaxed">
+                            {message.message}
+                          </ReactMarkdown>
                           <p className={`text-xs mt-2 ${
                             message.sender === 'user' ? 'text-white/70' : 'text-muted-foreground'
                           }`}>
@@ -304,7 +307,7 @@ const FloatingChatWidget: React.FC = () => {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder="Ask about your Australian visa journey..."
+                      placeholder="Ask about your Australian visa..."
                       className="flex-1 border-2 border-trust-blue/20 focus:border-trust-blue"
                       disabled={isLoading}
                     />
@@ -323,7 +326,7 @@ const FloatingChatWidget: React.FC = () => {
                       <button
                         key={suggestion}
                         onClick={() => setNewMessage(suggestion)}
-                        className="text-xs px-2 py-1 bg-muted hover:bg-muted/80 rounded-full transition-colors"
+                        className="text-xs px-2 py-1 bg-muted hover:bg-trust-blue rounded-full transition-colors"
                         disabled={isLoading}
                       >
                         {suggestion}
