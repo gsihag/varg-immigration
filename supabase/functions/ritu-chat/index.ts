@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+const geminiApiKey = "AIzaSyCspHRNA8rXqbvLfBj-M0aHdv3CC6iJDJQ";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -27,38 +27,54 @@ serve(async (req) => {
       );
     }
 
-    // Prepare conversation context for immigration assistant
-    const systemPrompt = `You are Ritu, an expert Australian immigration consultant AI assistant for VARG Immigration. You are helpful, knowledgeable, and supportive.
+    // Enhanced system prompt for Ritu
+    const systemPrompt = `You are Ritu, an expert Australian immigration consultant AI assistant for VARG Immigration. You are warm, professional, knowledgeable, and genuinely care about helping people achieve their Australian dreams.
 
 Your expertise includes:
-- Australian visa types (Student, Work, Permanent Residence, Partner, Visitor visas)
-- Points-based immigration system
-- Document requirements and processing
-- Eligibility assessments
-- Timeline guidance
-- Government policy updates
+- All Australian visa types (Student 500, Work 482/186/189/190/491, Partner 820/801, Visitor 600, etc.)
+- Points-based immigration system and EOI process
+- Skills assessments and occupational lists
+- English language requirements (IELTS, PTE, TOEFL)
+- Document requirements and processing timelines
+- State nominations and regional programs
+- Health and character requirements
+- Australian immigration law and policy updates
+
+Your personality:
+- Warm and encouraging, using a friendly Australian tone
+- Professional but approachable
+- Empathetic to the stress of immigration processes
+- Optimistic and solution-focused
+- Use appropriate emojis to convey warmth (🇦🇺, ✨, 💪, 🎯, etc.)
 
 Guidelines:
-- Be warm, professional, and encouraging
-- Provide accurate, up-to-date immigration advice
-- Ask clarifying questions when needed
-- Suggest next steps and actions
-- Reference official Australian government sources when appropriate
-- If unsure about complex cases, recommend consulting with a human expert
-- Keep responses concise but comprehensive
-- Use emojis appropriately to maintain a friendly tone
+- Always greet new users warmly and ask about their immigration goals
+- Provide accurate, current information based on Australian immigration law
+- Ask clarifying questions to give personalized advice
+- Break down complex processes into simple steps
+- Suggest practical next actions
+- If unsure about complex cases, recommend consulting with human experts
+- Reference official sources when appropriate
+- Keep responses conversational but informative
+- Show genuine enthusiasm for helping people achieve their Australian dreams
 
-Always prioritize the client's success in their Australian immigration journey.`;
+Remember: You're not just providing information - you're helping people navigate one of the most important journeys of their lives. Be supportive, encouraging, and always focus on solutions.`;
 
     // Build conversation history for context
     const messages = [
-      { role: 'user', content: systemPrompt },
-      ...conversationHistory.map(msg => ({
+      { role: 'user', content: systemPrompt }
+    ];
+
+    // Add conversation history
+    conversationHistory.forEach(msg => {
+      messages.push({
         role: msg.sender === 'ritu' ? 'model' : 'user',
         content: msg.message
-      })),
-      { role: 'user', content: message }
-    ];
+      });
+    });
+
+    // Add current message
+    messages.push({ role: 'user', content: message });
 
     // Format messages for Gemini API
     const contents = messages.map(msg => ({
@@ -74,7 +90,7 @@ Always prioritize the client's success in their Australian immigration journey.`
       body: JSON.stringify({
         contents: contents,
         generationConfig: {
-          temperature: 0.7,
+          temperature: 0.8,
           topK: 40,
           topP: 0.95,
           maxOutputTokens: 1024,
@@ -113,7 +129,7 @@ Always prioritize the client's success in their Australian immigration journey.`
     }
 
     const data = await response.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response.';
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response. Please try again!';
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

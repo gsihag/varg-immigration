@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Bot, Send, X, Minimize2, Maximize2 } from 'lucide-react';
+import { MessageCircle, Bot, Send, X, Minimize2, Maximize2, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,10 +23,10 @@ const FloatingChatWidget: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [hasGreeted, setHasGreeted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { useClientConversations } = useCRM();
-  // We'll implement conversation creation separately for now
 
   useEffect(() => {
     const getUser = async () => {
@@ -39,7 +39,7 @@ const FloatingChatWidget: React.FC = () => {
   const { data: conversations } = useClientConversations(user?.id || '');
 
   useEffect(() => {
-    if (conversations) {
+    if (conversations && conversations.length > 0) {
       const formattedMessages = conversations.map(conv => ({
         id: conv.id,
         sender: conv.sender === 'client' ? 'user' : 'ritu' as 'user' | 'ritu',
@@ -47,13 +47,24 @@ const FloatingChatWidget: React.FC = () => {
         timestamp: conv.timestamp || new Date().toISOString()
       }));
       setMessages(formattedMessages);
+      setHasGreeted(true);
+    } else if (!hasGreeted && isOpen) {
+      // Send initial greeting when chat opens for the first time
+      const welcomeMessage: Message = {
+        id: 'welcome-' + Date.now(),
+        sender: 'ritu',
+        message: "G'day! 👋 I'm Ritu, your personal Australian immigration assistant from VARG Immigration! 🇦🇺\n\nI'm here to help you navigate your journey to Australia with expert guidance on visas, requirements, and everything in between. Whether you're looking at student visas, work opportunities, or permanent residence - I've got you covered! ✨\n\nWhat brings you to Australia? I'd love to help you get started! 😊",
+        timestamp: new Date().toISOString()
+      };
+      setMessages([welcomeMessage]);
+      setHasGreeted(true);
     }
-  }, [conversations]);
+  }, [conversations, isOpen, hasGreeted]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowWidget(true);
-    }, 2500);
+    }, 3000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -66,7 +77,7 @@ const FloatingChatWidget: React.FC = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !user?.id) return;
+    if (!newMessage.trim()) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -80,15 +91,17 @@ const FloatingChatWidget: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Save user message to database (simplified for now)
-      await supabase.from('ritu_conversations').insert({
-        client_id: user.id,
-        sender: 'client',
-        message: newMessage,
-        message_type: 'text'
-      });
+      // Save user message to database if user is logged in
+      if (user?.id) {
+        await supabase.from('ritu_conversations').insert({
+          client_id: user.id,
+          sender: 'client',
+          message: newMessage,
+          message_type: 'text'
+        });
+      }
 
-      // Get AI response
+      // Get AI response from Gemini
       const response = await supabase.functions.invoke('ritu-chat', {
         body: { 
           message: newMessage,
@@ -100,7 +113,7 @@ const FloatingChatWidget: React.FC = () => {
         throw new Error(response.error.message);
       }
 
-      const aiReply = response.data?.reply || 'Sorry, I encountered an error. Please try again.';
+      const aiReply = response.data?.reply || 'Sorry, I encountered an error. Please try again! 😅';
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -111,19 +124,32 @@ const FloatingChatWidget: React.FC = () => {
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // Save AI response to database (simplified for now)
-      await supabase.from('ritu_conversations').insert({
-        client_id: user.id,
-        sender: 'ritu',
-        message: aiReply,
-        message_type: 'text'
-      });
+      // Save AI response to database if user is logged in
+      if (user?.id) {
+        await supabase.from('ritu_conversations').insert({
+          client_id: user.id,
+          sender: 'ritu',
+          message: aiReply,
+          message_type: 'text'
+        });
+      }
 
     } catch (error: any) {
       console.error('Chat error:', error);
+      
+      // Fallback response if API fails
+      const fallbackMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        sender: 'ritu',
+        message: "Oops! I'm having a bit of trouble connecting right now. 😅 But don't worry - I'm still here to help! Could you try asking your question again? In the meantime, feel free to explore our services or book a consultation with our human experts! 💪",
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, fallbackMessage]);
+      
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: "Connection Issue",
+        description: "Having trouble connecting to Ritu. Please try again!",
         variant: "destructive",
       });
     } finally {
@@ -167,6 +193,11 @@ const FloatingChatWidget: React.FC = () => {
                 Chat with Ritu
               </span>
             </div>
+            
+            {/* Floating hearts animation */}
+            <div className="absolute -top-2 -right-2">
+              <Heart className="w-4 h-4 text-energy-pink animate-bounce" style={{ animationDelay: '0.5s' }} />
+            </div>
           </Button>
         </div>
       )}
@@ -174,21 +205,27 @@ const FloatingChatWidget: React.FC = () => {
       {/* Chat Window */}
       {isOpen && (
         <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
-          isMinimized ? 'w-80' : 'w-96 h-[500px]'
+          isMinimized ? 'w-80' : 'w-96 h-[600px]'
         }`}>
-          <Card className="h-full shadow-2xl border-2 border-trust-blue/20">
+          <Card className="h-full shadow-2xl border-2 border-trust-blue/20 bg-white">
             {/* Header */}
-            <CardHeader className="bg-gradient-to-r from-trust-blue to-confidence-purple text-white p-4">
+            <CardHeader className="bg-gradient-to-r from-trust-blue to-confidence-purple text-white p-4 rounded-t-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback className="bg-white text-trust-blue font-bold text-sm">
+                  <Avatar className="w-10 h-10 border-2 border-white">
+                    <AvatarFallback className="bg-gradient-to-r from-action-orange to-action-warm text-white font-bold text-lg">
                       R
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <CardTitle className="text-lg">Ritu AI Assistant</CardTitle>
-                    <p className="text-xs text-white/80">Your Immigration Expert</p>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      Ritu AI Assistant
+                      <Sparkles className="w-4 h-4 animate-pulse" />
+                    </CardTitle>
+                    <p className="text-xs text-white/90 flex items-center gap-1">
+                      <div className="w-2 h-2 bg-success-green rounded-full animate-pulse"></div>
+                      Your Immigration Expert • Online
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -215,32 +252,22 @@ const FloatingChatWidget: React.FC = () => {
             {!isMinimized && (
               <>
                 {/* Messages */}
-                <CardContent className="flex-1 p-4 h-80 overflow-y-auto bg-gradient-to-b from-background to-muted/30">
+                <CardContent className="flex-1 p-4 h-96 overflow-y-auto bg-gradient-to-b from-background to-muted/30">
                   <div className="space-y-4">
-                    {messages.length === 0 && (
-                      <div className="text-center py-8">
-                        <Bot className="w-12 h-12 text-trust-blue mx-auto mb-3" />
-                        <p className="text-muted-foreground text-sm">
-                          G'day! I'm Ritu, your Australian immigration assistant. 
-                          How can I help you today? 🇦🇺
-                        </p>
-                      </div>
-                    )}
-                    
                     {messages.map((message) => (
                       <div
                         key={message.id}
                         className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[80%] p-3 rounded-xl ${
+                          className={`max-w-[85%] p-3 rounded-xl ${
                             message.sender === 'user'
-                              ? 'bg-trust-blue text-white'
+                              ? 'bg-gradient-to-r from-trust-blue to-confidence-purple text-white'
                               : 'bg-white border border-border shadow-sm'
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap">{message.message}</p>
-                          <p className={`text-xs mt-1 ${
+                          <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.message}</p>
+                          <p className={`text-xs mt-2 ${
                             message.sender === 'user' ? 'text-white/70' : 'text-muted-foreground'
                           }`}>
                             {new Date(message.timestamp).toLocaleTimeString([], { 
@@ -255,10 +282,13 @@ const FloatingChatWidget: React.FC = () => {
                     {isLoading && (
                       <div className="flex justify-start">
                         <div className="bg-white border border-border shadow-sm p-3 rounded-xl">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-trust-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="w-2 h-2 bg-trust-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="w-2 h-2 bg-trust-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-trust-blue rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                              <div className="w-2 h-2 bg-trust-blue rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                              <div className="w-2 h-2 bg-trust-blue rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                            </div>
+                            <span className="text-xs text-muted-foreground">Ritu is thinking...</span>
                           </div>
                         </div>
                       </div>
@@ -274,17 +304,31 @@ const FloatingChatWidget: React.FC = () => {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder="Ask about your visa application..."
-                      className="flex-1"
+                      placeholder="Ask about your Australian visa journey..."
+                      className="flex-1 border-2 border-trust-blue/20 focus:border-trust-blue"
                       disabled={isLoading}
                     />
                     <Button
                       onClick={handleSendMessage}
                       disabled={!newMessage.trim() || isLoading}
-                      className="bg-trust-blue hover:bg-trust-blue/90"
+                      className="bg-gradient-to-r from-trust-blue to-confidence-purple hover:from-confidence-purple hover:to-trust-blue"
                     >
                       <Send className="w-4 h-4" />
                     </Button>
+                  </div>
+                  
+                  {/* Quick suggestions */}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {['Visa options', 'Points calculator', 'Processing times'].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => setNewMessage(suggestion)}
+                        className="text-xs px-2 py-1 bg-muted hover:bg-muted/80 rounded-full transition-colors"
+                        disabled={isLoading}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </>
