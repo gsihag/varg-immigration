@@ -205,10 +205,10 @@ const FloatingChatWidget: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-20 right-6 z-50 transition-all duration-300 ${
-          isMinimized ? 'w-80' : 'w-96 h-[600px]'
+        <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
+          isMinimized ? 'w-80' : 'w-96 max-h-[calc(100vh-3rem)] h-[min(600px,calc(100vh-3rem))]'
         }`}>
-          <Card className="h-full shadow-2xl border-2 border-trust-blue/20 bg-white">
+          <Card className="h-full shadow-2xl border-2 border-trust-blue/20 bg-white flex flex-col">
             {/* Header */}
             <CardHeader className="bg-gradient-to-r from-trust-blue to-confidence-purple text-white p-4 rounded-t-lg">
               <div className="flex items-center justify-between">
@@ -253,7 +253,7 @@ const FloatingChatWidget: React.FC = () => {
             {!isMinimized && (
               <>
                 {/* Messages */}
-                <CardContent className="flex-1 p-4 h-96 overflow-y-auto bg-gradient-to-b from-background to-muted/30">
+                <CardContent className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-background to-muted/30">
                   <div className="space-y-4">
                     {messages.map((message) => (
                       <div
