@@ -21,11 +21,13 @@ export const useCRM = () => {
     });
   };
 
-  const useClient = (clientId: string) => {
+  const useClient = (clientId: string, options?: { enabled?: boolean; staleTime?: number; refetchOnWindowFocus?: boolean }) => {
     return useQuery({
       queryKey: ['client', clientId],
       queryFn: () => CRMClient.getClientById(clientId),
-      enabled: !!clientId,
+      enabled: options?.enabled ?? !!clientId,
+      staleTime: options?.staleTime,
+      refetchOnWindowFocus: options?.refetchOnWindowFocus,
     });
   };
 

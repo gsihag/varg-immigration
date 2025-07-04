@@ -56,7 +56,11 @@ const Profile = () => {
     getUser();
   }, []);
 
-  const { data: client, isLoading: clientLoading } = useClient(user?.id || '');
+  const { data: client, isLoading: clientLoading } = useClient(user?.id || '', {
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     if (client) {
@@ -116,8 +120,8 @@ const Profile = () => {
     }
   };
 
-  // Show loading only when user is not yet loaded or client is being fetched for the first time
-  if (!user || (clientLoading && !client)) {
+  // Show loading only when user is not yet loaded
+  if (!user) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-64">
@@ -144,7 +148,7 @@ const Profile = () => {
               Profile Active
             </Badge>
             <Badge className="bg-trust-blue/10 text-trust-blue border-trust-blue/20">
-              Member since {new Date(client.created_at).toLocaleDateString()}
+              Member since {client?.created_at ? new Date(client.created_at).toLocaleDateString() : 'Recently'}
             </Badge>
           </div>
         </div>
@@ -312,9 +316,9 @@ const Profile = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm">Ritu Chat assistance</span>
-                        <Badge className="bg-success-green/10 text-success-green border-success-green/20">
-                          {client.ritu_chat_enabled ? 'Enabled' : 'Disabled'}
-                        </Badge>
+                         <Badge className="bg-success-green/10 text-success-green border-success-green/20">
+                           {client?.ritu_chat_enabled ? 'Enabled' : 'Disabled'}
+                         </Badge>
                       </div>
                     </div>
                   </div>
