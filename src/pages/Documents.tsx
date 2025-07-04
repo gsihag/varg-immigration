@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from '@/integrations/supabase/client';
 import { useCRM } from '@/hooks/useCRM';
 import { toast } from '@/components/ui/sonner';
-import { Upload, FileText, Eye, Trash2, CheckCircle, Clock, AlertCircle, Download } from 'lucide-react';
+import { Upload, FileText, Eye, Trash2, CheckCircle, Clock, AlertCircle, Download, Filter, Search } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useDropzone } from 'react-dropzone';
 
@@ -29,6 +29,9 @@ const Documents = () => {
   const [selectedDocType, setSelectedDocType] = useState('');
   const [uploadingFiles, setUploadingFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
 
   const { useClientDocuments, useUploadDocument, useFileUpload } = useCRM();
   const uploadDocumentMutation = useUploadDocument();
@@ -126,15 +129,25 @@ const Documents = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'verified':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return 'text-success-green bg-success-green/10 border-success-green/20';
       case 'under_review':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+        return 'text-action-orange bg-action-orange/10 border-action-orange/20';
       case 'rejected':
-        return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-destructive bg-destructive/10 border-destructive/20';
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return 'text-muted-foreground bg-muted border-border';
     }
   };
+
+  // Filter documents based on search and filters
+  const filteredDocuments = documents.filter((doc: any) => {
+    const matchesSearch = doc.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         doc.document_type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || doc.status === statusFilter;
+    const matchesType = typeFilter === 'all' || doc.document_type === typeFilter;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -274,60 +287,142 @@ const Documents = () => {
         {/* Documents List */}
         <Card>
           <CardHeader>
-            <CardTitle>Uploaded Documents</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-trust-blue" />
+                Documents ({filteredDocuments.length})
+              </CardTitle>
+              
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Search documents..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 w-64"
+                  />
+                </div>
+                
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="uploaded">Uploaded</SelectItem>
+                    <SelectItem value="under_review">Under Review</SelectItem>
+                    <SelectItem value="verified">Verified</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filter by type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    {documentTypes.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {documents.length === 0 ? (
               <div className="text-center py-12">
-                <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No documents uploaded yet</h3>
-                <p className="text-gray-500 mb-4">
-                  Start by uploading your required immigration documents
+                <div className="bg-gradient-to-br from-trust-blue/5 to-confidence-purple/5 rounded-full w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                  <FileText className="h-12 w-12 text-trust-blue" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">No documents uploaded yet</h3>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Start building your document portfolio by uploading your required immigration documents
                 </p>
-                <Button onClick={() => setUploadDialogOpen(true)}>
+                <Button 
+                  onClick={() => setUploadDialogOpen(true)}
+                  className="bg-gradient-to-r from-trust-blue to-confidence-purple hover:from-confidence-purple hover:to-trust-blue"
+                >
                   <Upload className="h-4 w-4 mr-2" />
                   Upload Your First Document
                 </Button>
               </div>
+            ) : filteredDocuments.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="bg-muted rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <Search className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-medium text-foreground mb-2">No documents found</h3>
+                <p className="text-muted-foreground">
+                  Try adjusting your search or filter criteria
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setSearchTerm('');
+                    setStatusFilter('all');
+                    setTypeFilter('all');
+                  }}
+                  className="mt-4"
+                >
+                  Clear Filters
+                </Button>
+              </div>
             ) : (
-              <div className="space-y-4">
-                {documents.map((doc: any) => (
-                  <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                    <div className="flex items-center space-x-4">
-                      <FileText className="h-8 w-8 text-gray-400" />
-                      <div>
-                        <h4 className="font-medium text-gray-900">{doc.file_name}</h4>
-                        <div className="flex items-center space-x-2 text-sm text-gray-500">
-                          <span className="capitalize">{doc.document_type.replace('_', ' ')}</span>
-                          <span>•</span>
-                          <span>{formatFileSize(doc.file_size || 0)}</span>
-                          <span>•</span>
-                          <span>{new Date(doc.upload_date).toLocaleDateString()}</span>
+              <div className="space-y-3">
+                {filteredDocuments.map((doc: any) => (
+                  <div key={doc.id} className="group p-4 border border-border rounded-lg hover:shadow-md hover:border-trust-blue/30 transition-all duration-200 bg-gradient-to-r hover:from-background hover:to-muted/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4 flex-1">
+                        <div className="bg-gradient-to-br from-trust-blue/10 to-confidence-purple/10 p-3 rounded-lg">
+                          <FileText className="h-6 w-6 text-trust-blue" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-foreground truncate">{doc.file_name}</h4>
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                            <span className="px-2 py-1 bg-muted rounded-md text-xs font-medium capitalize">
+                              {doc.document_type.replace('_', ' ')}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
+                              {formatFileSize(doc.file_size || 0)}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
+                              {new Date(doc.upload_date).toLocaleDateString()}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center space-x-3">
-                      <div className={`flex items-center space-x-1 px-2 py-1 rounded-full border text-xs font-medium ${getStatusColor(doc.status)}`}>
-                        {getStatusIcon(doc.status)}
-                        <span className="capitalize">{doc.status.replace('_', ' ')}</span>
-                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full border text-xs font-medium ${getStatusColor(doc.status)}`}>
+                          {getStatusIcon(doc.status)}
+                          <span className="capitalize">{doc.status.replace('_', ' ')}</span>
+                        </div>
 
-                      <div className="flex items-center space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDownload(doc.file_url, doc.file_name)}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => window.open(doc.file_url, '_blank')}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDownload(doc.file_url, doc.file_name)}
+                            className="h-8 w-8 p-0 hover:bg-trust-blue/10 hover:text-trust-blue"
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => window.open(doc.file_url, '_blank')}
+                            className="h-8 w-8 p-0 hover:bg-trust-blue/10 hover:text-trust-blue"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
