@@ -68,6 +68,11 @@ const FeaturesSection = () => {
                 </div>
                 <h3 className="text-base font-bold text-slate-800 mb-2 group-hover:text-trust-blue transition-colors">{feature.title}</h3>
                 <p className="text-slate-600 leading-relaxed font-medium text-sm">{feature.description}</p>
+                <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Button size="sm" className="bg-gradient-action text-white hover:shadow-lg magnetic-hover text-xs">
+                    Learn More
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

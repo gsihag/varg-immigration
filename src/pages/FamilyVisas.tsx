@@ -72,9 +72,6 @@ const FamilyVisas = () => {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">
-                  Learn More
-                </Button>
               </CardContent>
             </Card>
           ))}
